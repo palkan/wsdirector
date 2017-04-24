@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+require 'wsdirector'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: wsdirector [options]"
+
+  opts.on("-s", "--clients [clients]", "number of clients") do |cl|
+    options[:clients] = cl
+  end
+
+end.parse!
+
+file = File.expand_path(__FILE__)
+if ARGV.empty?
+  exec "#{file} -h"
+  exit 1
+elsif ARGV.size > 1
+  WSdirector::Task.start(yaml_file: ARGV[0], websocket: ARGV[1], clients: options[:clients])
+else
+  WSdirector::Task.start(websocket: ARGV[0], clients: options[:clients])
+end

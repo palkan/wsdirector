@@ -1,3 +1,4 @@
 module WSdirector
-  VERSION = "0.1.0"
+  class Task
+  end
 end

@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in wsdirector.gemspec
+# Specify your gem's dependencies in WSdirector.gemspec
 gemspec

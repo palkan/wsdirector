@@ -4,9 +4,9 @@ require 'wsdirector/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "wsdirector"
-  spec.version       = Wsdirector::VERSION
-  spec.authors       = ["Kirillvs"]
-  spec.email         = ["kirillvs@mail.ru"]
+  spec.version       = WSdirector::VERSION
+  spec.authors       = ["Kirill Arkhipov", "palkan"]
+  spec.email         = ["kirillvs@mail.ru", "dementiev.vm@gmail.com"]
 
   spec.summary       = "Command line tool for testing websocket servers using scenarios."
   spec.description   = "Command line tool for testing websocket servers using scenarios."
@@ -16,6 +16,8 @@ Gem::Specification.new do |spec|
   spec.files         = `git ls-files`.split($/).select { |p| p.match(%r{^lib/}) } +
     %w(README.md CHANGELOG.md LICENSE.txt)
 
+  spec.bindir        = "bin"
+  spec.executables   = "wsdirector"
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.10"
@@ -23,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.5"
   spec.add_development_dependency "minitest", "~> 5.9"
   spec.add_development_dependency "rubocop", "~> 0.50"
+  spec.add_development_dependency "aruba"
 end
