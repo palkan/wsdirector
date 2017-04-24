@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+require "wsdirector"
+require 'thor'
+
+class MyCLI < Thor
+  default_task :start
+
+  desc "start", "Start orange_pomodoro timer"
+  def start
+    
+  end
+end
+
+MyCLI.start
