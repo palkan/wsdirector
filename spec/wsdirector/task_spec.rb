@@ -5,7 +5,7 @@ describe WSdirector::Task do
 
   describe '.start' do
     it 'call WSdirector::Configuration.load' do
-      expect(WSdirector::Configuration).to receive(:load).with()
+      expect(WSdirector::Configuration).to receive(:load)
     end
 
     context 'then create new instance of WSdirector::Task' do

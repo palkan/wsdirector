@@ -1,6 +1,12 @@
 require "spec_helper"
+require_relative 'echo_server'
 
 describe WSdirector do
+
+  before(:context) do
+    Thread.new { WSdirector::EchoServer.start }
+  end
+
   it "has a version number" do
     expect(WSdirector::VERSION).not_to be nil
   end
