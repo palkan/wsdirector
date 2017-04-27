@@ -36,7 +36,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "aruba", "~> 0.14"
   spec.add_development_dependency "eventmachine", "~> 1.0.9"
   spec.add_development_dependency "websocket-eventmachine-server", "~> 1.0.1"
-
-
-  spec.add_dependency "thor", "~> 0.19.4"
+  spec.add_development_dependency "simplecov"
 end
