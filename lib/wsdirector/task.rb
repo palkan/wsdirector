@@ -7,8 +7,7 @@ module WSdirector
 
     def self.start(test_script = nil, ws_addr)
       if test_script
-        parsed_params = Configuration.load(test_script)
-        raise "Cofiguration load is failed, please check #{test_script}" unless parsed_params
+        parsed_params = Configuration.load(test_script)        
         new(parsed_params, ws_addr)
       else
         new(ws_addr)

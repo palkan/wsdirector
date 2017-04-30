@@ -38,13 +38,6 @@ describe WSdirector::Task do
           subject.start(test_script, ws_addr)
         end
       end
-
-      context 'when WSdirector::Configuration.load fails' do
-        it 'Exit with non-zero code and error stack' do
-          allow(WSdirector::Configuration).to receive(:load).with(test_script).and_return(false)
-          expect { subject.start(test_script, ws_addr) }.to raise_error("Cofiguration load is failed, please check #{test_script}")
-        end
-      end
     end
   end
 end

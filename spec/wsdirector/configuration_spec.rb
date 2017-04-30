@@ -7,8 +7,8 @@ describe WSdirector::Configuration do
 
   describe '.load' do
     context 'when check test_script file and it didnt exist' do
-      it 'return false' do
-        expect(subject.load(test_script)).to eq(false)
+      it 'raise exception' do
+        expect { subject.load(test_script) }.to raise_error(/Cofiguration load is failed, please check /)
       end
     end
 
@@ -51,8 +51,9 @@ describe WSdirector::Configuration do
         end
         after(:example) { File.delete(test_script) }
 
-        it 'return false' do
-          expect(subject.load(test_script)).to eq(false)
+        it 'raise exception' do
+          # expect(subject.load(test_script)).to eq(false)
+          expect { subject.load(test_script) }.to raise_error(/Cofiguration load is failed, please check /)
         end
       end
 
