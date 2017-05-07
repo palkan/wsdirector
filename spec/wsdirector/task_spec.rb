@@ -5,10 +5,6 @@ describe WSdirector::Task do
 
   let(:ws_addr) { 'ws://localhost:9876' }
 
-  describe '#run' do
-
-  end
-
   describe '.start' do
     let(:test_script) { 'test.yml' }
     let(:parsed_script) do
@@ -20,6 +16,7 @@ describe WSdirector::Task do
 
     it 'call WSdirector::Configuration.load' do
       expect(WSdirector::Configuration).to receive(:load).with(test_script).and_return(parsed_script)
+      allow_any_instance_of(subject).to receive(:run_with_script)
       subject.start(test_script, ws_addr)
     end
 
@@ -36,6 +33,15 @@ describe WSdirector::Task do
         expect(subject).to receive(:new).with(parsed_script, ws_addr)
         subject.start(test_script, ws_addr)
       end
+    end
+  end
+
+  describe '#origin' do
+    it 'return origin address' do
+      ws_addr = 'ws://localhost:9876'
+      allow_any_instance_of(subject).to receive(:run_simple)
+      task = subject.start(ws_addr)
+      expect(task.send(:origin, ws_addr)).to eq('http://localhost:9876')
     end
   end
 end

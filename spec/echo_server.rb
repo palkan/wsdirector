@@ -17,17 +17,13 @@ module WSdirector
             sid = @channel.subscribe do |mes|
               ws.send mes
             end
-            puts "<#{sid}> connect"
-
-            @channel.push "hello new client <#{sid}>"
+            @channel.push "Welcome"
 
             ws.onmessage do |msg|
-              puts "<#{sid}> #{msg}"
               @channel.push "<#{sid}> #{msg}"
             end
 
             ws.onclose do
-              puts "<#{sid}> disconnected"
               @channel.unsubscribe sid
               @channel.push "<#{sid}> disconnected"
             end
