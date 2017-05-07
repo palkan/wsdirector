@@ -22,11 +22,11 @@ describe WSdirector::Configuration do
           - send:
               data:
                 command: "subscribe"
-                identifier: '{"channel":"TestChannel"}'
+                identifier: '{\"channel\":\"TestChannel\"}'
           - receive:
               data:
                 type: "subscription_confirmation"
-                identifier: '{"channel":"TestChannel"}'
+                identifier: '{\"channel\":\"TestChannel\"}'
 
         YAML
       end
@@ -52,7 +52,6 @@ describe WSdirector::Configuration do
         after(:example) { File.delete(test_script) }
 
         it 'raise exception' do
-          # expect(subject.load(test_script)).to eq(false)
           expect { subject.load(test_script) }.to raise_error(/Cofiguration load is failed, please check /)
         end
       end

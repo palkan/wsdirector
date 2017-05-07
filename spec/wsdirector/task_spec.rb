@@ -24,19 +24,17 @@ describe WSdirector::Task do
     end
 
     context 'when there is no script file' do
-      it 'create new instance of WSdirector::Task? only with ws_addr' do
+      it 'create new instance of WSdirector::Task only with ws_addr' do
         expect(subject).to receive(:new).with(ws_addr)
         subject.start(ws_addr)
       end
     end
 
-    context 'when script file exist, then create new instance of WSdirector::Task' do
-      context 'when WSdirector::Configuration.load success' do
-        it 'create new instance of WSdirector::Task' do
-          allow(WSdirector::Configuration).to receive(:load).with(test_script).and_return(parsed_script)
-          expect(subject).to receive(:new).with(parsed_script, ws_addr)
-          subject.start(test_script, ws_addr)
-        end
+    context 'when script file exist and WSdirector::Configuration.load success' do
+      it 'create new instance of WSdirector::Task with ws_addr and script_yml' do
+        allow(WSdirector::Configuration).to receive(:load).with(test_script).and_return(parsed_script)
+        expect(subject).to receive(:new).with(parsed_script, ws_addr)
+        subject.start(test_script, ws_addr)
       end
     end
   end
