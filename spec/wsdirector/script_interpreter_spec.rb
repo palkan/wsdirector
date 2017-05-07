@@ -4,12 +4,18 @@ describe WSdirector::ScriptInterpreter do
   subject { WSdirector::ScriptInterpreter }
 
   describe '.start' do
-    it "create new instance of #{subject}" do
-      ws = instance_double("WebSocket::Client::Simple")
-      script = []
-      expect(subject).to receive(:new).with(ws, script)
-      subject.start(ws, script)
+    let(:params) { [instance_double("Client"), []] }
+    it 'create new instance' do
+      inst = instance_double(subject)
+      allow(inst).to receive(:run)
+      expect(subject).to receive(:new).with(*params).and_return(inst)
+      subject.start(*params)
     end
-    it 'start script'
+    it 'run script' do
+      expect_any_instance_of(subject).to receive(:run)
+      subject.start(*params)
+    end
   end
+
+  describe '#run'
 end
