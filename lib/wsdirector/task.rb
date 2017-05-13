@@ -23,8 +23,7 @@ module WSdirector
     private
 
     def run_with_script(script, ws_addr)
-      ws = WebSocket::Client::Simple.connect ws_addr, headers: { origin: origin(ws_addr) }
-      ScriptInterpreter.start(ws, script)
+      ScriptInterpreter.start(ws_addr, script)
     end
 
     def run_simple(ws_addr)

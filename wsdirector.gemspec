@@ -6,8 +6,8 @@ require 'wsdirector/version'
 Gem::Specification.new do |spec|
   spec.name          = "wsdirector"
   spec.version       = WSdirector::VERSION
-  spec.authors       = ["Kirill Arkhipov", "palkan"]
-  spec.email         = ["kirillvs@mail.ru", "dementiev.vm@gmail.com"]
+  spec.authors       = ["Kirill Arkhipov", "Vladimir Dementyev"]
+  spec.email         = ["kirillvs@mail.ru", "palkan@evl.ms"]
 
   spec.summary       = %q{Command line utility perform websocket-client - server interaction with script support.}
   # spec.description   = %q{TODO: Write a longer description or delete this line.}
