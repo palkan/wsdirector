@@ -30,11 +30,27 @@ describe WSdirector::ScriptInterpreter do
 
   describe '#start_sending_loop' do
     it 'sends messaged to ws' do
-      pending 'looks like wrong way'
-      ws = instance_double("WebsocketClientSimple")
-      allow(script_interpreter).to receive(:websocket).and_return(ws)
-      expect(ws).to receive(:send).exactly(script_interpreter.send_commands.size).times
-      script_interpreter.start_sending_loop
+      allow(script_interpreter).to receive(:set_message_endpoint)
+      allow(script_interpreter).to receive(:sleep)
+      expect(script_interpreter).to receive(:send_to_ws).exactly(2).times
+      script_interpreter.send(:recursive_parse, scrpt)
+      script_interpreter.send(:start_sending_loop)
+    end
+
+    it 'assign key in @work_hash where to send messages from WebSocket' do
+      allow(script_interpreter).to receive(:send_to_ws)
+      allow(script_interpreter).to receive(:sleep)
+      expect(script_interpreter).to receive(:set_message_endpoint).exactly(2).times
+      script_interpreter.send(:recursive_parse, scrpt)
+      script_interpreter.send(:start_sending_loop)
+    end
+
+    it 'sleep 1 sec after each send' do
+      allow(script_interpreter).to receive(:send_to_ws)
+      allow(script_interpreter).to receive(:set_message_endpoint)
+      expect(script_interpreter).to receive(:sleep).with(1).exactly(2).times
+      script_interpreter.send(:recursive_parse, scrpt)
+      script_interpreter.send(:start_sending_loop)
     end
   end
 
@@ -47,16 +63,7 @@ describe WSdirector::ScriptInterpreter do
     end
   end
 
-  describe '#recursive_parse, scrpt' do
-    let(:scrpt) do
-      [
-        { 'receive' => { 'data' => 1 } },
-        { 'send' => { 'data' => 2 } },
-        { 'receive' => { 'data' => 3 } },
-        { 'send' => { 'data' => 4 } }
-      ]
-    end
-
+  describe '#recursive_parse' do
     context 'when send first' do
       it 'assign expected hash to @expected_hash' do
         expected_send_receive = {

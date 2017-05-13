@@ -38,4 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "eventmachine", "~> 1.0.9"
   spec.add_development_dependency "websocket-eventmachine-server", "~> 1.0.1"
   spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "pry"
 end

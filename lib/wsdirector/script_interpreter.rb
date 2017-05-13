@@ -3,7 +3,7 @@ require 'websocket-client-simple'
 
 module WSdirector
   class ScriptInterpreter
-    attr_accessor :websocket, :script # , :send_commands, :incoming_messages, :sended_messages # , :receive_commands
+    attr_accessor :websocket, :script
     attr_accessor :work_hash, :expected_hash
 
     def self.start(ws, script)
@@ -16,8 +16,6 @@ module WSdirector
       @script = script
       @work_hash = {}
       @expected_hash = {}
-      # @incoming_messages = []
-      # @sended_messages = []
     end
 
     def run
@@ -28,6 +26,31 @@ module WSdirector
 
     private
 
+    def start_sending_loop
+      @work_hash.each do |k, v|
+        next if k == 'default'
+        set_message_endpoint(k)
+        send_to_ws(v)
+        sleep 1
+      end
+    end
+
+    def send_to_ws(message)
+      json_message = JSON.generate(message)
+      @ws.send(json_message)
+    end
+
+    def set_message_endpoint(key)
+      @ws.on :message do |event|
+        if event.data
+          message = JSON.parse(event.data)
+        else
+          message = event
+        end
+        @work_hash[key] << message
+      end
+    end
+
     def init_connection
       @websocket = WebSocket::Client::Simple.connect @ws_addr, headers: { origin: origin(@ws_addr) } do |ws|
         ws.on :message do |event|
@@ -36,7 +59,7 @@ module WSdirector
           else
             message = event
           end
-          incoming_messages << message if start_receive?
+          @work_hash['default'] << message if @work_hash['default']
         end
 
         ws.on :open do
