@@ -35,13 +35,4 @@ describe WSdirector::Task do
       end
     end
   end
-
-  describe '#origin' do
-    it 'return origin address' do
-      ws_addr = 'ws://localhost:9876'
-      allow_any_instance_of(subject).to receive(:run_simple)
-      task = subject.start(ws_addr)
-      expect(task.send(:origin, ws_addr)).to eq('http://localhost:9876')
-    end
-  end
 end

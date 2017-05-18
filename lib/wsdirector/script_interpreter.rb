@@ -19,8 +19,8 @@ module WSdirector
     end
 
     def run
-      init_connection
       recursive_parse(script)
+      init_connection
       start_sending_loop
     end
 
@@ -30,36 +30,44 @@ module WSdirector
       @work_hash.each do |k, v|
         next if k == 'default'
         set_message_endpoint(k)
-        send_to_ws(v)
+        send_to_ws(k)
         sleep 1
       end
     end
 
     def send_to_ws(message)
       json_message = JSON.generate(message)
-      @ws.send(json_message)
+      @websocket.send(json_message)
     end
 
     def set_message_endpoint(key)
-      @ws.on :message do |event|
-        if event.data
+      work_hash = self.work_hash
+      @websocket.on :message do |event|
+        begin
           message = JSON.parse(event.data)
-        else
-          message = event
+        rescue
+          message = event.data
         end
-        @work_hash[key] << message
+        work_hash[key] << message
       end
     end
 
+    def print_par(param)
+      p "Params - #{param}"
+    end
+
     def init_connection
-      @websocket = WebSocket::Client::Simple.connect @ws_addr, headers: { origin: origin(@ws_addr) } do |ws|
+      work_hash = self.work_hash
+      func = proc { |param| print_par(param) }
+      @websocket = WebSocket::Client::Simple.connect @ws_addr, headers: { origin: Configuration.origin(@ws_addr) } do |ws|
         ws.on :message do |event|
-          if event.data
+          begin
             message = JSON.parse(event.data)
-          else
-            message = event
+          rescue
+            message = event.data
           end
-          @work_hash['default'] << message if @work_hash['default']
+          func.call(message)
+          work_hash['default'] << message if work_hash['default']
         end
 
         ws.on :open do
@@ -72,7 +80,7 @@ module WSdirector
         end
 
         ws.on :error do |e|
-          puts "Error (#{e.inspect})"
+          p "Error (#{e.inspect})"
         end
       end
     end
@@ -80,14 +88,14 @@ module WSdirector
     def recursive_parse(script_array)
       return if script_array.empty?
       if script_array.first.keys.include?('send')
-        @work_hash[script_array.first['send'].to_s] = []
-        @expected_hash[script_array.first['send'].to_s] = []
+        @work_hash[script_array.first['send']['data'].to_s] = []
+        @expected_hash[script_array.first['send']['data'].to_s] = []
         script_array.shift
       elsif @expected_hash.keys.last.nil?
         @expected_hash['default'] = []
         @work_hash['default'] = []
       end
-      @expected_hash[@expected_hash.keys.last]  << script_array.shift['receive'] if script_array.first
+      @expected_hash[@expected_hash.keys.last]  << script_array.shift['receive']['data'] if script_array.first
       recursive_parse(script_array)
     end
   end

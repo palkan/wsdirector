@@ -38,11 +38,6 @@ describe WSdirector::Configuration do
           File.open(test_script, "w+") { |file| file.write(content) }
         end
         after(:example) { File.delete(test_script) }
-
-        it 'call parse_script method' do
-          expect(subject).to receive(:parse_script).with(instance_of(Array))
-          subject.load(test_script)
-        end
       end
 
       context 'when yml invalid' do
@@ -60,12 +55,17 @@ describe WSdirector::Configuration do
           it 'return parsed config' do
             fake_parsed_config = [{ config: 'config'}]
             allow(File).to receive(:exist?).and_return true
-            allow(subject).to receive(:load_from_yml)
-            allow(subject).to receive(:parse_script).and_return(fake_parsed_config)
+            allow(subject).to receive(:load_from_yml).and_return(fake_parsed_config)
             expect(subject.load(test_script)).to eq(fake_parsed_config)
           end
       end
 
+      describe '.origin' do
+        it 'return origin address' do
+          ws_addr = 'ws://localhost:9876'
+          expect(subject.origin(ws_addr)).to eq('http://localhost:9876')
+        end
+      end
     end
   end
 end

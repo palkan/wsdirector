@@ -5,10 +5,10 @@ describe WSdirector::ScriptInterpreter do
 
   let(:scrpt) do
     [
-      { 'receive' => { 'data' => 1 } },
-      { 'send' => { 'data' => 2 } },
-      { 'receive' => { 'data' => 3 } },
-      { 'send' => { 'data' => 4 } }
+      { 'receive' => { 'data' => { 'message' => 1 } } },
+      { 'send' => { 'data' => { 'message' => 2 } } },
+      { 'receive' => { 'data' => { 'message' => 3 } } },
+      { 'send' => { 'data' => { 'message' => 4 } } }
     ]
   end
 
@@ -66,10 +66,15 @@ describe WSdirector::ScriptInterpreter do
   describe '#recursive_parse' do
     context 'when send first' do
       it 'assign expected hash to @expected_hash' do
+        # expected_send_receive = {
+        #   'default'=>[{"data"=>1}],
+        #   "{\"data\"=>2}" => [{"data"=>3}],
+        #   "{\"data\"=>4}" => []
+        # }
         expected_send_receive = {
-          'default'=>[{"data"=>1}],
-          "{\"data\"=>2}" => [{"data"=>3}],
-          "{\"data\"=>4}" => []
+          'default'=>[{"message"=>1}],
+          "{\"message\"=>2}" => [{"message"=>3}],
+          "{\"message\"=>4}" => []
         }
         script_interpreter.send(:recursive_parse, scrpt)
         expect(script_interpreter.expected_hash).to eq(expected_send_receive)
@@ -78,8 +83,8 @@ describe WSdirector::ScriptInterpreter do
       it 'assign work hash to @work_hash' do
         work_send_receive = {
           'default'=>[],
-          "{\"data\"=>2}" => [],
-          "{\"data\"=>4}" => []
+          "{\"message\"=>2}" => [],
+          "{\"message\"=>4}" => []
         }
         script_interpreter.send(:recursive_parse, scrpt)
         expect(script_interpreter.work_hash).to eq(work_send_receive)
@@ -90,8 +95,8 @@ describe WSdirector::ScriptInterpreter do
       before(:example) { scrpt.shift }
       it 'assign expected hash to @expected_hash' do
         expected_send_receive = {
-          "{\"data\"=>2}" => [{ "data"=>3}],
-          "{\"data\"=>4}" => []
+          "{\"message\"=>2}" => [{ "message"=>3}],
+          "{\"message\"=>4}" => []
         }
         script_interpreter.send(:recursive_parse, scrpt)
         expect(script_interpreter.expected_hash).to eq(expected_send_receive)
@@ -99,8 +104,8 @@ describe WSdirector::ScriptInterpreter do
 
       it 'assign work hash to @work_hash' do
         work_send_receive = {
-          "{\"data\"=>2}" => [],
-          "{\"data\"=>4}" => []
+          "{\"message\"=>2}" => [],
+          "{\"message\"=>4}" => []
         }
         script_interpreter.send(:recursive_parse, scrpt)
         expect(script_interpreter.work_hash).to eq(work_send_receive)
