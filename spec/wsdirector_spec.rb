@@ -1,6 +1,8 @@
 require "spec_helper"
 
 describe WSdirector do
+  let(:test_script) { 'test_script.yml' }
+
   it "has a version number" do
     expect(WSdirector::VERSION).not_to be nil
   end
@@ -14,21 +16,56 @@ describe WSdirector do
     end
   end
 
-  describe 'send particular message to websocket server' do
-    it 'success'
-  end
+  context 'simple script with echo server' do
+    context 'when websocket pass test' do
+      let(:content) do
+        <<-YAML.strip_heredoc
+          - receive:
+              data: "Welcome"
+          - send:
+              data: "test message"
+          - receive:
+              data: "test message"
+        YAML
+      end
 
-  describe 'receive message from websocket server' do
-    context 'when message equal to scenario' do
-      it 'show success message'
-    end
-    context 'when message not equal to scenarion' do
-      it 'shows fail message'
-    end
-  end
+      before(:example) do
+        File.open(test_script, "w+") { |file| file.write(content) }
+      end
 
-  describe 'after passing all scenarion' do
-    it 'shows summary information'
+      after(:example) { File.delete(test_script) }
+
+      it 'show success message and result script' do
+        WSdirector::Task.start(test_script, 'ws://127.0.0.1:9876')
+      end
+    end
+
+    context "when websocket test did't pass" do
+      let(:content) do
+        <<-YAML.strip_heredoc
+          - receive:
+              data:
+                type: "Welcome"
+          - send:
+              data:
+                command: "subscribe"
+                identifier: '{\"channel\":\"TestChannel\"}'
+          - receive:
+              data:
+                type: "subscription_confirmation"
+                identifier: '{\"channel\":\"TestChannel\"}'
+
+        YAML
+      end
+
+      before(:example) do
+        File.open(test_script, "w+") { |file| file.write(content) }
+      end
+
+      after(:example) { File.delete(test_script) }
+
+      it "show fails message and fails"
+    end
   end
 
   it 'execute success on simple echo scenario' do
