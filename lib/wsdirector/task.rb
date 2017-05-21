@@ -2,52 +2,61 @@ require 'websocket-client-simple'
 
 module WSdirector
   class Task
+    attr_accessor :ws_addr, :test_script, :multiple_clients
 
-    #exclude all logic from here to start. Rewrite tests
-    def initialize(params = nil, ws_addr)
-      if params
-        run_with_script(params, ws_addr)
-      else
-        run_simple(ws_addr)
-      end
+    def initialize(ws_addr, test_script = nil, multiple_clients = nil)
+      @ws_addr = ws_addr
+      @test_script = test_script
+      @multiple_clients = multiple_clients
     end
 
-    def self.start(test_script = nil, ws_addr)
-      if test_script
-        parsed_params = Configuration.load(test_script)
-        new(parsed_params, ws_addr)
+    def self.start(ws_addr, test_script = nil, multiple_clients = nil)
+      if multiple_clients && test_script && ws_addr
+        new(ws_addr, test_script, multiple_clients).start_multiple_clients
+      elsif test_script && ws_addr
+        new(ws_addr, test_script).start_one_client
       else
-        new(ws_addr)
+        new(ws_addr).start_cmd_ws
       end
     end
 
     private
 
-    def run_with_script(script, ws_addr)
-      ScriptInterpreter.start(ws_addr, script)
-    end
+    def run_client(conf, clients_holder, results_holder)
+      Thread.new do
+        websocket = Websocket.new(ws_addr)
+        result = Result.new(conf['group'])
+        results_holder << result
+        client = Client.new(conf, websocket, result, conf['group'])
+        clients_holder << client
 
-    def run_simple(ws_addr)
-      WebSocket::Client::Simple.connect ws_addr, headers: { origin: Configuration.origin(ws_addr) } do |ws|
-        ws.on :message do |event|
-          puts "from run_simple >> #{event.data}"
-        end
-
-        ws.on :open do
-          puts "Connection established - #{ws.url}"
-        end
-
-        ws.on :close do |e|
-          puts "Connection closed (#{e.inspect})"
-          exit 1
-        end
-
-        ws.on :error do |e|
-          puts "Error (#{e.inspect})"
-        end
+        client.start
       end
-    rescue => error
-      raise "Connection problems - #{error}"
     end
+
+    def start_one_client
+      conf = Configuration.parse(test_script)
+      clients_holder = ClientsHolder.new
+      results_holder = ResultsHolder.new
+
+      run_client(conf, clients_holder, results_holder)
+
+      clients_holder.wait_for_finish
+      results_holder.print_result
+    end
+
+    def start_multiple_clients
+      multiple_conf = Configuration.multiple_parse(multiple_clients)
+      clients_holder = ClientsHolder.new
+      results_holder = ResultsHolder.new
+
+      multiple_conf.each do |conf|
+        conf['multiplier'].times { run_client(conf, clients_holder, results_holder) }
+      end
+
+      clients_holder.wait_for_finish
+      results_holder.print_result
+    end
+
   end
 end
