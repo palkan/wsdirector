@@ -22,12 +22,16 @@ describe WSdirector::Client do
 
   describe '#start' do
     before(:example) do
+      allow(ws).to receive(:init)
       allow(client).to receive(:wait_all)
       allow(client).to receive(:receive)
       allow(client).to receive(:send_receive)
     end
     after(:example) { client.start }
 
+    it 'call ws init' do
+      expect(ws).to receive(:init)
+    end
     it 'call wait_all' do
       expect(client).to receive(:wait_all)
     end
@@ -64,6 +68,30 @@ describe WSdirector::Client do
       expect(result).to receive(:add_result_from_receive)
                     .with([{ 'data' => { 'message' => 'we wanna receive it' } }],
                           [{ 'data' => { 'message' => 'we wanna receive it' } }])
+    end
+  end
+
+  describe '#send_receive' do
+    before(:example) do
+      allow(ws).to receive(:send_receive).and_return([{ 'data' => { 'message' => 'we wanna receive it' } }])
+      allow(result).to receive(:add_result_from_send_receive)
+    end
+    after(:example) { client.send :send_receive, [{ 'data' => { 'message' => 'we_send_it' } }, { 'data' => { 'message' => 'we wanna receive it' } }] }
+    it 'call sned_receive command on ws' do
+      expect(ws).to receive(:send_receive).with({ 'data' => { 'message' => 'we_send_it' } }, [nil])
+    end
+    it 'assign result to instance of result' do
+      expect(result).to receive(:add_result_from_send_receive)
+                    .with({ 'data' => { 'message' => 'we_send_it' } },
+                          [{ 'data' => { 'message' => 'we wanna receive it' } }],
+                          [{ 'data' => { 'message' => 'we wanna receive it' } }])
+    end
+  end
+
+  describe '#register' do
+    it 'assigns clients_holder' do
+      client.register(clients_holder)
+      expect(client.clients_holder).to eq(clients_holder)
     end
   end
 end

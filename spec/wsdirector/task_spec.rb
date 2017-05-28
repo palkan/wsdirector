@@ -94,8 +94,8 @@ describe WSdirector::Task do
     end
     after(:example) { task_example.send :start_multiple_clients }
 
-    it 'call Configuration.multiple_parse with number of multiplier_coefficient' do
-      expect(WSdirector::Configuration).to receive(:multiple_parse).with(clients)
+    it 'call Configuration.multiple_parse with script and number of multiplier_coefficient' do
+      expect(WSdirector::Configuration).to receive(:multiple_parse).with(test_script, clients)
     end
 
     it 'create new instance of ClientsHolder' do

@@ -46,8 +46,9 @@ module WSdirector
     end
 
     def start_multiple_clients
-      multiple_conf = Configuration.multiple_parse(multiple_clients)
-      clients_holder = ClientsHolder.new
+      multiple_conf = Configuration.multiple_parse(test_script, multiple_clients)
+      all_cnt = multiple_conf.map { |conf| conf['multiplier'] }
+      clients_holder = ClientsHolder.new(all_cnt)
       results_holder = ResultsHolder.new
 
       multiple_conf.each do |conf|
