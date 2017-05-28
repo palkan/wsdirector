@@ -22,10 +22,12 @@ describe WSdirector::Client do
 
   describe '#start' do
     before(:example) do
+      client.clients_holder = clients_holder
       allow(ws).to receive(:init)
       allow(client).to receive(:wait_all)
       allow(client).to receive(:receive)
       allow(client).to receive(:send_receive)
+      allow(clients_holder).to receive(:finish_work)
     end
     after(:example) { client.start }
 
@@ -40,6 +42,9 @@ describe WSdirector::Client do
     end
     it 'call send_receive with send and receive expecting' do
       expect(client).to receive(:send_receive).with([{ 'data' => { 'message' => 'we_send_it' } }, { 'data' => { 'message' => 'we wanna receive it' } }])
+    end
+    it 'call finish work on clients_holder' do
+      expect(clients_holder).to receive(:finish_work)
     end
   end
 

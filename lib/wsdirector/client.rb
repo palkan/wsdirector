@@ -20,6 +20,7 @@ module WSdirector
       script['actions'].each do |command|
         send command.shift, command
       end
+      clients_holder.finish_work
     end
 
     private
