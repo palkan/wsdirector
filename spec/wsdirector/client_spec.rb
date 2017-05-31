@@ -51,12 +51,14 @@ describe WSdirector::Client do
   describe '#wait_all' do
     it 'waits until clients_holder allow to continue' do
       client.clients_holder = clients_holder
-      allow(clients_holder).to receive(:wait_all) do
-        @ticks ||= 0
-        @ticks += 1
-        @ticks == 5 ? false : true
-      end
-      expect(client.send(:wait_all, [])).to eq(4)
+      # allow(clients_holder).to receive(:wait_all) do
+      #   @ticks ||= 0
+      #   @ticks += 1
+      #   @ticks == 5 ? false : true
+      # end
+      # expect(client.send(:wait_all, [])).to eq(4)
+      expect(clients_holder).to receive(:wait_all)
+      client.send(:wait_all, [])
     end
   end
 

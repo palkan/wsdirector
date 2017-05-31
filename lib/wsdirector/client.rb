@@ -24,13 +24,14 @@ module WSdirector
     end
 
     private
-
+    #TO DO need to rework, blocking is on clients_holder side
     def wait_all(_)
-      ticks = 0
-      while clients_holder.wait_all
-        ticks += 1
-      end
-      ticks
+      clients_holder.wait_all
+      # ticks = 0
+      # while clients_holder.wait_all
+      #   ticks += 1
+      # end
+      # ticks
     end
 
     def receive(expected_array)

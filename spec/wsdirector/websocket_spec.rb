@@ -51,7 +51,7 @@ describe WSdirector::Websocket do
   end
 
   describe '#parse_message' do
-    it 'it return JSON generated mess if i call it with hash with key data' do
+    it 'return JSON generated mess if i call it with hash with key data' do
       message = { 'data' => { "some" => "message" } }
       expect(ws.parse_message(message)).to eq(JSON.generate(message))
     end
