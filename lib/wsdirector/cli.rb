@@ -3,6 +3,10 @@ require 'optparse'
 require "wsdirector/task"
 require "wsdirector/scenario_reader"
 require "wsdirector/client"
+require "wsdirector/result"
+require "wsdirector/clients_holder"
+require "wsdirector/results_holder"
+require "wsdirector/printer"
 
 module WsDirector
   class CLI
