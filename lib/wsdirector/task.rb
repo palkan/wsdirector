@@ -20,8 +20,6 @@ module WSdirector
       end
     end
 
-    private
-
     def run_client(conf, clients_holder, results_holder)
       Thread.new do
         websocket = Websocket.new(ws_addr)

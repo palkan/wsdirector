@@ -27,11 +27,6 @@ module WSdirector
 
     def wait_all(_)
       clients_holder.wait_all
-      # ticks = 0
-      # while clients_holder.wait_all
-      #   ticks += 1
-      # end
-      # ticks
     end
 
     def receive(expected_array)

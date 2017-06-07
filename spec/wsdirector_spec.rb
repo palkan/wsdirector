@@ -4,7 +4,7 @@ require_relative 'echo_server'
 describe WSdirector do
 
   before(:context) do
-    Thread.new { WSdirector::EchoServer.start }
+    # Thread.new { WSdirector::EchoServer.start }
   end
 
   let(:test_script) { 'test_script.yml' }
@@ -34,8 +34,10 @@ describe WSdirector do
     context 'when websocket pass test' do
       let(:content) do
         <<-YAML.strip_heredoc
+          - send:
+              data: "test message"
           - receive:
-              data: "Welcome"
+              data: "test message"
           - send:
               data: "test message"
           - receive:
@@ -50,7 +52,7 @@ describe WSdirector do
       after(:example) { File.delete(test_script) }
 
       it 'show success message and result script' do
-        WSdirector::Task.start(test_script, 'ws://127.0.0.1:9876')
+        WSdirector::Task.start('ws://127.0.0.1:9876', test_script)
       end
     end
 
