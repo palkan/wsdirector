@@ -144,4 +144,15 @@ describe WSdirector::Configuration do
       expect(subject.origin(ws_addr)).to eq('http://localhost:9876')
     end
   end
+
+  describe '.test?' do
+    it 'true if test env' do
+      subject.env = :test
+      expect(subject.test?).to eq(true)
+    end
+    it 'false if not test env' do
+      subject.env = nil
+      expect(subject.test?).to eq(false)
+    end
+  end
 end
