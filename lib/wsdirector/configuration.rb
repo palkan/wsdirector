@@ -28,13 +28,13 @@ module WSdirector
       conf.each do |i|
         if(i.is_a? String)
           result << i
+        elsif(i.keys[0] == 'receive' && !is_send)
+          result << [:receive, i['receive']]
         elsif(i.keys[0] == 'send')
           result << [:send_receive, i['send']]
-        elsif(i.keys[0] == 'receive' && is_send)
-          result.last << i['receive']
-        else
-          result << [:receive, i['receive']]
           is_send = true
+        elsif(i.keys[0] == 'receive')
+          result.last << i['receive']
         end
       end
       result

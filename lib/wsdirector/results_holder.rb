@@ -21,13 +21,18 @@ module WSdirector
     def print_fails(group, results)
       bad = results.select { |r| r.result_array.any? { |i| i[0] == false } }
       Printer.out("Group #{group} fails", :red)
-      Printer.out("- #{bad.size} clients of #{results.size} fails", :red)
+      Printer.out(" #{bad.size} clients of #{results.size} fails", :red)
       bad.first.result_array.select { |i| i[0] == false }.each do |row|
         Printer.out(
-          "-- send: #{row[1]}\n--expect receive: #{row[3]}\n--got: #{row[2]}",
+          "  send: #{row[1]}\n  expect receive: #{row[3]}\n  got: #{row[2]}",
           :red
         )
       end
+      exit_with_fail
+    end
+
+    def exit_with_fail
+      abort('Websocket test fails')
     end
 
     def <<(result)

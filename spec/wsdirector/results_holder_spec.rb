@@ -106,11 +106,12 @@ describe WSdirector::ResultsHolder do
     before(:example) do
       allow(good_result).to receive(:result_array).and_return(success_summary_result)
       allow(bad_result).to receive(:result_array).and_return(fail_summary_result)
+      allow(results_holder).to receive(:exit_with_fail)
     end
     it 'print fail group and specific errors for first result' do
       expect(WSdirector::Printer).to receive(:out).with('Group default fails', :red)
-      expect(WSdirector::Printer).to receive(:out).with('- 2 clients of 5 fails', :red)
-      expect(WSdirector::Printer).to receive(:out).with("-- send: send_command3\n--expect receive: expected_array3\n--got: receive_array3", :red)
+      expect(WSdirector::Printer).to receive(:out).with(' 2 clients of 5 fails', :red)
+      expect(WSdirector::Printer).to receive(:out).with("  send: send_command3\n  expect receive: expected_array3\n  got: receive_array3", :red)
       results_holder.print_fails('default', fail_results)
     end
   end

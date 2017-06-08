@@ -19,15 +19,17 @@ module WSdirector
             sid = @channel.subscribe do |mes|
               ws.send mes
             end
+            # func.call('connected')
             @channel.push "Welcome"
 
             ws.onmessage do |msg|
-              func.call(msg)
-              puts msg
+              # func.call(msg)
+              # puts msg
               @channel.push "#{msg}"
             end
 
             ws.onclose do
+              # func.call('disconnected')
               @channel.unsubscribe sid
               @channel.push "disconnected"
             end

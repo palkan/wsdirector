@@ -122,7 +122,7 @@ describe WSdirector::Configuration do
   end
 
   describe '.parse_it' do
-    it 'return expected result' do
+    it 'return expected result with receive start' do
       conf = [
         {"receive"=>{"data"=>{"type"=>"welcome"}}},
         {
@@ -135,6 +135,26 @@ describe WSdirector::Configuration do
         }
       ]
       expect(WSdirector::Configuration.parse_it(conf)).to eq(parsed_script)
+    end
+
+    it 'return expected result with send_receive start' do
+      conf = [
+        {
+          "send"=>{"data"=>{"command"=>"subscribe",
+          "identifier"=>"{\"channel\":\"TestChannel\"}"}}
+        },
+        {
+          "receive"=>{"data"=>{"type"=>"subscription_confirmation",
+          "identifier"=>"{\"channel\":\"TestChannel\"}"}}
+        }
+      ]
+      result = [
+          [:send_receive,
+            { 'data' => { 'command' => 'subscribe', 'identifier' => "{\"channel\":\"TestChannel\"}" } },
+            { 'data' => { 'type' => 'subscription_confirmation', 'identifier' => "{\"channel\":\"TestChannel\"}" } }
+          ]
+        ]
+      expect(WSdirector::Configuration.parse_it(conf)).to eq(result)
     end
   end
 
