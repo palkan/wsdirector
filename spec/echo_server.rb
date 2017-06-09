@@ -7,7 +7,7 @@ module WSdirector
     PORT = 9876
 
     def self.start
-      func = proc { |param| p param }
+      # func = proc { |param| p param }
 
       EM::run do
         @channel = EM::Channel.new
@@ -19,17 +19,16 @@ module WSdirector
             sid = @channel.subscribe do |mes|
               ws.send mes
             end
-            # func.call('connected')
-            @channel.push "Welcome"
+            # func.call("#{sid} - connected")
+            ws.send "Welcome"
 
             ws.onmessage do |msg|
-              # func.call(msg)
-              # puts msg
+              # func.call("#{sid} message >> #{msg}")
               @channel.push "#{msg}"
             end
 
             ws.onclose do
-              # func.call('disconnected')
+              # func.call("#{sid} - disconnected")
               @channel.unsubscribe sid
               @channel.push "disconnected"
             end

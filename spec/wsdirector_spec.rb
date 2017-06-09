@@ -80,4 +80,35 @@ describe WSdirector do
       end
     end
   end
+
+  context 'simple script with muptiple clients' do
+    context 'when websocket pass test' do
+      let(:content) do
+        <<-YAML.strip_heredoc
+          - client:
+              multiplier: "5 * :scale"
+              actions:
+                - receive: "Welcome"
+                - send:
+                    data: "test message"
+                - receive:
+                    data: "test message"
+                - send:
+                    data: "test message"
+                - receive:
+                    data: "test message"
+        YAML
+      end
+
+      before(:example) do
+        File.open(test_script, "w+") { |file| file.write(content) }
+      end
+
+      after(:example) { File.delete(test_script) }
+
+      it 'succefful perform all tasks' do
+        expect { WSdirector::Task.start('ws://127.0.0.1:9876', test_script, 1) }.to_not raise_error
+      end
+    end
+  end
 end
