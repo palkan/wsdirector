@@ -38,14 +38,18 @@ describe WSdirector::Websocket do
   end
 
   describe '#send_receive' do
-    before(:example) { ws.receive_queue = ['a', 'b', 'c'] }
+    before(:example) do
+      ws.receive_queue = ['a', 'b', 'c']
+      allow(ws).to receive_message_chain(:websocket_client, :instance_eval).and_return(true)
+      allow(ws).to receive(:wait_until_hanshaked).and_return(true)
+    end
     it 'send message' do
       allow(ws).to receive(:websocket_client).and_return(fake_double)
-      expect(fake_double).to receive(:send)
+      expect(fake_double).to receive(:send).and_return true
       ws.send_receive('command', [nil, nil])
     end
     it 'return expected result' do
-      allow(ws).to receive_message_chain(:websocket_client, :send)
+      allow(ws).to receive_message_chain(:websocket_client, :send).and_return true
       expect(ws.send_receive('command', [nil, nil, nil])).to eq(['a', 'b', 'c'])
     end
   end

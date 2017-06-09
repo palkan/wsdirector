@@ -39,7 +39,7 @@ module WSdirector
       send_command = expected_array.shift
       receive_array = expected_array.map { |i| nil }
       receive_array = ws.send_receive(send_command, receive_array)
-      result.add_result_from_send_receive(send_command, expected_array, receive_array)
+      result.add_result_from_send_receive(send_command, receive_array, expected_array)
     end
   end
 end

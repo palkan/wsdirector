@@ -25,7 +25,7 @@ module WSdirector
         websocket = Websocket.new(ws_addr)
         result = Result.new(conf['group'])
         results_holder << result
-        client = Client.new(conf, websocket, result, conf['group'])
+        client = Client.new(Marshal.load(Marshal.dump(conf)), websocket, result, conf['group'])
         clients_holder << client
 
         client.start

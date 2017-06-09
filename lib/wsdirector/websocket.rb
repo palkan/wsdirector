@@ -12,17 +12,21 @@ module WSdirector
 
     def init
       add_received_message = ->(message) { receive_queue << message }
+      raise_exception = -> (error) { abort(error) }
       @websocket_client = WebSocket::Client::Simple.connect addr, headers: { origin: Configuration.origin(addr) }
       @websocket_client.on :message do |event|
-        message = event
-        message = { data: JSON.parse(event.data) } if event.data
+        begin
+          message = JSON.parse(event.data)
+        rescue
+          message = event.data
+        end
         add_received_message.call(message)
       end
       @websocket_client.on :close do |e|
-        raise('Websocket client close unexpectedly')
+        raise_exception.call('Websocket client close unexpectedly')
       end
       @websocket_client.on :error do |e|
-        raise("Websocket client get error: #{e}")
+        raise_exception.call("Websocket client get error: #{e}")
       end
     end
 
@@ -37,8 +41,15 @@ module WSdirector
       receive_array
     end
 
+    def wait_until_hanshaked
+      while !websocket_client.instance_eval "@handshaked";end
+    end
+
     def send_receive(send_command, receive_array)
-      websocket_client.send(parse_message(send_command))
+      s = parse_message(send_command)
+      wait_until_hanshaked
+      status = websocket_client.send(s)
+      abort("Client handshaked? #{websocket_client.instance_eval "@handshaked"}") unless status
       i = 0
       while receive_array.any?(&:nil?) do
         if receive_queue.first
