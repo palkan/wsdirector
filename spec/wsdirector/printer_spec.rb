@@ -3,6 +3,7 @@ require "spec_helper"
 describe WSdirector::Printer do
   subject { WSdirector::Printer }
   it 'print message as expected' do
+    allow(WSdirector::Configuration).to receive(:test?).and_return(false)
     expect_any_instance_of(String).to receive(:colorize).with(:green).and_return('test')
     expect(subject).to receive(:puts).with('test')
     subject.out('test', :green)

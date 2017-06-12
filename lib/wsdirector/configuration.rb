@@ -52,7 +52,7 @@ module WSdirector
     end
 
     def self.test?
-      @env == :test
+      env == :test
     end
 
     class << self

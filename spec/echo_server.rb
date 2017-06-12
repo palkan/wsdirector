@@ -7,7 +7,7 @@ module WSdirector
     PORT = 9876
 
     def self.start
-      # func = proc { |param| p param }
+      func = proc { |param| p param }
 
       EM::run do
         @channel = EM::Channel.new
@@ -20,7 +20,9 @@ module WSdirector
               ws.send mes
             end
             # func.call("#{sid} - connected")
-            ws.send "Welcome"
+            sleep 0.1
+            st = ws.send "Welcome"
+            # func.call("welcome - status #{st}")
 
             ws.onmessage do |msg|
               # func.call("#{sid} message >> #{msg}")

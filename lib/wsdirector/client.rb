@@ -18,14 +18,19 @@ module WSdirector
     def start
       ws.init
       script['actions'].each do |command|
-        send command.shift, command
+        begin
+          command = [command] unless command.is_a? Array
+          send command.shift, command
+        rescue => e
+          abort("#{e}")
+        end
       end
       clients_holder.finish_work
     end
 
     private
 
-    def wait_all(_)
+    def wait_all(a = [])
       clients_holder.wait_all
     end
 

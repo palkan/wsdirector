@@ -3,7 +3,7 @@ require "spec_helper"
 describe WSdirector::Configuration do
   subject { WSdirector::Configuration }
 
-  let(:test_script) { 'test_script.yml' }
+  let(:test_script) { 'test.yml' }
 
   let(:content) do
     <<-YAML.strip_heredoc
@@ -167,11 +167,13 @@ describe WSdirector::Configuration do
 
   describe '.test?' do
     it 'true if test env' do
-      subject.env = :test
+      # subject.env = :test
+      allow(subject).to receive(:env).and_return(:test)
       expect(subject.test?).to eq(true)
     end
     it 'false if not test env' do
-      subject.env = nil
+      # subject.env = nil
+      allow(subject).to receive(:env).and_return(nil)
       expect(subject.test?).to eq(false)
     end
   end

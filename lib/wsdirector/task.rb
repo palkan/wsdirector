@@ -8,6 +8,7 @@ module WSdirector
       @ws_addr = ws_addr
       @test_script = test_script
       @multiple_clients = multiple_clients
+      Thread.abort_on_exception = true
     end
 
     def self.start(ws_addr, test_script = nil, multiple_clients = nil)
