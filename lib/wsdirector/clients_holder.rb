@@ -1,23 +1,28 @@
+require 'concurrent'
+
 module WSdirector
   class ClientsHolder
 
-    attr_accessor :all_cnt, :clients_wait, :clients_finished_work
+    attr_accessor :all_cnt
+    attr_accessor :barrier_for_finish, :barrier_for_task
 
     def initialize(cnt = [1])
       @all_cnt = cnt.inject(:+)
-      @clients_wait = 0
-      @clients_finished_work = 0
+      @barrier_for_finish = Concurrent::CyclicBarrier.new(@all_cnt + 1)
+      @barrier_for_task = Concurrent::CyclicBarrier.new(@all_cnt)
     end
 
     def wait_for_finish
-      while all_cnt > clients_finished_work;end
-      clients_finished_work
+      result = barrier_for_finish.wait
+      barrier_for_finish.reset
+      result
     end
 
     def wait_all
-      @clients_wait += 1
-      while all_cnt > clients_wait;end
-      clients_wait
+      result = barrier_for_task.wait(Configuration::TIMEOUT)
+      raise 'Broken on timeout in client_holder.rb in wait_all' unless result
+      barrier_for_task.reset
+      result
     end
 
     def <<(client)
@@ -25,7 +30,8 @@ module WSdirector
     end
 
     def finish_work
-      @clients_finished_work += 1
+      result = barrier_for_finish.wait # (Configuration::TIMEOUT)
+      abort("Broken on timeout in client_holder.rb in finish_work") unless result
     end
   end
 end
