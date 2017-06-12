@@ -3,6 +3,9 @@ require 'yaml'
 module WSdirector
   class Configuration
 
+    #timeout secs
+    TIMEOUT = 5
+
     def self.parse(script_yml)
       conf = load_from_yml(script_yml)
       conf_parsed = parse_it(conf)

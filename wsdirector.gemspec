@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-# coding: utf-8
->>>>>>> eaef55b... tmp version, tested with action cable
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wsdirector/version'
@@ -26,8 +22,9 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'websocket-client-simple', '~> 0.3'
   spec.add_dependency 'colorize'
+  spec.add_dependency 'concurrent-ruby', '~> 1.0.5'
 
-  spec.add_development_dependency "bundler", "~> 1.10"
+  spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.5"
   spec.add_development_dependency "minitest", "~> 5.9"
