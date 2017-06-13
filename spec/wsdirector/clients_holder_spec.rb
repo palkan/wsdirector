@@ -5,8 +5,6 @@ describe WSdirector::ClientsHolder do
 
   it 'set initial params' do
     expect(clients_holder.all_cnt).to eq(5)
-    expect(clients_holder.clients_wait).to eq(0)
-    expect(clients_holder.clients_finished_work).to eq(0)
   end
 
   describe '#<<' do
@@ -20,33 +18,40 @@ describe WSdirector::ClientsHolder do
 
   describe '#wait_for_finish' do
     it 'loop untill all clients finished' do
-      fake_clients_finish = 0
-      allow(clients_holder).to receive(:clients_finished_work) do
-        fake_clients_finish += 1
+      (clients_holder.all_cnt).times do
+        Thread.new do
+          expect(clients_holder.finish_work).to be_truthy
+        end
       end
-      expect(clients_holder.wait_for_finish).to eq(5 + 1) # :) because of last statement
+      expect(clients_holder.wait_for_finish).to be_truthy
+    end
+
+    it 'fails when not enough threads finished' do
+      (clients_holder.all_cnt - 1).times do
+        Thread.new do
+          expect(clients_holder.finish_work).to be_truthy
+        end
+      end
+      expect { clients_holder.wait_for_finish }.to raise_error('No live threads left. Deadlock?')
     end
   end
 
   describe '#wait_all' do
-    it 'add +1 to clients_wait' do
-      clients_holder.all_cnt = 1
-      expect(clients_holder.wait_all).to eq(1)
-    end
     it 'loop untill all clients finish current task' do
-      fake_clients_finish = 0
-      allow(clients_holder).to receive(:clients_wait) do
-        fake_clients_finish += 1
+      (clients_holder.all_cnt - 1).times do
+        Thread.new do
+          clients_holder.wait_all
+        end
       end
-      expect(clients_holder.wait_all).to eq(5 + 1) # :) because of last statement
+      expect(clients_holder.wait_all).to be_truthy
     end
-  end
-
-  describe '#finish work' do
-    it 'add +1 clients_finished_work' do
-      clients_holder.finish_work
-      clients_holder.finish_work
-      expect(clients_holder.clients_finished_work).to eq(2)
+    it 'fails when not enough threads finished current task' do
+      (clients_holder.all_cnt - 2).times do
+        Thread.new do
+          clients_holder.wait_all
+        end
+      end
+      expect { clients_holder.wait_all }.to raise_error('Broken on timeout in client_holder.rb in wait_all')
     end
   end
 end
