@@ -13,14 +13,28 @@ describe WSdirector do
     expect(WSdirector::VERSION).not_to be nil
   end
 
-  describe 'connect to websocket server' do
-    context 'when connection success' do
-      it 'shows success message'
-      it 'show welcome server message'
+  context 'when params fails' do
+    it 'exit with error when there is no file' do
+      expect { WSdirector::Task.start('ws://127.0.0.1:9876', test_script) }.to raise_error(/No such file or directory/)
     end
 
-    context 'when connection fails' do
-      it 'exit with non-zero code and show error log'
+    it 'exit with error when script is not specified' do
+      expect { WSdirector::Task.start('ws://127.0.0.1:9876') }.to raise_error('Error! Missing script file path or websocket server address.')
+    end
+
+    it 'exit with error when websocket addr is not specified' do
+      expect { WSdirector::Task.start(test_script) }.to raise_error('Error! Missing script file path or websocket server address.')
+    end
+
+    it 'exit with error when yaml file invalid' do
+      content = <<-YAML.strip_heredoc
+                  receive "Welcome"
+                  data "test message"
+                YAML
+
+      File.open(test_script, "w+") { |file| file.write(content) }
+      expect { WSdirector::Task.start('ws://127.0.0.1:9876', test_script) }.to raise_error(/Cofiguration load is failed, please check/)
+      File.delete(test_script)
     end
   end
 
@@ -158,7 +172,7 @@ describe WSdirector do
               actions:
                 - receive: "Welcome"
                 - wait_all
-                - send:
+                - receive:
                     data: "test message"
         YAML
       end

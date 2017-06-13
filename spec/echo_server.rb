@@ -7,7 +7,7 @@ module WSdirector
     PORT = 9876
 
     def self.start
-      func = proc { |param| p param }
+      # func = proc { |param| p param }
 
       EM::run do
         @channel = EM::Channel.new

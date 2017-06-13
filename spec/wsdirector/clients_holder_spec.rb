@@ -20,7 +20,7 @@ describe WSdirector::ClientsHolder do
     it 'loop untill all clients finished' do
       (clients_holder.all_cnt).times do
         Thread.new do
-          expect(clients_holder.finish_work).to be_truthy
+          clients_holder.finish_work
         end
       end
       expect(clients_holder.wait_for_finish).to be_truthy
@@ -29,7 +29,7 @@ describe WSdirector::ClientsHolder do
     it 'fails when not enough threads finished' do
       (clients_holder.all_cnt - 1).times do
         Thread.new do
-          expect(clients_holder.finish_work).to be_truthy
+          clients_holder.finish_work
         end
       end
       expect { clients_holder.wait_for_finish }.to raise_error('No live threads left. Deadlock?')
@@ -37,11 +37,9 @@ describe WSdirector::ClientsHolder do
   end
 
   describe '#wait_all' do
-    before(:example) {
-      # allow(WSdirector::Configuration).to receive(:TIMEOUT).and_return(5)
-      WSdirector::Configuration::TIMEOUT = 5
-    }
-    after(:example) { WSdirector::Configuration::TIMEOUT = 30 }
+    let(:before_timepout) { WSdirector::Configuration::TIMEOUT }
+    before(:example) { WSdirector::Configuration::TIMEOUT = 5 }
+    after(:example) { WSdirector::Configuration::TIMEOUT = before_timepout }
     it 'loop untill all clients finish current task' do
       (clients_holder.all_cnt - 1).times do
         Thread.new do

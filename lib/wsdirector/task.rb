@@ -58,5 +58,10 @@ module WSdirector
       results_holder.print_result
     end
 
+    def start_cmd_ws
+      #not implemented
+      abort("Error! Missing script file path or websocket server address.")
+    end
+
   end
 end
