@@ -4,7 +4,7 @@ module WSdirector
   class Configuration
 
     #timeout secs
-    TIMEOUT = 5
+    TIMEOUT = 30
 
     def self.parse(script_yml)
       conf = load_from_yml(script_yml)

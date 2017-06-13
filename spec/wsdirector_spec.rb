@@ -141,4 +141,69 @@ describe WSdirector do
       end
     end
   end
+
+  context 'simple script with muptiple clients and two groups' do
+    context 'when websocket pass test' do
+      let(:content) do
+        <<-YAML.strip_heredoc
+          - client:
+              multiplier: ":scale"
+              actions:
+                - receive: "Welcome"
+                - wait_all
+                - send:
+                    data: "test message"
+          - client:
+              multiplier: "10 * :scale"
+              actions:
+                - receive: "Welcome"
+                - wait_all
+                - send:
+                    data: "test message"
+        YAML
+      end
+
+      before(:example) do
+        File.open(test_script, "w+") { |file| file.write(content) }
+      end
+
+      after(:example) { File.delete(test_script) }
+
+      it 'succefful perform all tasks' do
+        expect { WSdirector::Task.start('ws://127.0.0.1:9876', test_script, 1) }.to_not raise_error
+      end
+    end
+
+    context 'when websocket fails test' do
+      let(:content) do
+        <<-YAML.strip_heredoc
+          - client:
+              multiplier: ":scale"
+              actions:
+                - receive: "Welcome"
+                - wait_all
+                - send:
+                    data: "test message"
+          - client:
+              multiplier: "10 * :scale"
+              actions:
+                - receive: "Welcome"
+                - wait_all
+                - receive:
+                    data: "fails message"
+        YAML
+      end
+
+      before(:example) do
+        File.open(test_script, "w+") { |file| file.write(content) }
+      end
+
+      after(:example) { File.delete(test_script) }
+
+      it 'succefful perform all tasks' do
+        expect { WSdirector::Task.start('ws://127.0.0.1:9876', test_script, 1) }.to raise_error("Websocket test fails")
+      end
+    end
+  end
+
 end

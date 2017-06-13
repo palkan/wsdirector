@@ -37,6 +37,11 @@ describe WSdirector::ClientsHolder do
   end
 
   describe '#wait_all' do
+    before(:example) {
+      # allow(WSdirector::Configuration).to receive(:TIMEOUT).and_return(5)
+      WSdirector::Configuration::TIMEOUT = 5
+    }
+    after(:example) { WSdirector::Configuration::TIMEOUT = 30 }
     it 'loop untill all clients finish current task' do
       (clients_holder.all_cnt - 1).times do
         Thread.new do
