@@ -31,6 +31,7 @@ module WSdirector
       conf.each do |i|
         if(i.is_a? String)
           result << i
+          is_send = false
         elsif(i.keys[0] == 'receive' && !is_send)
           result << [:receive, i['receive']]
         elsif(i.keys[0] == 'send')
@@ -48,7 +49,7 @@ module WSdirector
     end
 
     def self.origin(ws_addr)
-      full_addr = /(wss?):\/\/(.*)/.match(ws_addr)
+      full_addr = /^(wss?):\/\/([^\/]+)/.match(ws_addr)
       prot, addr = full_addr[1], full_addr[2]
       prot = prot == 'ws' ? 'http' : 'https'
       "#{prot}://#{addr}"

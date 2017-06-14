@@ -163,6 +163,10 @@ describe WSdirector::Configuration do
       ws_addr = 'ws://localhost:9876'
       expect(subject.origin(ws_addr)).to eq('http://localhost:9876')
     end
+    it 'return origin address if after addr path' do
+      ws_addr = 'ws://localhost:9876/cable'
+      expect(subject.origin(ws_addr)).to eq('http://localhost:9876')
+    end
   end
 
   describe '.test?' do
