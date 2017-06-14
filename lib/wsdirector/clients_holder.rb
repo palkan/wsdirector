@@ -19,10 +19,8 @@ module WSdirector
     end
 
     def wait_all
-      result = barrier_for_task.wait(Configuration::TIMEOUT)
-      raise 'Broken on timeout in client_holder.rb in wait_all' unless result
-      barrier_for_task.reset
-      result
+      raise 'Broken on timeout in client_holder.rb in wait_all' unless barrier_for_task.wait(Configuration::TIMEOUT)
+      true
     end
 
     def <<(client)

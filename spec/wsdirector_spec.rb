@@ -150,7 +150,7 @@ describe WSdirector do
 
       after(:example) { File.delete(test_script) }
 
-      it 'succefful perform all tasks' do
+      it 'fails perform all tasks' do
         expect { WSdirector::Task.start('ws://127.0.0.1:9876', test_script, 1) }.to raise_error("Websocket test fails")
       end
     end
@@ -214,7 +214,7 @@ describe WSdirector do
 
       after(:example) { File.delete(test_script) }
 
-      it 'succefful perform all tasks' do
+      it 'fails perform all tasks' do
         expect { WSdirector::Task.start('ws://127.0.0.1:9876', test_script, 1) }.to raise_error("Websocket test fails")
       end
     end

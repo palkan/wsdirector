@@ -17,7 +17,7 @@ if ARGV.empty?
   exec "#{file} -h"
   exit 1
 elsif ARGV.size > 1
-  WSdirector::Task.start(websocket: ARGV[1], yaml_file: ARGV[0], clients: options[:clients])
+  WSdirector::Task.start(ARGV[1], ARGV[0], options[:clients])
 else
-  WSdirector::Task.start(websocket: ARGV[0], clients: options[:clients])
+  WSdirector::Task.start(ARGV[0], options[:clients])
 end
