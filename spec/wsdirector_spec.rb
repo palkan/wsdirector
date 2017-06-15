@@ -72,14 +72,9 @@ describe WSdirector do
               data:
                 type: "Welcome"
           - send:
-              data:
-                command: "subscribe"
-                identifier: '{\"channel\":\"TestChannel\"}'
+              data: "payload"
           - receive:
-              data:
-                type: "subscription_confirmation"
-                identifier: '{\"channel\":\"TestChannel\"}'
-
+              data: "fake"
         YAML
       end
 

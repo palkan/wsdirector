@@ -13,6 +13,9 @@ describe WSdirector::Websocket do
   it 'assign ws server address' do
     expect(ws.addr).to eq(ws_addr)
   end
+  it 'assign service_messages array' do
+    expect(ws.service_messages).to eq([])
+  end
 
   describe '#init' do
     before(:example) do
@@ -57,7 +60,7 @@ describe WSdirector::Websocket do
   describe '#parse_message' do
     it 'return JSON generated mess if i call it with hash with key data' do
       message = { 'data' => { "some" => "message" } }
-      expect(ws.parse_message(message)).to eq(JSON.generate(message))
+      expect(ws.parse_message(message)).to eq(JSON.generate(message['data']))
     end
     it "return same message if there is no data or it's not a hash" do
       message = 'message'

@@ -20,7 +20,7 @@ module WSdirector
               ws.send mes
             end
             # func.call("#{sid} - connected")
-            sleep 0.1
+            # sleep 0.1
             st = ws.send "Welcome"
             # func.call("welcome - status #{st}")
 
