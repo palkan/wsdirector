@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["kirillvs@mail.ru", "palkan@evl.ms"]
 
   spec.summary       = %q{Command line utility perform websocket-client - server interaction with script support.}
-  # spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.description   = %q{Command line tool for testing websocket servers, using testing scripts. Also can be used for stress testing.}
   spec.homepage      = "https://github.com/palkan/WSdirector"
   spec.license       = "MIT"
 
@@ -36,7 +36,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.5"
-  spec.add_development_dependency "aruba", "~> 0.14"
   spec.add_development_dependency "eventmachine", "~> 1.0.9"
   spec.add_development_dependency "websocket-eventmachine-server", "~> 1.0.1"
   spec.add_development_dependency "byebug"

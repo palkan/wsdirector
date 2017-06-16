@@ -6,7 +6,7 @@ describe WSdirector::Configuration do
   let(:test_script) { 'test.yml' }
 
   let(:content) do
-    <<-YAML.strip_heredoc
+    <<-YAML
       - receive:
           data:
             type: "welcome"
@@ -23,7 +23,7 @@ describe WSdirector::Configuration do
   end
 
   let(:multiple_content) do
-    <<-YAML.strip_heredoc
+    <<-YAML
       - client:
           multiplier: ":scale"
           actions:

@@ -27,7 +27,7 @@ describe WSdirector do
     end
 
     it 'exit with error when yaml file invalid' do
-      content = <<-YAML.strip_heredoc
+      content = <<-YAML
                   receive "Welcome"
                   data "test message"
                 YAML
@@ -41,7 +41,7 @@ describe WSdirector do
   context 'simple script with echo server' do
     context 'when websocket pass test' do
       let(:content) do
-        <<-YAML.strip_heredoc
+        <<-YAML
           - receive: "Welcome"
           - send:
               data: "test message"
@@ -67,7 +67,7 @@ describe WSdirector do
 
     context "when websocket test did't pass" do
       let(:content) do
-        <<-YAML.strip_heredoc
+        <<-YAML
           - receive:
               data:
                 type: "Welcome"
@@ -93,7 +93,7 @@ describe WSdirector do
   context 'simple script with muptiple clients' do
     context 'when websocket pass test' do
       let(:content) do
-        <<-YAML.strip_heredoc
+        <<-YAML
           - client:
               multiplier: "5 * :scale"
               actions:
@@ -123,7 +123,7 @@ describe WSdirector do
 
     context 'when websocket fails test' do
       let(:content) do
-        <<-YAML.strip_heredoc
+        <<-YAML
           - client:
               multiplier: "5 * :scale"
               actions:
@@ -154,7 +154,7 @@ describe WSdirector do
   context 'simple script with muptiple clients and two groups' do
     context 'when websocket pass test' do
       let(:content) do
-        <<-YAML.strip_heredoc
+        <<-YAML
           - client:
               multiplier: ":scale"
               actions:
@@ -185,7 +185,7 @@ describe WSdirector do
 
     context 'when websocket fails test' do
       let(:content) do
-        <<-YAML.strip_heredoc
+        <<-YAML
           - client:
               multiplier: ":scale"
               actions:

@@ -21,7 +21,8 @@ module WSdirector
             end
             # func.call("#{sid} - connected")
             # sleep 0.1
-            st = ws.send "Welcome"
+            ws.send "Welcome"
+            # st = ws.send "Welcome"
             # func.call("welcome - status #{st}")
 
             ws.onmessage do |msg|
