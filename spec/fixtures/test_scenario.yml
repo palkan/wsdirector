@@ -13,6 +13,7 @@
     data:
       identifier: "{\"channel\":\"TestChannel\"}"
       type: "confirm_subscription"
+- wait_all
 - send:
     data:
       command: "message"

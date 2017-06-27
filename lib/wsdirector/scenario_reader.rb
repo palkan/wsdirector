@@ -10,7 +10,11 @@ module WsDirector
 
     def to_hash
       hash = scenario.map do |h|
-        h.map{ |k, v| { 'type' => k }.merge(v) }
+        if h.is_a?(Hash)
+          h.map{ |k, v| { 'type' => k }.merge(v) }
+        else
+          { 'type' => h }
+        end
       end
       p hash.flatten
     end
