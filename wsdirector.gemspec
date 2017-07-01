@@ -61,6 +61,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "websocket-eventmachine-server"
   spec.add_development_dependency "pry-byebug"
+  spec.add_development_dependency "simplecov"
   spec.add_runtime_dependency "websocket-client-simple", "~> 0.3"
 >>>>>>> eaef55b... tmp version, tested with action cable
 end

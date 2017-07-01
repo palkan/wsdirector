@@ -30,4 +30,15 @@ describe WSdirector do
   describe 'after passing all scenarion' do
     it 'shows summary information'
   end
+
+  it 'execute success on simple echo scenario' do
+    file_path = File.join(File.dirname(__dir__), 'spec', 'fixtures', 'test_scenario.yml')
+    scenario = WsDirector::ScenarioReader.new(file_path).to_hash
+    WsDirector::Runner.new(EchoServer.url, scenario)
+  end
+  it 'execute success on multi client broadcast scenario' do
+    file_path = File.join(File.dirname(__dir__), 'spec', 'fixtures', 'test_multi_scenario.yml')
+    scenario = WsDirector::ScenarioReader.new(file_path).to_hash
+    WsDirector::Runner.new(EchoServer.url, scenario)
+  end
 end

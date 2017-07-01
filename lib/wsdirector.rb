@@ -4,6 +4,7 @@ require "wsdirector/task"
 =======
 require "wsdirector/scenario_reader"
 require "wsdirector/client"
+require "wsdirector/runner"
 
 module WsDirector
   def self.perform
