@@ -2,6 +2,10 @@ module WsDirector
   class Client
     require 'websocket-client-simple'
     require 'json'
+    require "concurrent"
+
+    WAIT_WHEN_EXPECTING_EVENT = 5
+    WAIT_WHEN_NOT_EXPECTING_EVENT = 0.5
 
     attr_reader :path, :scenario, :wait_proc
 
@@ -9,6 +13,9 @@ module WsDirector
       @path = path
       @scenario = scenario
       @wait_proc = wait_proc
+      @messages = Queue.new
+      @mutex = Mutex.new
+      @has_messages = Concurrent::Semaphore.new(0)
     end
 
     def perform(threads_count = 1)
@@ -19,21 +26,15 @@ module WsDirector
     end
 
     def process(path, scenario, thread_num)
-      queue = Marshal.load(Marshal.dump(scenario))
+      queue = Concurrent::Array.new(Marshal.load(Marshal.dump(scenario)))
+      messages = @messages
+      has_messages = @has_messages
       ws = WebSocket::Client::Simple.connect path do |ws|
         ws.on :message do |msg|
-          task = queue.first
-          p "#{thread_num} RECEIVE  #{msg.data}"
-          next unless task
-          if task['data'].to_json == msg.data
-            task_multiplier = task['multiplier']
-            if task_multiplier.nil? || task_multiplier.to_i == 1
-              queue.shift
-            else
-              task['multiplier'] = task_multiplier - 1
-              queue[0] = task
-              p "#{thread_num}  ----"
-            end
+          message = JSON.parse(msg.data)
+          unless message["type"] == "ping"
+            messages << message
+            has_messages.release
           end
         end
 
@@ -53,18 +54,41 @@ module WsDirector
       end
       while !ws.open?
       end
-      while ws.open? && !queue.empty?
-        if queue.first && queue.first['type'] == 'wait_all'
-          queue.shift
-          wait_proc.call
-        end
-        if queue.first && queue.first['type'] == 'send'
-          task = queue.shift
-          p "#{thread_num} SEND #{task}"
-          ws.send(task['data'].to_json)
+      handle_instruction_from_queue(queue, thread_num, ws)
+      p "#{thread_num} ended #{queue}"
+    end
+
+    def handle_instruction_from_queue(queue, thread_num, ws)
+      return if queue.empty?
+      sleep(0.5)
+      task = queue.shift
+      if task['type'] == 'send'
+        ws.send(task['data'].to_json)
+        sleep(0.5)
+      elsif task['type'] == 'wait_all'
+        wait_proc.call
+      elsif task['type'] == 'receive'
+        message = receive_message
+        if task['data'] == message
+          task_multiplier = task['multiplier']
+          if !task_multiplier.nil? && task_multiplier.to_i != 1
+            task['multiplier'] = task_multiplier - 1
+            queue.unshift(task)
+            p "#{thread_num}  ----"
+          end
+        else
+          sleep(2)
+          raise Exception.new("#{thread_num} ERROR #{message} && #{task['data']}") if @messages.empty?
         end
       end
-      p "#{thread_num} ended #{queue}"
+      handle_instruction_from_queue(queue, thread_num, ws)
+    end
+
+    def receive_message
+      @has_messages.try_acquire(1, WAIT_WHEN_EXPECTING_EVENT)
+      @messages.pop(true)
+    rescue
+      nil
     end
   end
 end
