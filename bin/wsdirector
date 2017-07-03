@@ -2,5 +2,30 @@
 
 require "bundler/setup"
 require "wsdirector"
+require 'optparse'
 
-WsDirector.perform
+begin
+  scenario_path = ARGV[0]
+  ws_path = ARGV[1]
+  options = {}
+  parser = OptionParser.new do |opts|
+    opts.banner = "Usage: wsdirector scenario_path ws_path [options]"
+
+    opts.on("-s SCALE", "--scale=SCALE", "Scale") do |v|
+      options[:scale] = v
+    end
+  end
+  parser.parse!
+  if scenario_path.nil?
+    raise(Exception, 'Scenario path param is empty')
+  end
+
+  if ws_path.nil?
+    raise(Exception, 'Websocket path param is empty')
+  end
+
+  WsDirector.perform(scenario_path, ws_path, options[:scale].to_i || 1)
+rescue Exception => e
+  STDERR.puts(e)
+  exit(1)
+end

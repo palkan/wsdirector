@@ -2,8 +2,8 @@ module WsDirector
   class ClientThread
     require 'websocket-client-simple'
     require 'json'
-
     require 'concurrent'
+
     attr_reader :wait_proc, :ws
 
     WAIT_WHEN_EXPECTING_RECEIVE = 5
@@ -27,11 +27,13 @@ module WsDirector
         end
 
         ws.on :error do |e|
-          raise_exception "ERROR #{e.inspect} #{e.backtrace}"
+          raise_exception("ERROR #{e.inspect} #{e.backtrace}")
         end
       end
       wait_connecting
       handle_instruction_from_scenario(scenario, thread_num)
+    rescue Errno::ECONNREFUSED
+      raise_exception("Can't connect to websocket")
     end
 
     def handle_instruction_from_scenario(scenario, thread_num)
@@ -67,10 +69,12 @@ module WsDirector
     def receive_message
       @has_messages.try_acquire(1, WAIT_WHEN_EXPECTING_RECEIVE)
       @messages.pop(true)
+    rescue
+      nil
     end
 
     def raise_exception(message)
-      raise Exception, message
+      raise(Exception, message)
     end
 
     def wait_connecting
