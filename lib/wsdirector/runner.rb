@@ -8,7 +8,11 @@ module WsDirector
       wait_proc = proc do
         mutex.synchronize do
           waited_clients += 1
+<<<<<<< HEAD
           p "waited_clients = #{waited_clients}"
+=======
+          p waited_clients
+>>>>>>> 5c2cc98... realization executable; some improvements
           if clients_count == waited_clients
             cond.broadcast
             waited_clients = 0
@@ -26,6 +30,7 @@ module WsDirector
         end
       end
       threads.each(&:join)
+      p 'success'
     end
   end
 end
