@@ -15,7 +15,7 @@ describe WsDirector do
   end
   it 'execute success on multi client broadcast scenario' do
     file_path = File.join(File.dirname(__dir__), 'spec', 'fixtures', 'test_multi_scenario.yml')
-    scenario = WsDirector::ScenarioReader.new(file_path).to_hash
+    scenario = WsDirector::ScenarioReader.new(file_path, 3).to_hash
     WsDirector::Runner.new(EchoServer.url, scenario)
   end
 end
