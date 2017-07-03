@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Grandman"]
   spec.email         = ["root@grandman73.ru"]
 
-  spec.summary       = %q{WsDirector}
-  spec.description   = %q{Tool for testing websockets}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{Tool for testing websocket servers}
+  spec.description   = %q{Tool for testing websocket servers using scenarios.}
+  spec.homepage      = "https://github.com/palkan/WSdirector"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -35,6 +35,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "em-websocket"
   spec.add_development_dependency "pry-byebug"
   spec.add_development_dependency "simplecov"
-  spec.add_runtime_dependency "concurrent-ruby", "~> 1.0.0"
+  spec.add_runtime_dependency "concurrent-ruby", "~> 1.0.5"
   spec.add_runtime_dependency "websocket-client-simple", "~> 0.3"
 end
