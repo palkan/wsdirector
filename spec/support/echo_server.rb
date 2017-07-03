@@ -14,20 +14,26 @@ module EchoServer
           @clients << ws
         end
         ws.onmessage do |msg|
-          subscribe_message = { command: 'subscribe', identifier: "{\"channel\":\"TestChannel\"}" }.to_json
-          send_message = { command: 'message', identifier: "{\"channel\":\"TestChannel\"}", data: "{\"text\": \"echo\",\"action\":\"echo\"}" }.to_json
-          broadcast_message = { command: 'message', identifier: "{\"channel\":\"TestChannel\"}", data: "{\"text\": \"echo\",\"action\":\"broadcast\"}" }.to_json
+          subscribe_message_hash = { command: 'subscribe',
+                                     identifier: '{"channel":"TestChannel"}' }
+          send_message_hash = { command: 'message',
+                                identifier: '{"channel":"TestChannel"}',
+                                data: '{"text": "echo","action":"echo"}' }
+          broadcast_message_hash = { command: 'message',
+                                     identifier: '{"channel":"TestChannel"}',
+                                     data: '{"text": "echo","action":"broadcast"}' }
 
-          if msg == subscribe_message
-            ws.send({identifier: "{\"channel\":\"TestChannel\"}", type: "confirm_subscription"}.to_json)
+          if msg == subscribe_message_hash.to_json
+            ws.send({ identifier: '{"channel":"TestChannel"}', type: 'confirm_subscription' }.to_json)
           end
-          if msg == send_message
-            ws.send({identifier:"{\"channel\":\"TestChannel\"}", message: { text: 'echo', action: 'echo' } }.to_json)
+          if msg == send_message_hash.to_json
+            ws.send({ identifier: '{"channel":"TestChannel"}', message: { text: 'echo', action: 'echo' } }.to_json)
           end
-          if msg == broadcast_message
-             @clients.each do |socket|
-               socket.send({identifier:"{\"channel\":\"TestChannel\"}", message: { text: 'echo', action: 'broadcast' }}.to_json)
-             end
+          if msg == broadcast_message_hash.to_json
+            @clients.each do |socket|
+              socket.send({ identifier: '{"channel":"TestChannel"}',
+                            message: { text: 'echo', action: 'broadcast' } }.to_json)
+            end
           end
         end
       end
@@ -35,7 +41,7 @@ module EchoServer
   end
 
   def url
-    "ws://localhost:#{self.port}"
+    "ws://localhost:#{port}"
   end
 
   def port

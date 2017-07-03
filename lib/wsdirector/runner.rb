@@ -3,7 +3,10 @@ module WsDirector
     def initialize(path, scenario)
       mutex = Mutex.new
       cond = ConditionVariable.new
-      clients_count = scenario.inject(0) { |a, e| a + e['client']['multiplier'].to_i }
+      clients_count = scenario.inject(0) do |a, e|
+        a + e['client']['multiplier'].to_i
+      end
+
       waited_clients = 0
       wait_proc = proc do
         mutex.synchronize do
@@ -16,6 +19,7 @@ module WsDirector
           end
         end
       end
+
       threads = []
       scenario.each do |client_scenario|
         threads << Thread.new do

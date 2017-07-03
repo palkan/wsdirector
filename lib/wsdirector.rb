@@ -1,6 +1,7 @@
 require "wsdirector/version"
 require "wsdirector/scenario_reader"
 require "wsdirector/client"
+require "wsdirector/client_thread"
 require "wsdirector/runner"
 
 module WsDirector

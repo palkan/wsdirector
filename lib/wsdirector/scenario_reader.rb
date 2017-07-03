@@ -37,8 +37,8 @@ module WsDirector
 
     def handle_several_scenarios
       scenario.map do |hash|
-        { 'client' => handle_multiplier({ 'multiplier' => hash['client']['multiplier'] || '1',
-                                          'actions' => handle_actions(hash['client']['actions']) }) }
+        { 'client' => handle_multiplier('multiplier' => hash['client']['multiplier'] || '1',
+                                        'actions' => handle_actions(hash['client']['actions'])) }
       end
     end
 
