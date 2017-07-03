@@ -9,7 +9,8 @@ module EchoServer
       EM::WebSocket.run(host: '0.0.0.0', port: port) do |ws|
         @channel = EM::Channel.new
         ws.onopen do
-          sid = @channel.subscribe { |msg| ws.send msg}
+          sid = @channel.subscribe { |msg| ws.send msg }
+          sleep(1)
           ws.send({ 'type' => 'welcome' }.to_json)
           ws.onmessage do |msg|
             subscribe_message = { command: 'subscribe', identifier: "{\"channel\":\"TestChannel\"}" }.to_json
