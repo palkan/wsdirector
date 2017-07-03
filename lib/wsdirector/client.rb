@@ -23,9 +23,13 @@ module WsDirector
       messages = Queue.new
       ws = WebSocket::Client::Simple.connect path do |ws|
         ws.on :message do |msg|
-          message = JSON.parse(msg.data)
-          unless message["type"] == "ping"
-            messages << message
+          begin
+            message = JSON.parse(msg.data)
+            unless message["type"] == "ping"
+              messages << message
+            end
+          rescue JSON::ParserError
+            messages << msg.data
           end
         end
 
@@ -43,11 +47,11 @@ module WsDirector
       end
       while !ws.open?
       end
+      wait_proc
       handle_instruction_from_queue(queue, thread_num, ws, messages)
     end
 
     def handle_instruction_from_queue(queue, thread_num, ws, messages)
-      raise Exception unless ws.open?
       return if queue.empty?
       task = queue.shift
       if task['type'] == 'send'
@@ -63,7 +67,7 @@ module WsDirector
             queue.unshift(task)
           end
         else
-          raise Exception.new("#{thread_num} ERROR #{message} new #{receive_message} && #{task['data']}") if messages.empty?
+          raise Exception.new("RECEIVED: #{message}  EXPECTED: #{task['data']}")
         end
       end
       handle_instruction_from_queue(queue, thread_num, ws, messages)

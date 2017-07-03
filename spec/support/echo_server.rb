@@ -1,14 +1,16 @@
-require 'websocket-eventmachine-server'
+require 'em-websocket'
 require 'json'
 
 module EchoServer
   extend self
 
   def start
-    EM.run {
-      WebSocket::EventMachine::Server.start(host: '0.0.0.0', port: self.port) do |ws|
+    EM.run do
+      EM::WebSocket.run(host: '0.0.0.0', port: port) do |ws|
         @channel = EM::Channel.new
         ws.onopen do
+          sid = @channel.subscribe { |msg| ws.send msg}
+          ws.send({ 'type' => 'welcome' }.to_json)
           ws.onmessage do |msg|
             subscribe_message = { command: 'subscribe', identifier: "{\"channel\":\"TestChannel\"}" }.to_json
             send_message = { command: 'message', identifier: "{\"channel\":\"TestChannel\"}", data: "{\"text\": \"echo\",\"action\":\"echo\"}" }.to_json
@@ -26,11 +28,9 @@ module EchoServer
           ws.onclose do
             @channel.unsubscribe(sid)
           end
-          sid = @channel.subscribe { |msg| ws.send msg }
-          ws.send({ 'type' => 'welcome' }.to_json)
         end
       end
-    }
+    end
   end
 
   def url
