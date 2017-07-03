@@ -20,11 +20,11 @@ If something will go not according scenario, script returns fail exit code and p
 There are 2 types of using: simple and multi-client
 ### Simple scenario
 ```yml
-- receive:
-    data:
+- receive: # should receive message
+    data: # it's json object
       type: "welcome"
-- send:
-    data:
+- send: # should send message
+    data: # json object
       command: "subscribe"
       identifier: "{\"channel\":\"TestChannel\"}"
 - receive:
@@ -49,8 +49,8 @@ wsdirector script.yml ws://127.0.0.1:3000
 ```
 ### Multi-client scenario
 ```yml
-- client: # first client group
-    multiplier: ":scale"
+- client: # first client group (senders)
+    multiplier: ":scale" # multiplies clients
     actions:
       - receive:
           data:
@@ -63,15 +63,15 @@ wsdirector script.yml ws://127.0.0.1:3000
           data:
             identifier: "{\"channel\":\"TestChannel\"}"
             type: "confirm_subscription"
-      - wait_all
+      - wait_all # wait all clients in this point from both clients group in this case 
       - send:
           data:
             command: "message"
             identifier: "{\"channel\":\"TestChannel\"}"
             data: "{\"text\": \"echo\",\"action\":\"broadcast\"}"
 
-- client: # second client group
-    multiplier: ":scale * 2" # multiplies clients
+- client: # second client group (readers)
+    multiplier: ":scale * 2" # multiplies clients: 2 * senders
     actions:
       - receive:
           data:
@@ -84,9 +84,9 @@ wsdirector script.yml ws://127.0.0.1:3000
           data:
             identifier: "{\"channel\":\"TestChannel\"}"
             type: "confirm_subscription"
-      - wait_all # wait all clients in this point
+      - wait_all # wait all clients in this point from both clients group in this case 
       - receive:
-          multiplier: ":scale" # multiplies actions
+          multiplier: ":scale" # multiplies actions, should receive as many messages as senders count
           data:
             identifier: "{\"channel\":\"TestChannel\"}"
             message:
