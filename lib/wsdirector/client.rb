@@ -11,7 +11,7 @@ module WsDirector
     def perform(threads_count = 1)
       threads = Array.new(threads_count) do |i|
         Thread.new do
-          WsDirector::ClientThread.new(path, scenario, wait_proc, threads_count * 2 + i)
+          WsDirector::ClientThread.new(path, scenario, wait_proc, i)
         end
       end
       threads.each(&:join)
