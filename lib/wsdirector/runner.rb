@@ -11,7 +11,6 @@ module WsDirector
       wait_proc = proc do
         mutex.synchronize do
           waited_clients += 1
-          p waited_clients
           if clients_count == waited_clients
             cond.broadcast
             waited_clients = 0

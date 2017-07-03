@@ -3,10 +3,12 @@ module WsDirector
     require 'websocket-client-simple'
     require 'json'
     require 'concurrent'
+    require 'timeout'
 
     attr_reader :wait_proc, :ws
 
     WAIT_WHEN_EXPECTING_RECEIVE = 5
+    WAIT_ALL_TIMEOUT = 10
 
     def initialize(path, scenario, wait_proc, thread_num)
       @wait_proc = wait_proc
@@ -43,7 +45,9 @@ module WsDirector
       if task['type'] == 'send'
         ws.send(task['data'].to_json)
       elsif task['type'] == 'wait_all'
-        wait_proc.call
+        Timeout.timeout(WAIT_ALL_TIMEOUT) do
+          wait_proc.call
+        end
       elsif task['type'] == 'receive'
         message = receive_message
         if task['data'] == message
