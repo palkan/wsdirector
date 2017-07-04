@@ -1,8 +1,15 @@
-require 'simplecov'
-SimpleCov.start
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+
+require 'simplecov'
+
+if ENV['CIRCLE_ARTIFACTS']
+  dir = File.join(ENV['CIRCLE_ARTIFACTS'], "coverage")
+  SimpleCov.coverage_dir(dir)
+end
+
+SimpleCov.start
+
 require "wsdirector"
-<<<<<<< HEAD
 
 begin
   require "pry-byebug"
@@ -20,8 +27,3 @@ RSpec.configure do |config|
 
   config.example_status_persistence_file_path = "tmp/.rspec-status"
 end
-=======
-require 'support/echo_server'
-require 'pry'
-
->>>>>>> eaef55b... tmp version, tested with action cable
