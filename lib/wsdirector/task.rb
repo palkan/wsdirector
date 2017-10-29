@@ -1,4 +1,4 @@
-module WSdirector
+module WSDirector
   class Task
   end
 end

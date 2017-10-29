@@ -1,12 +1,12 @@
-module WsDirector
+require "yaml"
+
+module WDDirector
+  # Read and parse YAML scenario
   class ScenarioReader
-    require "yaml"
+    attr_accessor :scenario
 
-    attr_accessor :scenario, :scale
-
-    def initialize(file_path, scale = 1)
+    def initialize(file_path)
       @scenario = YAML.load_file(file_path)
-      @scale = scale
     end
 
     def to_hash

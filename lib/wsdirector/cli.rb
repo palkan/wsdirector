@@ -8,36 +8,44 @@ require "wsdirector/clients_holder"
 require "wsdirector/results_holder"
 require "wsdirector/printer"
 
-module WsDirector
+module WSDirector
   # Command line interface for WsDirector
   class CLI
-    def initialize(argv); end
+    def initialize; end
 
     def run
-      scenario = WsDirector::ScenarioReader.new(argv[0])
-      WsDirector::Client.new(ARGV[1], scenario)
+      parse_args!
+      scenario = WsDirector::ScenarioReader.parse(WSDirector.config.scenario_path)
+      WsDirector::Runner.new(WSDirector.config.ws_url, scenario).start
+      exit 0
+    rescue Error => e
+      STDERR.puts e.message
+      exit 1
     end
 
     private
 
-    def parse
-      options = {}
-      options[:file_path] = ARGV[0]
-      options[:ws_path] = ARGV[1]
-
+    def parse_args!
       parser = OptionParser.new do |opts|
-        opts.banner = "Usage: wsdirector scenario_path ws_path [options]"
+        opts.banner = "Usage: wsdirector scenario_path ws_url [options]"
 
-        opts.on("-s SCALE", "--scale=SCALE", "Scale") do |v|
-          options[:scale] = v
+        opts.on("-s SCALE", "--scale=SCALE", Integer, "Scale") do |v|
+          WSDirector.config.scale = v
+        end
+
+        opts.on("-c COLOR", "--color=COLOR", TrueClass, "Colorize output") do |v|
+          WSDirector.config.colorize = v
         end
       end
 
       parser.parse!
 
-      raise(Error, "Scenario path is missing") if options[:file_path].nil?
+      WSDirector.config.scenario_path = ARGV[0]
+      WSDirector.config.ws_url = ARGV[1]
 
-      raise(Error, "Websocket server url is missing") if options[:ws_path].nil?
+      raise(Error, "Scenario path is missing") if WSDirector.config.scenario_path.nil?
+
+      raise(Error, "Websocket server url is missing") if WSDirector.config.ws_url.nil?
     end
   end
 end
