@@ -29,7 +29,7 @@ Style/Documentation:
     - 'spec/**/*.rb'
 
 Style/StringLiterals:
-  Enabled: false
+  EnforcedStyle: double_quotes
 
 Style/RegexpLiteral:
   Enabled: false
