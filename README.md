@@ -2,7 +2,7 @@
 
 # WebSocket Director
 
-Command line tool for testing websocket servers, using testing scripts.
+Command line tool for testing websocket servers using scenarios.
 
 Suitable for testing any websocket server implementation, like [Action Cable](https://github.com/rails/rails/tree/master/actioncable), [Websocket Eventmachine Server](https://github.com/imanel/websocket-eventmachine-server), [Litecable](https://github.com/palkan/litecable) and so on.
 

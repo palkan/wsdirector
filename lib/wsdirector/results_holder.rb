@@ -1,6 +1,5 @@
 module WSdirector
   class ResultsHolder
-
     attr_accessor :groups
 
     def initialize

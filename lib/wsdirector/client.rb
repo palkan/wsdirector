@@ -1,7 +1,7 @@
 module WsDirector
   class Client
-    require 'websocket-client-simple'
-    require 'json'
+    require "websocket-client-simple"
+    require "json"
 
     attr_reader :path, :scenario, :wait_proc
 
@@ -25,12 +25,12 @@ module WsDirector
           task = queue.first
           p "#{thread_num} RECEIVE  #{msg.data}"
           next unless task
-          if task['data'].to_json == msg.data
-            task_multiplier = task['multiplier']
+          if task["data"].to_json == msg.data
+            task_multiplier = task["multiplier"]
             if task_multiplier.nil? || task_multiplier.to_i == 1
               queue.shift
             else
-              task['multiplier'] = task_multiplier - 1
+              task["multiplier"] = task_multiplier - 1
               queue[0] = task
               p "#{thread_num}  ----"
             end
@@ -51,18 +51,17 @@ module WsDirector
           exit 1
         end
       end
-      while !ws.open?
+      until ws.open?
       end
       while ws.open? && !queue.empty?
-        if queue.first && queue.first['type'] == 'wait_all'
+        if queue.first && queue.first["type"] == "wait_all"
           queue.shift
           wait_proc.call
         end
-        if queue.first && queue.first['type'] == 'send'
-          task = queue.shift
-          p "#{thread_num} SEND #{task}"
-          ws.send(task['data'].to_json)
-        end
+        next unless queue.first && queue.first["type"] == "send"
+        task = queue.shift
+        p "#{thread_num} SEND #{task}"
+        ws.send(task["data"].to_json)
       end
       p "#{thread_num} ended #{queue}"
     end

@@ -1,8 +1,8 @@
 module WsDirector
   class ClientThread
-    require 'websocket-client-simple'
-    require 'json'
-    require 'concurrent'
+    require "websocket-client-simple"
+    require "json"
+    require "concurrent"
 
     attr_reader :wait_proc, :ws
 
@@ -17,9 +17,7 @@ module WsDirector
         ws.on :message do |msg|
           begin
             message = JSON.parse(msg.data)
-            unless message['type'] == 'ping'
-              messages << message
-            end
+            messages << message unless message["type"] == "ping"
           rescue JSON::ParserError
             messages << msg.data
           end
@@ -37,19 +35,19 @@ module WsDirector
     end
 
     def handle_instruction_from_scenario(scenario, thread_num)
-      raise_exception('Connection was closed') unless ws.open?
+      raise_exception("Connection was closed") unless ws.open?
       return if scenario.empty?
       task = scenario.shift
-      if task['type'] == 'send'
-        ws.send(task['data'].to_json)
-      elsif task['type'] == 'wait_all'
+      if task["type"] == "send"
+        ws.send(task["data"].to_json)
+      elsif task["type"] == "wait_all"
         wait_proc.call
-      elsif task['type'] == 'receive'
+      elsif task["type"] == "receive"
         message = receive_message
-        if task['data'] == message
-          task_multiplier = task['multiplier']
+        if task["data"] == message
+          task_multiplier = task["multiplier"]
           if !task_multiplier.nil? && task_multiplier.to_i != 1
-            task['multiplier'] = task_multiplier - 1
+            task["multiplier"] = task_multiplier - 1
             scenario.unshift(task)
           end
           @retried = false

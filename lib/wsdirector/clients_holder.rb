@@ -1,8 +1,7 @@
-require 'concurrent'
+require "concurrent"
 
 module WSdirector
   class ClientsHolder
-
     attr_accessor :all_cnt
     attr_accessor :barrier_for_finish, :barrier_for_task
 
@@ -20,7 +19,7 @@ module WSdirector
 
     def wait_all
       result = barrier_for_task.wait(Configuration::TIMEOUT)
-      raise 'Broken on timeout in client_holder.rb in wait_all' unless result
+      raise "Broken on timeout in client_holder.rb in wait_all" unless result
       barrier_for_task.reset
       result
     end

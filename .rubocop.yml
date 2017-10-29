@@ -37,6 +37,9 @@ Style/RegexpLiteral:
 Style/ClassAndModuleChildren:
   Enabled: false
 
+Style/NumericPredicate:
+  Enabled: false
+
 Style/BlockDelimiters:
   Exclude:
     - 'spec/**/*.rb'

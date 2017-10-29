@@ -1,23 +1,23 @@
 require "spec_helper"
 
 describe WSdirector do
-  let(:test_script) { 'test_script.yml' }
+  let(:test_script) { "test_script.yml" }
 
   it "has a version number" do
     expect(WSdirector::VERSION).not_to be nil
   end
 
-  describe 'connect to websocket server' do
-    context 'when connection success' do
-      it 'shows success message'
+  describe "connect to websocket server" do
+    context "when connection success" do
+      it "shows success message"
     end
-    context 'when connection fails' do
-      it 'exit with non-zero code and show error log'
+    context "when connection fails" do
+      it "exit with non-zero code and show error log"
     end
   end
 
-  context 'simple script with echo server' do
-    context 'when websocket pass test' do
+  context "simple script with echo server" do
+    context "when websocket pass test" do
       let(:content) do
         <<-YAML.strip_heredoc
           - receive:
@@ -35,8 +35,8 @@ describe WSdirector do
 
       after(:example) { File.delete(test_script) }
 
-      it 'show success message and result script' do
-        WSdirector::Task.start(test_script, 'ws://127.0.0.1:9876')
+      it "show success message and result script" do
+        WSdirector::Task.start(test_script, "ws://127.0.0.1:9876")
       end
     end
 
@@ -68,13 +68,13 @@ describe WSdirector do
     end
   end
 
-  it 'execute success on simple echo scenario' do
-    file_path = File.join(File.dirname(__dir__), 'spec', 'fixtures', 'test_scenario.yml')
+  it "execute success on simple echo scenario" do
+    file_path = File.join(File.dirname(__dir__), "spec", "fixtures", "test_scenario.yml")
     scenario = WsDirector::ScenarioReader.new(file_path).to_hash
     WsDirector::Runner.new(EchoServer.url, scenario)
   end
-  it 'execute success on multi client broadcast scenario' do
-    file_path = File.join(File.dirname(__dir__), 'spec', 'fixtures', 'test_multi_scenario.yml')
+  it "execute success on multi client broadcast scenario" do
+    file_path = File.join(File.dirname(__dir__), "spec", "fixtures", "test_multi_scenario.yml")
     scenario = WsDirector::ScenarioReader.new(file_path).to_hash
     WsDirector::Runner.new(EchoServer.url, scenario)
   end

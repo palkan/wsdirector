@@ -1,5 +1,5 @@
 require "wsdirector"
-require 'optparse'
+require "optparse"
 require "wsdirector/task"
 require "wsdirector/scenario_reader"
 require "wsdirector/client"
@@ -9,9 +9,9 @@ require "wsdirector/results_holder"
 require "wsdirector/printer"
 
 module WsDirector
+  # Command line interface for WsDirector
   class CLI
-    def initialize(argv)
-    end
+    def initialize(argv); end
 
     def run
       scenario = WsDirector::ScenarioReader.new(argv[0])
@@ -35,13 +35,9 @@ module WsDirector
 
       parser.parse!
 
-      if options[:file_path].nil?
-        raise(Error, 'Scenario path is missing')
-      end
+      raise(Error, "Scenario path is missing") if options[:file_path].nil?
 
-      if options[:ws_path].nil?
-        raise(Error, 'Websocket server url is missing')
-      end
+      raise(Error, "Websocket server url is missing") if options[:ws_path].nil?
     end
   end
 end
