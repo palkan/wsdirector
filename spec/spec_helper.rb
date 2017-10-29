@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "wsdirector"
+<<<<<<< HEAD
 
 begin
   require "pry-byebug"
@@ -17,3 +18,8 @@ RSpec.configure do |config|
 
   config.example_status_persistence_file_path = "tmp/.rspec-status"
 end
+=======
+require 'support/echo_server'
+require 'pry'
+
+>>>>>>> eaef55b... tmp version, tested with action cable

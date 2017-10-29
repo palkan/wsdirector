@@ -1,5 +1,10 @@
 sudo: false
 language: ruby
 rvm:
+<<<<<<< HEAD
   - 2.3.3
 before_install: gem install bundler -v 1.15.4
+=======
+  - 2.2.4
+before_install: gem install bundler -v 1.13.6
+>>>>>>> eaef55b... tmp version, tested with action cable
