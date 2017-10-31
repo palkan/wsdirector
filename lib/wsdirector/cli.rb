@@ -31,6 +31,7 @@ module WSDirector
     private
 
     def parse_args!
+      # rubocop: disable Metrics/LineLength
       parser = OptionParser.new do |opts|
         opts.banner = "Usage: wsdirector scenario_path ws_url [options]"
 
@@ -46,6 +47,7 @@ module WSDirector
           WSDirector.config.colorize = v
         end
       end
+      # rubocop: enable Metrics/LineLength
 
       parser.parse!
 

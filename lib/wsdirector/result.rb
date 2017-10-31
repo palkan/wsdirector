@@ -1,28 +1,44 @@
 # frozen_string_literal: true
 
-module WSdirector
+module WSDirector
+  # Handle results from all clients from the group
   class Result
-    attr_accessor :group, :result_array, :summary_result
+    attr_reader :group, :errors
 
     def initialize(group)
       @group = group
-      @result_array = []
-      @summary_result = { all: 0, success: 0, fails: 0 }
+      @errors = Concurrent::Array.new
+
+      @all = Concurrent::AtomicFixnum.new(0)
+      @failures = Concurrent::AtomicFixnum.new(0)
     end
 
-    def add_result_from_receive(receive_array, expected_array)
-      proccess_result(receive_array, expected_array)
+    # Called when client successfully finished it's work
+    def succeed
+      all.increment
     end
 
-    def add_result_from_send_receive(send_command, receive_array, expected_array)
-      proccess_result(send_command, receive_array, expected_array)
+    # Called when client failed
+    def failed(error_message)
+      errors << error_message
+      all.increment
+      failures.increment
     end
 
-    def proccess_result(command = nil, receive_array, expected_array)
-      result = receive_array == expected_array
-      result_array << [result, command, receive_array, expected_array]
-      summary_result[:all] += 1
-      result ? summary_result[:success] += 1 : summary_result[:fails] += 1
+    def success?
+      failures.value.zero?
     end
+
+    def total_count
+      all.value
+    end
+
+    def failures_count
+      failures.value
+    end
+
+    private
+
+    attr_reader :all, :success, :failures
   end
 end

@@ -1,39 +1,40 @@
 # frozen_string_literal: true
 
-module WSdirector
+require "wsdirector/printer"
+
+module WSDirector
+  # Holds all results for all groups of clients
   class ResultsHolder
-    attr_accessor :groups
-
     def initialize
-      @groups = {}
+      @groups = Concurrent::Map.new
     end
 
-    def print_result
-      groups.each do |group, results|
-        group_result = results.all? { |result| result.summary_result[:fails] == 0 }
-        if group_result
-          Printer.out("Group #{group} - all messages success", :green)
-        else
-          print_fails(group, results)
-        end
-      end
-    end
-
-    def print_fails(group, results)
-      bad = results.select { |r| r.result_array.any? { |i| i[0] == false } }
-      Printer.out("Group #{group} fails", :red)
-      Printer.out("- #{bad.size} clients of #{results.size} fails", :red)
-      bad.first.result_array.select { |i| i[0] == false }.each do |row|
+    def print_summary
+      single_group = groups.size == 1
+      groups.each do |group, result|
+        color = result.success? ? :green : :red
+        prefix = single_group ? "" : "Group #{group}: "
         Printer.out(
-          "-- send: #{row[1]}\n--expect receive: #{row[3]}\n--got: #{row[2]}",
-          :red
+          "#{prefix}#{result.total_count} clients, #{result.failures_count} failures\n",
+          color
         )
+
+        print_errors(result.errors) unless result.success?
       end
     end
 
     def <<(result)
-      groups[result.group] ||= []
-      groups[result.group] << result
+      groups[result.group] = result
+    end
+
+    private
+
+    attr_reader :groups
+
+    def print_errors(errors)
+      errors.each do |error|
+        Printer.out "-- #{error}\n", :red
+      end
     end
   end
 end

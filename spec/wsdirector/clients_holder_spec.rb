@@ -1,5 +1,3 @@
-require "spec_helper"
-
 describe WSDirector::ClientsHolder do
   let(:clients_count) { 3 }
 

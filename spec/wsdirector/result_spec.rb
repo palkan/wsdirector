@@ -1,82 +1,43 @@
-require "spec_helper"
+describe WSDirector::Result do
+  subject { described_class.new("default") }
 
-describe WSdirector::Result do
-  let(:result) { WSdirector::Result.new("default") }
-
-  it "has group" do
-    expect(result.group).to eq("default")
+  specify "group" do
+    expect(subject.group).to eq("default")
   end
 
-  it "has result_array" do
-    expect(result.result_array).to eq([])
+  specify "errors" do
+    expect(subject.errors).to be_a(Concurrent::Array)
   end
 
-  it "has summary_result" do
-    expect(result.summary_result).to eq(all: 0, success: 0, fails: 0)
-  end
-  let(:send_command) { [:send_receive, { "data" => { "message" => "we_send_it" } }] }
-  let(:receive_array) { [:receive, "data" => { "type" => "receive_something" }] }
-  let(:expected_array) { [:receive, "data" => { "type" => "receive_something" }] }
-
-  describe "#add_result_from_receive" do
-    it "increas all count in summary result" do
-      result.add_result_from_receive(receive_array, expected_array)
-      expect(result.summary_result[:all]).to eq(1)
-    end
-    context "when command success" do
-      it "assigns result to result_array" do
-        result.add_result_from_receive(receive_array, expected_array)
-        expect(result.result_array.last).to eq([true, nil, receive_array, expected_array])
+  describe "#succeed" do
+    it "increments totals" do
+      threads = []
+      3.times do
+        threads << Thread.new { subject.succeed }
       end
 
-      it "increas success count in summary result" do
-        result.add_result_from_receive(receive_array, expected_array)
-        expect(result.summary_result[:success]).to eq(1)
-      end
-    end
-    context "when command fails" do
-      let(:expected_array) { [:receive, "data" => { "type" => "receive_something_else" }] }
+      threads.each(&:join)
 
-      it "assigns result to result_array" do
-        result.add_result_from_receive(receive_array, expected_array)
-        expect(result.result_array.last).to eq([false, nil, receive_array, expected_array])
-      end
-
-      it "increase fails count in summary result" do
-        result.add_result_from_receive(receive_array, expected_array)
-        expect(result.summary_result[:fails]).to eq(1)
-      end
+      expect(subject.errors.size).to eq 0
+      expect(subject.total_count).to eq 3
+      expect(subject.failures_count).to eq 0
     end
   end
 
-  describe "#add_result_from_send_receive" do
-    it "increas all count in summary result" do
-      result.add_result_from_send_receive(send_command, receive_array, expected_array)
-      expect(result.summary_result[:all]).to eq(1)
-    end
-    context "when command success" do
-      it "assigns result to result_array" do
-        result.add_result_from_send_receive(send_command, receive_array, expected_array)
-        expect(result.result_array.last).to eq([true, send_command, receive_array, expected_array])
+  describe "#failed" do
+    it "adds errors and increments totals", :aggregate_failures do
+      threads = []
+      3.times do
+        threads << Thread.new { subject.failed("Unknown error") }
       end
 
-      it "increas success count in summary result" do
-        result.add_result_from_send_receive(send_command, receive_array, expected_array)
-        expect(result.summary_result[:success]).to eq(1)
-      end
-    end
-    context "when command fails" do
-      let(:expected_array) { [:receive, "data" => { "type" => "receive_something_else" }] }
+      threads.each(&:join)
 
-      it "assigns result to result_array" do
-        result.add_result_from_send_receive(send_command, receive_array, expected_array)
-        expect(result.result_array.last).to eq([false, send_command, receive_array, expected_array])
-      end
-
-      it "increase fails count in summary result" do
-        result.add_result_from_send_receive(send_command, receive_array, expected_array)
-        expect(result.summary_result[:fails]).to eq(1)
-      end
+      expect(subject.errors.size).to eq 3
+      expect(subject.errors.last)
+        .to match(/Unknown error/)
+      expect(subject.total_count).to eq 3
+      expect(subject.failures_count).to eq 3
     end
   end
 end
