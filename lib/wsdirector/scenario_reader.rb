@@ -30,20 +30,22 @@ module WSDirector
         end
       end
 
-      def parse_simple_scenario(steps, multiplier = 1)
+      def parse_simple_scenario(steps, multiplier: 1, name: "default")
         {
           "multiplier" => multiplier,
-          "steps" => handle_steps(steps)
+          "steps" => handle_steps(steps),
+          "name" => name
         }
       end
 
       def parse_multiple_scenarios(definitions)
         total_count = 0
-        clients = definitions.map do |client|
+        clients = definitions.map.with_index do |client, i|
           _, client = client.to_a.first
           multiplier = parse_multiplier(client.delete("multiplier") || "1")
+          name = client.delete("name") || (i + 1).to_s
           total_count += multiplier
-          parse_simple_scenario(client.fetch("actions", []), multiplier)
+          parse_simple_scenario(client.fetch("actions", []), multiplier: multiplier, name: name)
         end
         { "total" => total_count, "clients" => clients }
       end

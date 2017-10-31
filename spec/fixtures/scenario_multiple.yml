@@ -31,6 +31,7 @@
 
 - client:
     multiplier: ":scale * 2"
+    name: "listeners"
     actions:
       - receive:
           data:

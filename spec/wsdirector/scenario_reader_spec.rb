@@ -6,6 +6,7 @@ describe WSDirector::ScenarioReader do
 
     it "contains one client", :aggregate_failures do
       expect(subject["total"]).to eq(1)
+      expect(subject["clients"].first["name"]).to eq "default"
       expect(subject["clients"].first["steps"].size).to eq 5
       expect(subject["clients"].first["multiplier"]).to eq 1
       expect(subject["clients"].first["steps"].first["type"]).to eq "receive"
@@ -17,11 +18,13 @@ describe WSDirector::ScenarioReader do
 
     it "contains two clients", :aggregate_failures do
       expect(subject["total"]).to eq(3)
+      expect(subject["clients"].first["name"]).to eq "1"
       expect(subject["clients"].size).to eq 2
       expect(subject["clients"].first["steps"].size).to eq 7
       expect(subject["clients"].first["multiplier"]).to eq 1
       expect(subject["clients"].first["steps"].last["type"]).to eq "send"
       expect(subject["clients"].last["steps"].size).to eq 7
+      expect(subject["clients"].last["name"]).to eq "listeners"
       expect(subject["clients"].last["multiplier"]).to eq 2
       expect(subject["clients"].last["steps"][3]["type"]).to eq "wait_all"
     end
