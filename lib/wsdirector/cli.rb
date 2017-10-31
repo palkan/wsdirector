@@ -21,7 +21,7 @@ module WSDirector
         WSDirector.config.scenario_path
       )
 
-      WSDirector::Runner.new(WSDirector.config.ws_url, scenario).start
+      WSDirector::Runner.new(scenario).start
       exit 0
     rescue Error => e
       STDERR.puts e.message
@@ -34,8 +34,12 @@ module WSDirector
       parser = OptionParser.new do |opts|
         opts.banner = "Usage: wsdirector scenario_path ws_url [options]"
 
-        opts.on("-s SCALE", "--scale=SCALE", Integer, "Scale") do |v|
+        opts.on("-s SCALE", "--scale=SCALE", Integer, "Scale factor") do |v|
           WSDirector.config.scale = v
+        end
+
+        opts.on("-t TIMEOUT", "--timeout=TIMEOUT", Integer, "Synchronization (wait_all) timeout") do |v|
+          WSDirector.config.sync_timeout = v
         end
 
         opts.on("-c COLOR", "--color=COLOR", TrueClass, "Colorize output") do |v|

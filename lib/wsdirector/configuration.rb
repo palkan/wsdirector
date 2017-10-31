@@ -3,7 +3,8 @@
 module WSDirector
   # WSDirector configuration
   class Configuration
-    attr_accessor :ws_url, :scenario_path, :colorize, :scale
+    attr_accessor :ws_url, :scenario_path, :colorize, :scale,
+                  :sync_timeout
 
     def initialize
       reset!
@@ -17,6 +18,7 @@ module WSDirector
     def reset!
       @scale = 1
       @colorize = false
+      @sync_timeout = 5
     end
   end
 end

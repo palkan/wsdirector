@@ -1,38 +1,23 @@
 # frozen_string_literal: true
 
-require "concurrent"
-
-module WSdirector
+module WSDirector
+  # Acts as a re-usable global barrier for a fixed number of clients.
+  # Barrier is reset if sucessfully passed in time.
   class ClientsHolder
-    attr_accessor :all_cnt
-    attr_accessor :barrier_for_finish, :barrier_for_task
-
-    def initialize(cnt = [1])
-      @all_cnt = cnt.inject(:+)
-      @barrier_for_finish = Concurrent::CyclicBarrier.new(@all_cnt + 1)
-      @barrier_for_task = Concurrent::CyclicBarrier.new(@all_cnt)
-    end
-
-    def wait_for_finish
-      result = barrier_for_finish.wait
-      barrier_for_finish.reset
-      result
+    def initialize(count)
+      @barrier = Concurrent::CyclicBarrier.new(count)
     end
 
     def wait_all
-      result = barrier_for_task.wait(Configuration::TIMEOUT)
-      raise "Broken on timeout in client_holder.rb in wait_all" unless result
-      barrier_for_task.reset
+      result = barrier.wait(WSDirector.config.sync_timeout)
+      raise Error, "Timeout (#{WSDirector.config.sync_timeout}s) exceeded for #wait_all" unless
+        result
+      barrier.reset
       result
     end
 
-    def <<(client)
-      client.register(self)
-    end
+    private
 
-    def finish_work
-      result = barrier_for_finish.wait # (Configuration::TIMEOUT)
-      abort("Broken on timeout in client_holder.rb in finish_work") unless result
-    end
+    attr_reader :barrier
   end
 end

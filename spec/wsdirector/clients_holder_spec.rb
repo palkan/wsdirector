@@ -1,57 +1,52 @@
 require "spec_helper"
 
-describe WSdirector::ClientsHolder do
-  let(:clients_holder) { WSdirector::ClientsHolder.new([2, 3]) }
+describe WSDirector::ClientsHolder do
+  let(:clients_count) { 3 }
 
-  it "set initial params" do
-    expect(clients_holder.all_cnt).to eq(5)
-  end
-
-  describe "#<<" do
-    it "register self on client" do
-      client = instance_double(WSdirector::Client)
-      expect(client).to receive(:register).with(clients_holder)
-      clients_holder << client
-    end
-    # it 'add client to relevant group'
-  end
-
-  describe "#wait_for_finish" do
-    it "loop untill all clients finished" do
-      clients_holder.all_cnt.times do
-        Thread.new do
-          expect(clients_holder.finish_work).to be_truthy
-        end
-      end
-      expect(clients_holder.wait_for_finish).to be_truthy
-    end
-
-    it "fails when not enough threads finished" do
-      (clients_holder.all_cnt - 1).times do
-        Thread.new do
-          expect(clients_holder.finish_work).to be_truthy
-        end
-      end
-      expect { clients_holder.wait_for_finish }.to raise_error("No live threads left. Deadlock?")
-    end
-  end
+  subject { described_class.new(clients_count) }
 
   describe "#wait_all" do
     it "loop untill all clients finish current task" do
-      (clients_holder.all_cnt - 1).times do
+      (clients_count - 1).times do
         Thread.new do
-          clients_holder.wait_all
+          expect(subject.wait_all).to be_truthy
         end
       end
-      expect(clients_holder.wait_all).to be_truthy
+      expect(subject.wait_all).to be_truthy
     end
-    it "fails when not enough threads finished current task" do
-      (clients_holder.all_cnt - 2).times do
+
+    it "fails when not enough clients finish their work in time" do
+      WSDirector.config.sync_timeout = 1
+
+      (clients_count - 2).times do
         Thread.new do
-          clients_holder.wait_all
+          subject.wait_all
         end
       end
-      expect { clients_holder.wait_all }.to raise_error("Broken on timeout in client_holder.rb in wait_all")
+
+      expect { subject.wait_all }.to raise_error(
+        WSDirector::Error,
+        "Timeout (1s) exceeded for #wait_all"
+      )
+    end
+
+    it "is re-usable" do
+      threads = []
+
+      clients_count.times do
+        threads << Thread.new do
+          expect(subject.wait_all).to be_truthy
+        end
+      end
+
+      threads.map(&:join)
+
+      (clients_count - 1).times do
+        Thread.new do
+          expect(subject.wait_all).to be_truthy
+        end
+      end
+      expect(subject.wait_all).to be_truthy
     end
   end
 end

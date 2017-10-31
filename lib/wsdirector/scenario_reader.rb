@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "yaml"
-
 module WSDirector
   # Read and parse YAML scenario
   class ScenarioReader
