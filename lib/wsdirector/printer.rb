@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module WSdirector
   class Printer
     def self.out(message, color)

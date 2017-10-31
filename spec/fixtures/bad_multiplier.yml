@@ -1,0 +1,2 @@
+- client:
+    multiplier: ":scale * :clients_num"

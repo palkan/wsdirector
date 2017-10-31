@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module WSdirector
   class Result
     attr_accessor :group, :result_array, :summary_result

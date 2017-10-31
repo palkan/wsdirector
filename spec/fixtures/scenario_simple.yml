@@ -1,10 +1,6 @@
-# приветственное сообщение от Action Cable
 - receive:
-    # если поле data – объект, то
-    # предполагаем, что это json
     data:
       type: "welcome"
-# подписка на канал и ожидание подтверждения
 - send:
     data:
       command: "subscribe"

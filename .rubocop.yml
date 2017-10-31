@@ -8,12 +8,10 @@ AllCops:
     - 'spec/dummy/**/*'
     - 'vendor/**/*'
     - 'tmp/**/*'
-    - 'Rakefile'
-    - 'Gemfile'
     - '*.gemspec'
   DisplayCopNames: true
   StyleGuideCopsOnly: false
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.3
 
 Rails:
   Enabled: false
@@ -21,10 +19,17 @@ Rails:
 Naming/AccessorMethodName:
   Enabled: false
 
+Naming/FileName:
+  Enabled: false
+
 Style/TrivialAccessors:
   Enabled: false
 
 Style/Documentation:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Style/FrozenStringLiteralComment:
   Exclude:
     - 'spec/**/*.rb'
 

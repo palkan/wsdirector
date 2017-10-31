@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module WSdirector
   class ResultsHolder
     attr_accessor :groups

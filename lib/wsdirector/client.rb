@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module WsDirector
   class Client
     require "websocket-client-simple"

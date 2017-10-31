@@ -1,56 +1,65 @@
+# frozen_string_literal: true
+
 require "yaml"
 
-module WDDirector
+module WSDirector
   # Read and parse YAML scenario
   class ScenarioReader
-    attr_accessor :scenario
+    MULTIPLIER_FORMAT = /^[-+*\\\d ]+$/
 
-    def initialize(file_path)
-      @scenario = YAML.load_file(file_path)
-    end
+    MULTIPLIER_KEY = "multiplier"
+    ACTIONS_KEY = "actions"
+    STEPS_KEY = "steps"
+    CLIENT_KEY = "client"
+    STEP_TYPE_KEY = "type"
 
-    def to_hash
-      if scenario.first.key?("client")
-        handle_several_scenarios
-      else
-        handle_simple_scenario
-      end
-    end
+    class << self
+      def parse(file_path)
+        contents = YAML.load_file(file_path)
 
-    private
-
-    def handle_actions(scenario)
-      hash = scenario.map do |h|
-        if h.is_a?(Hash)
-          h.map { |k, v| { "type" => k }.merge(handle_multiplier(v)) }
+        if contents.first.key?(CLIENT_KEY)
+          parse_multiple_scenarios(contents)
         else
-          { "type" => h }
+          [parse_simple_scenario(contents)]
         end
       end
-      hash.flatten
-    end
 
-    def handle_simple_scenario
-      [{ "client" => { "multiplier" => 1,
-                       "actions" => handle_actions(scenario) } }]
-    end
+      private
 
-    def handle_several_scenarios
-      scenario.map do |hash|
-        { "client" => handle_multiplier("multiplier" => hash["client"]["multiplier"] || "1",
-                                        "actions" => handle_actions(hash["client"]["actions"])) }
+      def handle_steps(steps)
+        steps.flat_map do |step|
+          if step.is_a?(Hash)
+            type, data = step.to_a.first
+            multiplier = parse_multiplier(data.delete(MULTIPLIER_KEY) || "1")
+            Array.new(multiplier) { { STEP_TYPE_KEY => type }.merge(data) }
+          else
+            { STEP_TYPE_KEY => step }
+          end
+        end
       end
-    end
 
-    def handle_multiplier(hash)
-      return hash unless hash.key?("multiplier")
+      def parse_simple_scenario(steps, multiplier = 1)
+        {
+          MULTIPLIER_KEY => multiplier,
+          STEPS_KEY => handle_steps(steps)
+        }
+      end
 
-      scale_string = hash["multiplier"]
-      scale_string = scale_string.gsub!(":scale", scale.to_s) || "1"
-      raise "Multiplier wrong" if (scale_string =~ /^[-+*\\\d ]+$/).nil?
+      def parse_multiple_scenarios(clients)
+        clients.map do |client|
+          _, client = client.to_a.first
+          multiplier = parse_multiplier(client.delete(MULTIPLIER_KEY) || "1")
+          parse_simple_scenario(client.fetch(ACTIONS_KEY, []), multiplier)
+        end
+      end
 
-      hash["multiplier"] = eval(scale_string) # rubocop:disable Security/Eval
-      hash
+      def parse_multiplier(str)
+        prepared = str.gsub(":scale", WSDirector.config.scale.to_s)
+        raise WSDirector::Error, "Unknown multiplier format: #{str}" unless
+          prepared =~ MULTIPLIER_FORMAT
+
+        eval(prepared) # rubocop:disable Security/Eval
+      end
     end
   end
 end

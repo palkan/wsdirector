@@ -4,7 +4,7 @@ require 'wsdirector/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "wsdirector"
-  spec.version       = WSdirector::VERSION
+  spec.version       = WSDirector::VERSION
   spec.authors       = ["Kirill Arkhipov", "Grandman", "palkan"]
   spec.email         = ["kirillvs@mail.ru", "root@grandman73.ru", "dementiev.vm@gmail.com"]
 
@@ -23,6 +23,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'websocket-client-simple', '~> 0.3'
   spec.add_dependency 'colorize'
   spec.add_dependency 'concurrent-ruby', '~> 1.0.5'
+
+  spec.add_development_dependency "websocket-eventmachine-server", "~> 1.0.1"
+  spec.add_development_dependency "litecable", "~> 0.5"
 
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"

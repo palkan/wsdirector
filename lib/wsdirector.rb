@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 require "wsdirector/version"
 require "wsdirector/configuration"
+require "wsdirector/scenario_reader"
 
 # Command line tool for testing websocket servers using scenarios.
 module WSDirector

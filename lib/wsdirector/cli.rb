@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 require "wsdirector"
 require "optparse"
-require "wsdirector/task"
 require "wsdirector/scenario_reader"
 require "wsdirector/client"
 require "wsdirector/result"
@@ -15,8 +16,12 @@ module WSDirector
 
     def run
       parse_args!
-      scenario = WsDirector::ScenarioReader.parse(WSDirector.config.scenario_path)
-      WsDirector::Runner.new(WSDirector.config.ws_url, scenario).start
+
+      scenario = WSDirector::ScenarioReader.parse(
+        WSDirector.config.scenario_path
+      )
+
+      WSDirector::Runner.new(WSDirector.config.ws_url, scenario).start
       exit 0
     rescue Error => e
       STDERR.puts e.message

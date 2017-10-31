@@ -1,12 +1,22 @@
+# frozen_string_literal: true
+
 module WSDirector
   # WSDirector configuration
   class Configuration
-    class << self
-      attr_accessor :ws_url, :scenario_path, :colorize, :scale
+    attr_accessor :ws_url, :scenario_path, :colorize, :scale
 
-      def colorize?
-        colorize == true
-      end
+    def initialize
+      reset!
+    end
+
+    def colorize?
+      colorize == true
+    end
+
+    # Restore to defaults
+    def reset!
+      @scale = 1
+      @colorize = false
     end
   end
 end
