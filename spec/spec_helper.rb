@@ -20,7 +20,7 @@ RSpec.configure do |config|
 
   config.example_status_persistence_file_path = "tmp/.rspec-status"
 
-  config.define_derived_metadata(file_path: %r{/spec/integrations/}) do |metadata|
+  config.define_derived_metadata(file_path: %r{/spec/cases/}) do |metadata|
     metadata[:type] = :integration
   end
 

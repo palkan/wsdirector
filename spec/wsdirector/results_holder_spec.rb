@@ -30,8 +30,8 @@ describe WSDirector::ResultsHolder do
         subject << failure
         expect(WSDirector::Printer).to receive(:out).with("Group group_1: 3 clients, 0 failures\n", :green)
         expect(WSDirector::Printer).to receive(:out).with("Group group_2: 4 clients, 2 failures\n", :red)
-        expect(WSDirector::Printer).to receive(:out).with("-- Incorrect message\n", :red)
-        expect(WSDirector::Printer).to receive(:out).with("-- Timeout error\n", :red)
+        expect(WSDirector::Printer).to receive(:out).with("  Incorrect message\n", :red)
+        expect(WSDirector::Printer).to receive(:out).with("  Timeout error\n", :red)
         subject.print_summary
       end
     end

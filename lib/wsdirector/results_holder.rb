@@ -33,7 +33,7 @@ module WSDirector
 
     def print_errors(errors)
       errors.each do |error|
-        Printer.out "-- #{error}\n", :red
+        Printer.out "  #{error}\n", :red
       end
     end
   end

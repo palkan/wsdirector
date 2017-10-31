@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe "wsdirector command" do
+describe "wsdirector vs EchoServer" do
   before(:all) { Thread.new { EchoServer.start } }
 
   after(:all) { EchoServer.stop }
@@ -13,40 +13,54 @@ describe "wsdirector command" do
 
   after(:example) { File.delete(test_script) }
 
-  context "single client" do
-    context "when scenario passes" do
-      let(:content) do
-        <<~YAML
-          - send:
-              data: "test message"
-          - receive:
-              data: "test message"
-        YAML
-      end
-
-      it "show success message and result script" do
-        expect(run_wsdirector(test_script)).to include "Success!"
-      end
+  context "just connect (no actions)" do
+    let(:content) do
+      <<~YAML
+        - client:
+          name: pingo
+      YAML
     end
 
-    context "when scenario fails" do
-      let(:content) do
-        <<~YAML
-          - send:
-              data:
-                command: "subscribe"
-                identifier: '{\"channel\":\"TestChannel\"}'
-          - receive:
-              data:
-                type: "subscription_confirmation"
-                identifier: '{\"channel\":\"TestChannel\"}'
+    it "shows success message" do
+      expect(run_wsdirector(test_script)).to include "1 clients, 0 failures"
+    end
+  end
 
-        YAML
-      end
+  context "when scenario passes" do
+    let(:content) do
+      <<~YAML
+        - send:
+            data: "test message"
+        - receive:
+            data: "test message"
+      YAML
+    end
 
-      it "show failure message and failes" do
-        expect(run_wsdirector(test_script, failure: true)).to include "Failed!"
-      end
+    it "shows success message" do
+      expect(run_wsdirector(test_script)).to include "1 clients, 0 failures"
+    end
+  end
+
+  context "when scenario fails" do
+    let(:content) do
+      <<~YAML
+        - send:
+            data:
+              command: "subscribe"
+              identifier: '{\"channel\":\"TestChannel\"}'
+        - receive:
+            data:
+              type: "subscription_confirmation"
+              identifier: '{\"channel\":\"TestChannel\"}'
+
+      YAML
+    end
+
+    it "show failure message and errors" do
+      output = run_wsdirector(test_script, failure: true)
+      expect(output).to include "1 clients, 1 failures"
+      expect(output).to include(/\-\- expected: receive .*subscribe/)
+      expect(output).to include(/\+\+ got: receive .*subscription_confirmation/)
     end
   end
 end
