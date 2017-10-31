@@ -1,69 +1,84 @@
 # frozen_string_literal: true
+
 require "websocket-client-simple"
 
 module WSDirector
+  # WebSocket client
   class Client
-    attr_reader :path, :scenario, :wait_proc
+    attr_reader :wait_proc, :ws
 
-    def initialize(path, scenario, wait_proc)
-      @path = path
-      @scenario = scenario
+    WAIT_WHEN_EXPECTING_RECEIVE = 5
+
+    def initialize(path, scenario, wait_proc, thread_num)
       @wait_proc = wait_proc
-    end
-
-    def perform(threads_count = 1)
-      threads = threads_count.times.map do |i|
-        Thread.new { process(path, scenario, threads_count * 2 + i) }
-      end
-      threads.each(&:join)
-    end
-
-    def process(path, scenario, thread_num)
-      queue = Marshal.load(Marshal.dump(scenario))
-      ws = WebSocket::Client::Simple.connect path do |ws|
+      has_messages = @has_messages = Concurrent::Semaphore.new(0)
+      scenario = Marshal.load(Marshal.dump(scenario))
+      messages = @messages = Queue.new
+      @ws = WebSocket::Client::Simple.connect path do |ws|
         ws.on :message do |msg|
-          task = queue.first
-          p "#{thread_num} RECEIVE  #{msg.data}"
-          next unless task
-          if task["data"].to_json == msg.data
-            task_multiplier = task["multiplier"]
-            if task_multiplier.nil? || task_multiplier.to_i == 1
-              queue.shift
-            else
-              task["multiplier"] = task_multiplier - 1
-              queue[0] = task
-              p "#{thread_num}  ----"
-            end
+          begin
+            message = JSON.parse(msg.data)
+            messages << message unless message["type"] == "ping"
+          rescue JSON::ParserError
+            messages << msg.data
           end
-        end
-
-        ws.on :open do
-          puts "-- websocket open (#{ws.url})"
-        end
-
-        ws.on :close do |e|
-          puts "-- websocket close (#{e.inspect})"
-          exit 1
+          has_messages.release
         end
 
         ws.on :error do |e|
-          puts "-- error (#{e.inspect} #{e.backtrace})"
-          exit 1
+          raise_exception("ERROR #{e.inspect} #{e.backtrace}")
         end
       end
+      wait_connecting
+      handle_instruction_from_scenario(scenario, thread_num)
+    rescue Errno::ECONNREFUSED
+      raise_exception("Can't connect to websocket")
+    end
+
+    def handle_instruction_from_scenario(scenario, thread_num)
+      raise_exception("Connection was closed") unless ws.open?
+      return if scenario.empty?
+      task = scenario.shift
+      if task["type"] == "send"
+        ws.send(task["data"].to_json)
+      elsif task["type"] == "wait_all"
+        wait_proc.call
+      elsif task["type"] == "receive"
+        message = receive_message
+        if task["data"] == message
+          task_multiplier = task["multiplier"]
+          if !task_multiplier.nil? && task_multiplier.to_i != 1
+            task["multiplier"] = task_multiplier - 1
+            scenario.unshift(task)
+          end
+          @retried = false
+        else
+          return raise_exception("#{thread_num} RECEIVED: #{message}  EXPECTED: #{task['data']}") if @retried
+          scenario.unshift(task)
+          @messages << message if message
+          @has_messages.release
+          @retried = true
+          sleep(WAIT_WHEN_EXPECTING_RECEIVE)
+          return handle_instruction_from_scenario(scenario, thread_num)
+        end
+      end
+      handle_instruction_from_scenario(scenario, thread_num)
+    end
+
+    def receive_message
+      @has_messages.try_acquire(1, WAIT_WHEN_EXPECTING_RECEIVE)
+      @messages.pop(true)
+    rescue
+      nil
+    end
+
+    def raise_exception(message)
+      raise(Exception, message)
+    end
+
+    def wait_connecting
       until ws.open?
       end
-      while ws.open? && !queue.empty?
-        if queue.first && queue.first["type"] == "wait_all"
-          queue.shift
-          wait_proc.call
-        end
-        next unless queue.first && queue.first["type"] == "send"
-        task = queue.shift
-        p "#{thread_num} SEND #{task}"
-        ws.send(task["data"].to_json)
-      end
-      p "#{thread_num} ended #{queue}"
     end
   end
 end
