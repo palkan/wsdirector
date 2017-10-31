@@ -5,10 +5,10 @@ describe WSDirector::ScenarioReader do
     let(:file_path) { fixture_path("scenario_simple.yml") }
 
     it "contains one client", :aggregate_failures do
-      expect(subject.size).to eq(1)
-      expect(subject.first["steps"].size).to eq 5
-      expect(subject.first["multiplier"]).to eq 1
-      expect(subject.first["steps"].first["type"]).to eq "receive"
+      expect(subject["total"]).to eq(1)
+      expect(subject["clients"].first["steps"].size).to eq 5
+      expect(subject["clients"].first["multiplier"]).to eq 1
+      expect(subject["clients"].first["steps"].first["type"]).to eq "receive"
     end
   end
 
@@ -16,23 +16,25 @@ describe WSDirector::ScenarioReader do
     let(:file_path) { fixture_path("scenario_multiple.yml") }
 
     it "contains two clients", :aggregate_failures do
-      expect(subject.size).to eq(2)
-      expect(subject.first["steps"].size).to eq 7
-      expect(subject.first["multiplier"]).to eq 1
-      expect(subject.first["steps"].last["type"]).to eq "send"
-      expect(subject.last["steps"].size).to eq 7
-      expect(subject.last["multiplier"]).to eq 2
-      expect(subject.last["steps"][3]["type"]).to eq "wait_all"
+      expect(subject["total"]).to eq(3)
+      expect(subject["clients"].size).to eq 2
+      expect(subject["clients"].first["steps"].size).to eq 7
+      expect(subject["clients"].first["multiplier"]).to eq 1
+      expect(subject["clients"].first["steps"].last["type"]).to eq "send"
+      expect(subject["clients"].last["steps"].size).to eq 7
+      expect(subject["clients"].last["multiplier"]).to eq 2
+      expect(subject["clients"].last["steps"][3]["type"]).to eq "wait_all"
     end
 
     context "with scale" do
       before { WSDirector.config.scale = 5 }
 
       it "parses multipliers", :aggregate_failures do
-        expect(subject.size).to eq(2)
-        expect(subject.first["multiplier"]).to eq 5
-        expect(subject.last["multiplier"]).to eq 10
-        expect(subject.last["steps"].size).to eq 15
+        expect(subject["total"]).to eq 15
+        expect(subject["clients"].size).to eq(2)
+        expect(subject["clients"].first["multiplier"]).to eq 5
+        expect(subject["clients"].last["multiplier"]).to eq 10
+        expect(subject["clients"].last["steps"].size).to eq 15
       end
     end
   end

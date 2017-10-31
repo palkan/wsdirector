@@ -4,8 +4,11 @@ require "wsdirector/clients_holder"
 
 module WsDirector
   class Runner
-    def initialize(scenarios)
-      @scenarios = scenarios
+    def initialize(scenario)
+      @scenario = scenario
+    end
+
+    def start
     end
 
   #     mutex = Mutex.new

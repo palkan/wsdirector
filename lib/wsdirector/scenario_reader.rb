@@ -5,20 +5,14 @@ module WSDirector
   class ScenarioReader
     MULTIPLIER_FORMAT = /^[-+*\\\d ]+$/
 
-    MULTIPLIER_KEY = "multiplier"
-    ACTIONS_KEY = "actions"
-    STEPS_KEY = "steps"
-    CLIENT_KEY = "client"
-    STEP_TYPE_KEY = "type"
-
     class << self
       def parse(file_path)
         contents = YAML.load_file(file_path)
 
-        if contents.first.key?(CLIENT_KEY)
+        if contents.first.key?("client")
           parse_multiple_scenarios(contents)
         else
-          [parse_simple_scenario(contents)]
+          { "total" => 1, "clients" => [parse_simple_scenario(contents)] }
         end
       end
 
@@ -28,27 +22,30 @@ module WSDirector
         steps.flat_map do |step|
           if step.is_a?(Hash)
             type, data = step.to_a.first
-            multiplier = parse_multiplier(data.delete(MULTIPLIER_KEY) || "1")
-            Array.new(multiplier) { { STEP_TYPE_KEY => type }.merge(data) }
+            multiplier = parse_multiplier(data.delete("multiplier") || "1")
+            Array.new(multiplier) { { "type" => type }.merge(data) }
           else
-            { STEP_TYPE_KEY => step }
+            { "type" => step }
           end
         end
       end
 
       def parse_simple_scenario(steps, multiplier = 1)
         {
-          MULTIPLIER_KEY => multiplier,
-          STEPS_KEY => handle_steps(steps)
+          "multiplier" => multiplier,
+          "steps" => handle_steps(steps)
         }
       end
 
-      def parse_multiple_scenarios(clients)
-        clients.map do |client|
+      def parse_multiple_scenarios(definitions)
+        total_count = 0
+        clients = definitions.map do |client|
           _, client = client.to_a.first
-          multiplier = parse_multiplier(client.delete(MULTIPLIER_KEY) || "1")
-          parse_simple_scenario(client.fetch(ACTIONS_KEY, []), multiplier)
+          multiplier = parse_multiplier(client.delete("multiplier") || "1")
+          total_count += multiplier
+          parse_simple_scenario(client.fetch("actions", []), multiplier)
         end
+        { "total" => total_count, "clients" => clients }
       end
 
       def parse_multiplier(str)
