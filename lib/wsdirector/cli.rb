@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require "wsdirector"
 require "optparse"
+
+require "wsdirector"
 require "wsdirector/scenario_reader"
-require "wsdirector/client"
-require "wsdirector/result"
-require "wsdirector/clients_holder"
-require "wsdirector/results_holder"
-require "wsdirector/printer"
+require "wsdirector/runner"
 
 module WSDirector
   # Command line interface for WsDirector
@@ -55,6 +52,9 @@ module WSDirector
       WSDirector.config.ws_url = ARGV[1]
 
       raise(Error, "Scenario path is missing") if WSDirector.config.scenario_path.nil?
+
+      raise(Error, "File doesn't exist #{WSDirector.config.scenario_path}") unless
+        File.file?(WSDirector.config.scenario_path)
 
       raise(Error, "Websocket server url is missing") if WSDirector.config.ws_url.nil?
     end

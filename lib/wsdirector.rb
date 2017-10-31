@@ -2,11 +2,11 @@
 
 require "concurrent"
 require "yaml"
+require "json"
 
 require "wsdirector/version"
 require "wsdirector/configuration"
-require "wsdirector/scenario_reader"
-require "wsdirector/runner"
+require "wsdirector/cli"
 
 # Command line tool for testing websocket servers using scenarios.
 module WSDirector

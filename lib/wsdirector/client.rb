@@ -1,10 +1,8 @@
 # frozen_string_literal: true
+require "websocket-client-simple"
 
-module WsDirector
+module WSDirector
   class Client
-    require "websocket-client-simple"
-    require "json"
-
     attr_reader :path, :scenario, :wait_proc
 
     def initialize(path, scenario, wait_proc)
