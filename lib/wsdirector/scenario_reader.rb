@@ -63,7 +63,7 @@ module WSDirector
       end
 
       def parse_multiplier(str)
-        prepared = str.gsub(":scale", WSDirector.config.scale.to_s)
+        prepared = str.to_s.gsub(":scale", WSDirector.config.scale.to_s)
         raise WSDirector::Error, "Unknown multiplier format: #{str}" unless
           prepared =~ MULTIPLIER_FORMAT
 

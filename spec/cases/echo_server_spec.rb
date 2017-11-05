@@ -10,6 +10,8 @@ describe "wsdirector vs EchoServer" do
 
   after(:example) { File.delete(test_script) }
 
+  before { WSDirector.config.ws_url = EchoServer.url }
+
   context "just connect (no actions)" do
     let(:content) do
       <<~YAML

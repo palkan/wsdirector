@@ -6,20 +6,24 @@ module WSDirector
     class Base
       def initialize(task)
         @task = task
-        @client = task.client
+      end
+
+      def init_client(**options)
+        @client = build_client(**options)
       end
 
       def handle_step(step)
-        type = step.fetch("type")
-        raise Error, "Unknown step #{type}" unless respond_to?(type)
+        type = step.delete("type")
+        raise Error, "Unknown step: #{type}" unless respond_to?(type)
         public_send(type, step)
       end
 
       def receive(step)
         expected = step.fetch("data")
         received = client.receive
-
         receive_matches?(expected, received)
+      rescue ThreadError
+        raise Error, "Expected to receive #{expected} but nothing has been received"
       end
 
       def send(step)
@@ -39,6 +43,10 @@ module WSDirector
       private
 
       attr_reader :client, :task
+
+      def build_client(**options)
+        Client.new(**options)
+      end
 
       def receive_matches?(expected, received)
         received = JSON.parse(received) if expected.is_a?(Hash)

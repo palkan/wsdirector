@@ -6,7 +6,7 @@ module IntegrationHelpers
 
     output, status = Open3.capture2(
       env,
-      "bundle exec #{cli_path} #{scenario_path} #{EchoServer.url} #{options}",
+      "bundle exec #{cli_path} #{scenario_path} #{WSDirector.config.ws_url} #{options}",
       chdir: chdir || File.expand_path("../../fixtures", __FILE__)
     )
     expect(status).to be_success, "Test #{scenario_path} #{options} failed with: #{output}" if success

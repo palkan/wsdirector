@@ -13,7 +13,9 @@ module WSDirector
       @steps = config.fetch("steps")
       @global_holder = global_holder
       @result = result
-      @protocol_class = Protocols.get(config.fetch("protocol", "base"))
+
+      protocol_class = Protocols.get(config.fetch("protocol", "base"))
+      @protocol = protocol_class.new(self)
     end
 
     def run
@@ -31,8 +33,7 @@ module WSDirector
     attr_reader :steps, :result, :protocol
 
     def connect!
-      @client = Client.new(ignore: @ignore)
-      @protocol = @protocol_class.new(self)
+      protocol.init_client(ignore: @ignore)
     end
   end
 end

@@ -4,10 +4,13 @@ require "wsdirector/clients_holder"
 require "wsdirector/results_holder"
 require "wsdirector/result"
 require "wsdirector/task"
+require "wsdirector/ext/deep_dup"
 
 module WSDirector
   # Initiates all clients as a separate tasks (=threads)
   class Runner
+    using WSDirector::Ext::DeepDup
+
     def initialize(scenario)
       @scenario = scenario
       @total_count = scenario["total"]
@@ -24,7 +27,7 @@ module WSDirector
 
         Array.new(client.fetch("multiplier")) do
           Thread.new do
-            Task.new(client, global_holder: global_holder, result: result)
+            Task.new(client.deep_dup, global_holder: global_holder, result: result)
                 .run
           end
         end

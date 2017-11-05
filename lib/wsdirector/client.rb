@@ -28,14 +28,15 @@ module WSDirector
         end
 
         ws.on :message do |msg|
-          msg = msg.data
-          next if client.ignored?(msg)
-          messages << msg
+          data = msg.data
+          next if data.empty?
+          next if client.ignored?(data)
+          messages << data
           has_messages.release
         end
 
         ws.on :error do |e|
-          raise Error, "WebSocket Error #{e.inspect} #{e.backtrace}"
+          messages << Error.new("WebSocket Error #{e.inspect} #{e.backtrace}")
         end
       end
 
