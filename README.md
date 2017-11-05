@@ -6,8 +6,6 @@ Command line tool for testing websocket servers using scenarios.
 
 Suitable for testing any websocket server implementation, like [Action Cable](https://github.com/rails/rails/tree/master/actioncable), [Websocket Eventmachine Server](https://github.com/imanel/websocket-eventmachine-server), [Litecable](https://github.com/palkan/litecable) and so on.
 
-Also can be used for stress testing.
-
 <a href="https://evilmartians.com/">
 <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54"></a>
 
@@ -19,7 +17,7 @@ Also can be used for stress testing.
 
 ## Usage
 
-Create yaml file with simle testing script, like that
+Create YAML file with simle testing script:
 
 ```yml
   # script.yml
@@ -29,37 +27,67 @@ Create yaml file with simle testing script, like that
   - receive:
       data: "receive message" # expect to receive json message
 ```
-and run it with this command
+
+and run it with this command:
+
 ```bash
-wsdirector ws://websocket.server:9876 script.yml # in case of using simple script
+wsdirector script.yml ws://websocket.server:9876/ws
+
+#=> 1 clients, 0 failures
 ```
 
-Also you can create more comlex test script, using different groups, like this
+You can create more complex scenarios with multiple client groups:
+
 ```yml
   # script.yml
   - client: # first clients group
+      name: "publisher" # optional group name
       multiplier: ":scale" # :scale take number from -s param, and run :scale number of clients in this group
-      actions: # in case of using - client, all commands must be placed in actions: instead of root
-        - receive: "Welcome"
-        - wait_all # makes all clients in all groups wait untill every client get this point, after that they all continue
+      actions: # 
+        - receive:
+            data: "Welcome"
+        - wait_all # makes all clients in all groups wait untill every client get this point (global barrier)
         - send:
             data: "test message"
   - client:
-      multiplier: "10 * :scale" # also you can use arithmetic operations in this expression, so in case of :scale = 10, in this group started 100 clients
+      name: "listeners"
+      multiplier: ":scale * 2"
       actions:
-        - receive: "Welcome"
+        - receive:
+            data: "Welcome"
         - wait_all
-        - send:
+        - receive:
+            multiplier: ":scale" # you can use multiplier with any action
             data: "test message"
 ```
-After you get testing script you can run it by
+
+Run with scale factor:
+
+
 ```bash
-wsdirector ws://websocket.server:9876 script.yml -s 10 # in case of using script with multiple clients
+wsdirector script.yml ws://websocket.server:9876 -s 10
+
+#=> Group publisher: 10 clients, 0 failures
+#=> Group listeners: 20 clients, 0 failures
 ```
 
-ActionCable example:
+The simpliest scenario is just checking that socket is succesfully connected:
 
-Channel code
+```yml
+- client:
+    name: connection check
+  # no actions
+```
+
+### Protocols
+
+WSDirector uses protocols to handle different actions.
+Currently, we support "base" protocol (with `send`, `receive`, `wait_all` actions) and "action_cable" protocol, which extends "base" with `subscribe` and `perform` actions.
+
+#### ActionCable Example
+
+Channel code:
+
 ```ruby
 class ChatChannel < ApplicationCable::Channel
   def subscribed
@@ -76,79 +104,34 @@ class ChatChannel < ApplicationCable::Channel
 end
 ```
 
-Your testing script
+Scenario:
+
 ```yml
-# action.yml
-# sending client script
 - client:
     multiplier: ":scale"
-    # Ignore ping messages
-    ignore: !ruby/regexp /ping/
+    name: "publisher"
+    protocol: "action_cable"
     actions:
-      # welcome message from Action Cable
-      - receive:
-          data:
-            type: "welcome"
-      # subscribe on channel
-      - send:
-          data:
-            command: "subscribe"
-            identifier: "{\"channel\":\"ChatChannel\"}"
-      # receive subscription confirmation
-      - receive:
-          data:
-            identifier: "{\"channel\":\"ChatChannel\"}"
-            type: "confirm_subscription"
-      # now wait for all clients from all groups to get this point
+      - subscribe:
+          channel: "ChatChannel"
       - wait_all
-      # sending message in channel
-      - send:
+      - perform:
+          channel: "ChatChannel"
+          action: "broadcast"
           data:
-            command: "message"
-            identifier: "{\"channel\":\"ChatChannel\"}"
-            data: "{\"text\": \"hello\", \"action\":\"broadcast\"}"
-
-# receiving client script
+            text: "hello"
 - client:
-    # we want ten times as much clients
-    multiplier: ":scale * 10"
-    # you can add multiple ignore patterns
-    ignore:
-      - !ruby/regexp /ping/
+    name: "listener"
+    protocol: "action_cable"
     actions:
-      # welcome from Action Cable
-      - receive:
-          data:
-            type: "welcome"
-      # subscribe on channel
-      - send:
-          data:
-            command: "subscribe"
-            identifier: "{\"channel\":\"ChatChannel\"}"
-      # receive subscription confirmation
-      - receive:
-          data:
-            identifier: "{\"channel\":\"ChatChannel\"}"
-            type: "confirm_subscription"
-      # now wait for all clients from all groups to get this point
+      - subscribe:
+          channel: "ChatChannel"
       - wait_all
-      # receive from channel message that was sending by first group
       - receive:
+          channel: "ChatChannel"
           data:
-            identifier: "{\"channel\":\"ChatChannel\"}"
-            message: # "{\"text\": \"hello\", \"action\"=>\"broadcast\"}"
-              text: "hello"
-              action: "broadcast"
-
+            text: "hello"
 ```
-and run it by
-```bash
-wsdirector action.yml ws://localhost:3000/cable -s 5
-```
-
-If all tests in all groups and clients passed, wsdirector will print success message,
-otherwise it will print what groups fails, how many clients fails in this groups, relevant expecatations and really getting values, and exit with non-zero code.
-
 
 ## Contributing
 
