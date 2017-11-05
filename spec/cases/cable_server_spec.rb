@@ -87,4 +87,40 @@ describe "wsdirector vs CableServer" do
       expect(output).to include "Group listeners: 6 clients, 0 failures"
     end
   end
+
+  context "when failed with wrong subscription and missing receive" do
+    let(:content) do
+      <<~YAML
+        - client:
+            protocol: "action_cable"
+            actions:
+              - subscribe:
+                  channel: "chat"
+              - wait_all
+
+        - client:
+            protocol: "action_cable"
+            actions:
+              - subscribe:
+                  channel: "chat"
+                  params:
+                    id: 2
+              - wait_all
+              - receive:
+                  channel: "chat"
+                  params:
+                    id: 2
+                  data:
+                    text: "Hello!"
+      YAML
+    end
+
+    it "shows failure message", :aggregate_failures do
+      output = run_wsdirector(test_script, failure: true)
+      expect(output).to include "Group 1: 1 clients, 1 failures"
+      expect(output).to include "Group 2: 1 clients, 1 failures"
+      expect(output).to include "Subscription rejected to"
+      expect(output).to match /Timeout .* exceeded for #wait_all/
+    end
+  end
 end

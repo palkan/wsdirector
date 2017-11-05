@@ -27,10 +27,15 @@ module Chat
       LiteCable.broadcast "chat_#{chat_id}", text: data["message"]
     end
 
+    def reject
+      log(:debug) { "Rejected!" }
+      super
+    end
+
     private
 
     def chat_id
-      params.fetch("id")
+      params["id"]
     end
   end
 end

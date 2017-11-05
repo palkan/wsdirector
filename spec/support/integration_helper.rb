@@ -9,7 +9,7 @@ module IntegrationHelpers
       "bundle exec #{cli_path} #{scenario_path} #{WSDirector.config.ws_url} #{options}",
       chdir: chdir || File.expand_path("../../fixtures", __FILE__)
     )
-    expect(status).to be_success, "Test #{scenario_path} #{options} failed with: #{output}" if success
+    expect(status).to be_success, "Test #{scenario_path} #{options} failed with: #{output}" if success && !failure
     expect(status).not_to be_success, "Test #{scenario_path} #{options} succeed with: #{output}" if failure
     output
   end

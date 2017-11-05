@@ -23,7 +23,7 @@ module WSDirector
         received = client.receive
         receive_matches?(expected, received)
       rescue ThreadError
-        raise Error, "Expected to receive #{expected} but nothing has been received"
+        raise NoMessageError, "Expected to receive #{expected} but nothing has been received"
       end
 
       def send(step)
@@ -51,7 +51,8 @@ module WSDirector
       def receive_matches?(expected, received)
         received = JSON.parse(received) if expected.is_a?(Hash)
 
-        raise Error, prepare_receive_error(expected, received) if received != expected
+        raise UnmatchedExpectationError, prepare_receive_error(expected, received) if
+          received != expected
       end
 
       def prepare_receive_error(expected, received)

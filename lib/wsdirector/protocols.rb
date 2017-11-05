@@ -10,6 +10,11 @@ module WSDirector
   }.freeze
 
   module Protocols # :nodoc:
+    # Raised when received not expected message
+    class UnmatchedExpectationError < WSDirector::Error; end
+    # Raised when nothing has been received
+    class NoMessageError < WSDirector::Error; end
+
     class << self
       def get(id)
         raise Error, "Unknown protocol: #{id}" unless ID2CLASS.key?(id)

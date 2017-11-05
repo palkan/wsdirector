@@ -24,6 +24,7 @@ module WSDirector
         )
 
         print_errors(result.errors) unless result.success?
+        Printer.out "\n"
       end
     end
 

@@ -21,9 +21,14 @@ module WSDirector
 
         client.send({ command: "subscribe", identifier: identifier }.to_json)
 
-        receive(
-          "data" => { "type" => "confirm_subscription", "identifier" => identifier }
-        )
+        begin
+          receive(
+            "data" => { "type" => "confirm_subscription", "identifier" => identifier }
+          )
+        rescue UnmatchedExpectationError => e
+          raise unless e.message =~ /reject_subscription/
+          raise UnmatchedExpectationError, "Subscription rejected to #{identifier}"
+        end
       end
 
       def perform(step)
@@ -48,12 +53,8 @@ module WSDirector
       private
 
       def extract_identifier(step)
-        if step.is_a?(Hash)
-          channel = step.delete("channel")
-          step.fetch("params", {}).merge(channel: channel).to_json
-        else
-          { channel: step }.to_json
-        end
+        channel = step.delete("channel")
+        step.fetch("params", {}).merge(channel: channel).to_json
       end
     end
   end
