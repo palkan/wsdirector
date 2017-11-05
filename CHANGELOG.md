@@ -1,6 +1,6 @@
 # Change log
 
-## 0.1.0 (2017-11-05)
+## 0.2.0 (2017-11-05)
 
 - Initial version. ([@palkan][], [@Kirillvs][], [@Grandman][])
 
