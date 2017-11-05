@@ -1,4 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/wsdirector.svg)](https://rubygems.org/gems/wsdirector) [![CircleCI](https://circleci.com/gh/palkan/wsdirector.svg?style=svg)](https://circleci.com/gh/palkan/wsdirector) 
+[![Gem Version](https://badge.fury.io/rb/wsdirector-cli.svg)](https://rubygems.org/gems/wsdirector-cli) [![CircleCI](https://circleci.com/gh/palkan/wsdirector.svg?style=svg)](https://circleci.com/gh/palkan/wsdirector) 
 
 # WebSocket Director
 
@@ -12,7 +12,7 @@ Suitable for testing any websocket server implementation, like [Action Cable](ht
 ## Installation
 
 ```bash
-  $ gem install wsdirector
+  $ gem install wsdirector-cli
 ```
 
 ## Usage

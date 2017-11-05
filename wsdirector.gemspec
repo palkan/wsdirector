@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'wsdirector/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "wsdirector"
+  spec.name          = "wsdirector-cli"
   spec.version       = WSDirector::VERSION
   spec.authors       = ["Kirill Arkhipov", "Grandman", "palkan"]
   spec.email         = ["kirillvs@mail.ru", "root@grandman73.ru", "dementiev.vm@gmail.com"]
