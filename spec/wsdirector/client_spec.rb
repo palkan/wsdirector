@@ -1,8 +1,6 @@
 describe WSDirector::Client do
   context "with EchoServer" do
-    before(:all) { Thread.new { EchoServer.start } }
-
-    after(:all) { EchoServer.stop }
+    require "echo_server_helper"
 
     subject { described_class.new }
 
@@ -32,8 +30,7 @@ describe WSDirector::Client do
   end
 
   context "with Cable server and ignore" do
-    before(:all) { CableServer.start }
-    after(:all) { CableServer.stop }
+    require "cable_server_helper"
 
     before { WSDirector.config.ws_url = CableServer.url }
 

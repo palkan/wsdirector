@@ -9,6 +9,10 @@ module WSDirector
       @groups = Concurrent::Map.new
     end
 
+    def success?
+      @groups.values.all?(&:success?)
+    end
+
     def print_summary
       single_group = groups.size == 1
       groups.each do |group, result|
@@ -32,8 +36,9 @@ module WSDirector
     attr_reader :groups
 
     def print_errors(errors)
-      errors.each do |error|
-        Printer.out "  #{error}\n", :red
+      Printer.out "\n"
+      errors.each.with_index do |error, i|
+        Printer.out "#{i + 1}) #{error}\n", :red
       end
     end
   end

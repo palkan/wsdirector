@@ -1,25 +1,25 @@
 # frozen_string_literal: true
 
 require "wsdirector/client"
+require "wsdirector/protocols"
 
 module WSDirector
   # Single client operator
   class Task
+    attr_reader :global_holder, :client
+
     def initialize(config, global_holder:, result:)
       @ignore = config.fetch("ignore")
       @steps = config.fetch("steps")
       @global_holder = global_holder
       @result = result
+      @protocol_class = Protocols.get(config.fetch("protocol", "base"))
     end
 
     def run
       connect!
 
-      steps.each do |step|
-        action = build_action(step)
-
-        action.call(client)
-      end
+      steps.each(&protocol)
 
       result.succeed
     rescue Error => e
@@ -28,10 +28,11 @@ module WSDirector
 
     private
 
-    attr_reader :steps, :global_holder, :result, :client
+    attr_reader :steps, :result, :protocol
 
     def connect!
       @client = Client.new(ignore: @ignore)
+      @protocol = @protocol_class.new(self)
     end
   end
 end

@@ -5,12 +5,12 @@ require "wsdirector/results_holder"
 require "wsdirector/result"
 require "wsdirector/task"
 
-module WsDirector
+module WSDirector
   # Initiates all clients as a separate tasks (=threads)
   class Runner
     def initialize(scenario)
       @scenario = scenario
-      @total_count = scenario.sum { |client| client["total"] }
+      @total_count = scenario["total"]
       @global_holder = ClientsHolder.new(total_count)
       @results_holder = ResultsHolder.new
     end
@@ -18,7 +18,7 @@ module WsDirector
     def start
       Thread.abort_on_exception = true
 
-      tasks = scenario.flat_map do |client|
+      tasks = scenario["clients"].flat_map do |client|
         result = Result.new(client.fetch("name"))
         results_holder << result
 
@@ -32,7 +32,7 @@ module WsDirector
 
       tasks.each(&:join)
       results_holder.print_summary
-      true
+      results_holder.success?
     end
 
     private

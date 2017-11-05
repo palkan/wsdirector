@@ -16,11 +16,13 @@ describe WSDirector::ResultsHolder do
   end
 
   describe "#print_summary" do
+    before { allow(WSDirector::Printer).to receive(:out) }
+
     context "when no failures" do
       it "call print success message for every group" do
         subject << success
-        expect(WSDirector::Printer).to receive(:out).with("3 clients, 0 failures\n", :green)
         subject.print_summary
+        expect(WSDirector::Printer).to have_received(:out).with("3 clients, 0 failures\n", :green)
       end
     end
 
@@ -28,11 +30,11 @@ describe WSDirector::ResultsHolder do
       it "call print failure message for every group", :aggregate_failures do
         subject << success
         subject << failure
-        expect(WSDirector::Printer).to receive(:out).with("Group group_1: 3 clients, 0 failures\n", :green)
-        expect(WSDirector::Printer).to receive(:out).with("Group group_2: 4 clients, 2 failures\n", :red)
-        expect(WSDirector::Printer).to receive(:out).with("  Incorrect message\n", :red)
-        expect(WSDirector::Printer).to receive(:out).with("  Timeout error\n", :red)
         subject.print_summary
+        expect(WSDirector::Printer).to have_received(:out).with("Group group_1: 3 clients, 0 failures\n", :green)
+        expect(WSDirector::Printer).to have_received(:out).with("Group group_2: 4 clients, 2 failures\n", :red)
+        expect(WSDirector::Printer).to have_received(:out).with("1) Incorrect message\n", :red)
+        expect(WSDirector::Printer).to have_received(:out).with("2) Timeout error\n", :red)
       end
     end
   end

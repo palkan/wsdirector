@@ -1,23 +1,20 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+require "echo_server_helper"
 
 describe "wsdirector vs EchoServer" do
-  before(:all) { Thread.new { EchoServer.start } }
-
-  after(:all) { EchoServer.stop }
-
   before(:example) do
     File.open(test_script, "w+") { |file| file.write(content) }
   end
 
   after(:example) { File.delete(test_script) }
 
-  fcontext "just connect (no actions)" do
+  context "just connect (no actions)" do
     let(:content) do
       <<~YAML
         - client:
-          name: pingo
+            name: pingo
       YAML
     end
 
@@ -56,11 +53,12 @@ describe "wsdirector vs EchoServer" do
       YAML
     end
 
-    it "show failure message and errors" do
-      output = run_wsdirector(test_script, failure: true)
+    it "show failure message and errors", :aggregate_failures do
+      output = run_wsdirector(test_script, failure: true, success: false)
       expect(output).to include "1 clients, 1 failures"
-      expect(output).to include(/\-\- expected: receive .*subscribe/)
-      expect(output).to include(/\+\+ got: receive .*subscription_confirmation/)
+      expect(output).to include("1) Action failed: #receive")
+      expect(output).to match(/\-\- expected: .*subscription_confirmation/)
+      expect(output).to match(/\+\+ got: .*subscribe/)
     end
   end
 end

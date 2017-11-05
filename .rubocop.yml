@@ -29,6 +29,9 @@ Style/Documentation:
   Exclude:
     - 'spec/**/*.rb'
 
+Style/SymbolArray:
+  Enabled: false
+
 Style/FrozenStringLiteralComment:
   Exclude:
     - 'spec/**/*.rb'
@@ -65,6 +68,9 @@ Lint/AmbiguousRegexpLiteral:
   Enabled: false
 
 Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ParameterLists:
   Enabled: false
 
 Metrics/AbcSize:

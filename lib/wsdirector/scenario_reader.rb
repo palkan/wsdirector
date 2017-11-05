@@ -30,12 +30,16 @@ module WSDirector
         end
       end
 
-      def parse_simple_scenario(steps, multiplier: 1, name: "default", ignore: nil)
+      def parse_simple_scenario(
+          steps,
+          multiplier: 1, name: "default", ignore: nil, protocol: "base"
+      )
         {
           "multiplier" => multiplier,
           "steps" => handle_steps(steps),
           "name" => name,
-          "ignore" => ignore
+          "ignore" => ignore,
+          "protocol" => protocol
         }
       end
 
@@ -47,7 +51,13 @@ module WSDirector
           name = client.delete("name") || (i + 1).to_s
           total_count += multiplier
           ignore = parse_ingore(client.fetch("ignore", nil))
-          parse_simple_scenario(client.fetch("actions", []), multiplier: multiplier, name: name, ignore: ignore)
+          parse_simple_scenario(
+            client.fetch("actions", []),
+            multiplier: multiplier,
+            name: name,
+            ignore: ignore,
+            protocol: client.fetch("protocol", "base")
+          )
         end
         { "total" => total_count, "clients" => clients }
       end

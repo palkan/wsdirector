@@ -18,8 +18,11 @@ module WSDirector
         WSDirector.config.scenario_path
       )
 
-      WSDirector::Runner.new(scenario).start
-      exit 0
+      if WSDirector::Runner.new(scenario).start
+        exit 0
+      else
+        exit 1
+      end
     rescue Error => e
       STDERR.puts e.message
       exit 1
