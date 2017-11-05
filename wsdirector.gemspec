@@ -25,7 +25,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'concurrent-ruby', '~> 1.0.5'
 
   spec.add_development_dependency "websocket-eventmachine-server", "~> 1.0.1"
+  spec.add_development_dependency "rack", "~> 2.0"
   spec.add_development_dependency "litecable", "~> 0.5"
+  spec.add_development_dependency "puma", "~> 3.6"
 
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"

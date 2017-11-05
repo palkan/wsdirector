@@ -1,5 +1,6 @@
 - client:
     multiplier: ":scale"
+    ignore: !ruby/regexp /ping/
     actions:
       - receive:
           data:
@@ -32,6 +33,8 @@
 - client:
     multiplier: ":scale * 2"
     name: "listeners"
+    ignore:
+      - !ruby/regexp /ping/
     actions:
       - receive:
           data:

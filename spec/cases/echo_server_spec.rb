@@ -13,7 +13,7 @@ describe "wsdirector vs EchoServer" do
 
   after(:example) { File.delete(test_script) }
 
-  context "just connect (no actions)" do
+  fcontext "just connect (no actions)" do
     let(:content) do
       <<~YAML
         - client:

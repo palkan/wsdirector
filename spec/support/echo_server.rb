@@ -7,28 +7,10 @@ module EchoServer
 
     def start
       EM.run {
-        WebSocket::EventMachine::Server.start(host: HOST, port: PORT) do |ws|
-          @channel = EM::Channel.new
+        @server_id = WebSocket::EventMachine::Server.start(host: HOST, port: PORT) do |ws|
           ws.onopen do
-            sid = @channel.subscribe { |msg| ws.send msg }
-            ws.send({ "type" => "welcome" }.to_json)
             ws.onmessage do |msg|
-              p msg
-              subscribe_message = { command: "subscribe", identifier: "{\"channel\":\"TestChannel\"}" }.to_json
-              send_message = { command: "message", identifier: "{\"channel\":\"TestChannel\"}", data: "{\"text\": \"echo\",\"action\":\"echo\"}" }.to_json
-              broadcast_message = { command: "message", identifier: "{\"channel\":\"TestChannel\"}", data: "{\"text\": \"echo\",\"action\":\"broadcast\"}" }.to_json
-              if msg == subscribe_message
-                ws.send({ identifier: "{\"channel\":\"TestChannel\"}", type: "confirm_subscription" }.to_json)
-              end
-              if msg == send_message
-                ws.send({ identifier: "{\"channel\":\"TestChannel\"}", message: { text: "echo", action: "echo" } }.to_json)
-              end
-              if msg == broadcast_message
-                @channel.push({ identifier: "{\"channel\":\"TestChannel\"}", message: { text: "echo", action: "broadcast" } }.to_json)
-              end
-            end
-            ws.onclose do
-              @channel.unsubscribe(sid)
+              ws.send msg
             end
           end
         end
@@ -36,7 +18,9 @@ module EchoServer
     end
 
     def stop
-      # TODO
+      EM.run {
+        EventMachine.stop_server @server_id
+      }
     end
 
     def url

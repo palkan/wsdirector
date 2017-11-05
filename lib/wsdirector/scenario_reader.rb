@@ -30,11 +30,12 @@ module WSDirector
         end
       end
 
-      def parse_simple_scenario(steps, multiplier: 1, name: "default")
+      def parse_simple_scenario(steps, multiplier: 1, name: "default", ignore: nil)
         {
           "multiplier" => multiplier,
           "steps" => handle_steps(steps),
-          "name" => name
+          "name" => name,
+          "ignore" => ignore
         }
       end
 
@@ -45,7 +46,8 @@ module WSDirector
           multiplier = parse_multiplier(client.delete("multiplier") || "1")
           name = client.delete("name") || (i + 1).to_s
           total_count += multiplier
-          parse_simple_scenario(client.fetch("actions", []), multiplier: multiplier, name: name)
+          ignore = parse_ingore(client.fetch("ignore", nil))
+          parse_simple_scenario(client.fetch("actions", []), multiplier: multiplier, name: name, ignore: ignore)
         end
         { "total" => total_count, "clients" => clients }
       end
@@ -56,6 +58,12 @@ module WSDirector
           prepared =~ MULTIPLIER_FORMAT
 
         eval(prepared) # rubocop:disable Security/Eval
+      end
+
+      def parse_ingore(str)
+        return unless str
+
+        Array(str)
       end
     end
   end

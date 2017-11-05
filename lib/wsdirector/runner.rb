@@ -2,6 +2,7 @@
 
 require "wsdirector/clients_holder"
 require "wsdirector/results_holder"
+require "wsdirector/result"
 require "wsdirector/task"
 
 module WsDirector
@@ -17,9 +18,16 @@ module WsDirector
     def start
       Thread.abort_on_exception = true
 
-      tasks = scenario.map do |client|
-        Task.new(client, global_holder: global_holder, results_holder: results_holder)
-            .run
+      tasks = scenario.flat_map do |client|
+        result = Result.new(client.fetch("name"))
+        results_holder << result
+
+        Array.new(client.fetch("multiplier")) do
+          Thread.new do
+            Task.new(client, global_holder: global_holder, result: result)
+                .run
+          end
+        end
       end
 
       tasks.each(&:join)

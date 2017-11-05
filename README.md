@@ -82,6 +82,8 @@ Your testing script
 # sending client script
 - client:
     multiplier: ":scale"
+    # Ignore ping messages
+    ignore: !ruby/regexp /ping/
     actions:
       # welcome message from Action Cable
       - receive:
@@ -110,6 +112,9 @@ Your testing script
 - client:
     # we want ten times as much clients
     multiplier: ":scale * 10"
+    # you can add multiple ignore patterns
+    ignore:
+      - !ruby/regexp /ping/
     actions:
       # welcome from Action Cable
       - receive:
