@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
-require "bundler/setup"
+require "rubygems"
+
+$:.unshift(File.expand_path(__dir__ + "/../lib"))
+
 require "wsdirector/cli"
 
 begin

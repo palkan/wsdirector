@@ -14,6 +14,13 @@ module WSDirector
     def run
       parse_args!
 
+      begin
+        require "colorize" if WSDirector.config.colorize?
+      rescue LoadError
+        WSDirector.config.colorize = false
+        warn "Install colorize to use colored output"
+      end
+
       scenario = WSDirector::ScenarioReader.parse(
         WSDirector.config.scenario_path
       )
@@ -43,8 +50,13 @@ module WSDirector
           WSDirector.config.sync_timeout = v
         end
 
-        opts.on("-c COLOR", "--color=COLOR", TrueClass, "Colorize output") do |v|
+        opts.on("-c", "--[no-]color", "Colorize output") do |v|
           WSDirector.config.colorize = v
+        end
+
+        opts.on("-v", "--version", "Print versin") do
+          STDOUT.puts WSDirector::VERSION
+          exit 0
         end
       end
       # rubocop: enable Metrics/LineLength

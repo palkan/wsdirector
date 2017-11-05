@@ -20,10 +20,10 @@ Gem::Specification.new do |spec|
   spec.executables   = "wsdirector"
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'websocket-client-simple', '~> 0.3'
-  spec.add_dependency 'colorize'
-  spec.add_dependency 'concurrent-ruby', '~> 1.0.5'
+  spec.add_dependency "websocket-client-simple", "~> 0.3"
+  spec.add_dependency "concurrent-ruby", "~> 1.0.5"
 
+  spec.add_development_dependency "colorize"
   spec.add_development_dependency "websocket-eventmachine-server", "~> 1.0.1"
   spec.add_development_dependency "rack", "~> 2.0"
   spec.add_development_dependency "litecable", "~> 0.5"

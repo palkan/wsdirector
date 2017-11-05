@@ -23,8 +23,10 @@ module WSDirector
           color
         )
 
-        print_errors(result.errors) unless result.success?
-        Printer.out "\n"
+        unless result.success?
+          print_errors(result.errors)
+          Printer.out "\n"
+        end
       end
     end
 
