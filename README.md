@@ -133,6 +133,22 @@ Scenario:
             text: "hello"
 ```
 
+## Future Ideas
+
+- File-less scenarios (JSON-encoded?), e.g.
+
+```shell
+wsdirector -i '{"receive": "hello"}' localhost:9898/ws
+```
+
+- Connection parameters (headers, query params, etc)
+
+- Testing frameworks integrations
+
+- Loading protocols dynamically
+
+- What else? [Submit an issue!](https://github.com/palkan/wsdirector/issues/new)
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/palkan/wsdirector.
