@@ -43,7 +43,7 @@ You can create more complex scenarios with multiple client groups:
   - client: # first clients group
       name: "publisher" # optional group name
       multiplier: ":scale" # :scale take number from -s param, and run :scale number of clients in this group
-      actions: # 
+      actions:
         - receive:
             data: "Welcome"
         - wait_all # makes all clients in all groups wait untill every client get this point (global barrier)
