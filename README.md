@@ -17,7 +17,7 @@ Suitable for testing any websocket server implementation, like [Action Cable](ht
 
 ## Usage
 
-Create YAML file with simle testing script:
+Create YAML file with simple testing script:
 
 ```yml
   # script.yml
