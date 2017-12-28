@@ -1,4 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/wsdirector-cli.svg)](https://rubygems.org/gems/wsdirector-cli) [![CircleCI](https://circleci.com/gh/palkan/wsdirector.svg?style=svg)](https://circleci.com/gh/palkan/wsdirector) 
+[![Gem Version](https://badge.fury.io/rb/wsdirector-cli.svg)](https://rubygems.org/gems/wsdirector-cli) [![Build Status](https://travis-ci.org/palkan/wsdirector.svg?branch=master)](https://travis-ci.org/palkan/wsdirector) [![CircleCI](https://circleci.com/gh/palkan/wsdirector.svg?style=svg)](https://circleci.com/gh/palkan/wsdirector) 
 
 # WebSocket Director
 
