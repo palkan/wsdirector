@@ -1,3 +1,4 @@
+[![Cult Of Martians](http://cultofmartians.com/assets/badges/badge.svg)](http://cultofmartians.com/tasks/websocket-director.html)
 [![Gem Version](https://badge.fury.io/rb/wsdirector-cli.svg)](https://rubygems.org/gems/wsdirector-cli) [![Build Status](https://travis-ci.org/palkan/wsdirector.svg?branch=master)](https://travis-ci.org/palkan/wsdirector) [![CircleCI](https://circleci.com/gh/palkan/wsdirector.svg?style=svg)](https://circleci.com/gh/palkan/wsdirector) 
 
 # WebSocket Director
@@ -5,9 +6,6 @@
 Command line tool for testing websocket servers using scenarios.
 
 Suitable for testing any websocket server implementation, like [Action Cable](https://github.com/rails/rails/tree/master/actioncable), [Websocket Eventmachine Server](https://github.com/imanel/websocket-eventmachine-server), [Litecable](https://github.com/palkan/litecable) and so on.
-
-<a href="https://evilmartians.com/">
-<img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Sponsored by Evil Martians" width="236" height="54"></a>
 
 ## Installation
 
