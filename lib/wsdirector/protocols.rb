@@ -12,6 +12,8 @@ module WSDirector
   module Protocols # :nodoc:
     # Raised when received not expected message
     class UnmatchedExpectationError < WSDirector::Error; end
+    # Raised when received message is unexpected
+    class UnexpectedMessageError < WSDirector::Error; end
     # Raised when nothing has been received
     class NoMessageError < WSDirector::Error; end
 

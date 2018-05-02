@@ -6,6 +6,7 @@ require "json"
 
 require "wsdirector/version"
 require "wsdirector/configuration"
+require "wsdirector/utils"
 
 # Command line tool for testing websocket servers using scenarios.
 module WSDirector

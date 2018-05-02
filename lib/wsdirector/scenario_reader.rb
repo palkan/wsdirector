@@ -3,9 +3,9 @@
 module WSDirector
   # Read and parse YAML scenario
   class ScenarioReader
-    MULTIPLIER_FORMAT = /^[-+*\\\d ]+$/
-
     class << self
+      include WSDirector::Utils
+
       def parse(file_path)
         contents = YAML.load_file(file_path)
 
@@ -60,14 +60,6 @@ module WSDirector
           )
         end
         { "total" => total_count, "clients" => clients }
-      end
-
-      def parse_multiplier(str)
-        prepared = str.to_s.gsub(":scale", WSDirector.config.scale.to_s)
-        raise WSDirector::Error, "Unknown multiplier format: #{str}" unless
-          prepared =~ MULTIPLIER_FORMAT
-
-        eval(prepared) # rubocop:disable Security/Eval
       end
 
       def parse_ingore(str)

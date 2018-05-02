@@ -4,6 +4,8 @@ module WSDirector
   module Protocols
     # Base protocol describes basic actions
     class Base
+      include WSDirector::Utils
+
       def initialize(task)
         @task = task
       end
@@ -21,10 +23,46 @@ module WSDirector
       def receive(step)
         expected = step.fetch("data")
         received = client.receive
-        receive_matches?(expected, received)
+        raise UnmatchedExpectationError, prepare_receive_error(expected, received) unless
+          receive_matches?(expected, received)
       rescue ThreadError
         raise NoMessageError, "Expected to receive #{expected} but nothing has been received"
       end
+
+      # rubocop: disable Metrics/CyclomaticComplexity
+      def receive_all(step)
+        messages = step.delete("messages")
+        raise ArgumentError, "Messages array must be specified" if
+          messages.nil? || messages.empty?
+
+        expected =
+          Hash[messages.map do |msg|
+            multiplier = parse_multiplier(msg.delete("multiplier") || "1")
+            [msg["data"], multiplier]
+          end]
+
+        total_expected = expected.values.sum
+        total_received = 0
+
+        total_expected.times do
+          received = client.receive
+
+          total_received += 1
+
+          match = expected.find { |k, _| receive_matches?(k, received) }
+
+          raise UnexpectedMessageError, "Unexpected message received: #{received}" if
+            match.nil?
+
+          expected[match.first] -= 1
+          expected.delete(match.first) if expected[match.first].zero?
+        end
+      rescue ThreadError
+        raise NoMessageError,
+              "Expected to receive #{total_expected} messages " \
+              "but received only #{total_received}"
+      end
+      # rubocop: enable Metrics/CyclomaticComplexity
 
       def send(step)
         data = step.fetch("data")
@@ -51,8 +89,7 @@ module WSDirector
       def receive_matches?(expected, received)
         received = JSON.parse(received) if expected.is_a?(Hash)
 
-        raise UnmatchedExpectationError, prepare_receive_error(expected, received) if
-          received != expected
+        received == expected
       end
 
       def prepare_receive_error(expected, received)

@@ -50,6 +50,20 @@ module WSDirector
         super("data" => { "identifier" => identifier, "message" => message })
       end
 
+      def receive_all(step)
+        messages = step["messages"]
+
+        return super if messages.nil? || messages.empty?
+
+        messages.each do |msg|
+          next unless msg.key?("channel")
+          identifier = extract_identifier(msg)
+          msg["data"] = { "identifier" => identifier, "message" => msg["data"] }
+        end
+
+        super
+      end
+
       private
 
       def extract_identifier(step)

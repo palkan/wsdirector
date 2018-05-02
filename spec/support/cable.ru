@@ -27,6 +27,11 @@ module Chat
       LiteCable.broadcast "chat_#{chat_id}", text: data["message"]
     end
 
+    def speak_with_ack(data)
+      speak data
+      transmit text: "message sent"
+    end
+
     def reject
       log(:debug) { "Rejected!" }
       super

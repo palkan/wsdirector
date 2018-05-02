@@ -88,6 +88,67 @@ describe "wsdirector vs CableServer" do
     end
   end
 
+  context "multiple clients with receive_all" do
+    let(:content) do
+      <<~YAML
+        - client:
+            multiplier: ":scale"
+            protocol: "action_cable"
+            name: "publishers"
+            actions:
+              - subscribe:
+                  channel: "chat"
+                  params:
+                    id: 2
+              - wait_all
+              - perform:
+                  channel: "chat"
+                  params:
+                    id: 2
+                  action: "speak_with_ack"
+                  multiplier: 3
+                  data:
+                    message: "Hello!"
+              - receive_all:
+                  messages:
+                    - data:
+                        text: "Hello!"
+                      multiplier: ":scale + :scale"
+                      channel: "chat"
+                      params:
+                        id: 2
+                    - data:
+                        text: "message sent"
+                      channel: "chat"
+                      params:
+                        id: 2
+        - client:
+            multiplier: ":scale * 2"
+            name: "listeners"
+            protocol: "action_cable"
+            actions:
+              - subscribe:
+                  channel: "chat"
+                  params:
+                    id: 2
+              - wait_all
+              - receive:
+                  multiplier: ":scale + :scale"
+                  channel: "chat"
+                  params:
+                    id: 2
+                  data:
+                    text: "Hello!"
+      YAML
+    end
+
+    it "shows success message", :aggregate_failures do
+      output = run_wsdirector(test_script, options: "-s 1")
+      expect(output).to include "Group publishers: 1 clients, 0 failures"
+      expect(output).to include "Group listeners: 2 clients, 0 failures"
+    end
+  end
+
   context "when failed with wrong subscription and missing receive" do
     let(:content) do
       <<~YAML
