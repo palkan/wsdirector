@@ -2,7 +2,15 @@
 
 ## master
 
-- Added `receive_all` action. ([@palkan][])
+## 0.3.0 (2018-05-02)
+
+- Add `debug` action and options. ([@palkan][])
+
+Allows to print arbitrary messages during the execution.
+
+- Add `sleep` action. ([@palkan][])
+
+- Add `receive_all` action. ([@palkan][])
 
 Allows to handle multiple messages with unspecified order:
 

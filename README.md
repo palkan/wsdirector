@@ -133,8 +133,6 @@ Scenario:
 
 ## Future Ideas
 
-- Unordered `receive` steps
-
 - Report timings (per-client and aggregates)
 
 - File-less scenarios (JSON-encoded?), e.g.
