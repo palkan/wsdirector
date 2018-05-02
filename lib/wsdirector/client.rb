@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 require "websocket-client-simple"
+require "securerandom"
 
 module WSDirector
   # WebSocket client
   class Client
     WAIT_WHEN_EXPECTING_EVENT = 5
 
-    attr_reader :ws
+    attr_reader :ws, :id
 
     # Create new WebSocket client and connect to WSDirector
     # ws URL.
@@ -22,6 +23,7 @@ module WSDirector
       open = Concurrent::Promise.new
       client = self
 
+      @id = SecureRandom.hex(6)
       @ws = WebSocket::Client::Simple.connect(path) do |ws|
         ws.on(:open) do |_event|
           open.set(true)

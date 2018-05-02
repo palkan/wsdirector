@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "time"
+
 module WSDirector
   module Protocols
     # Base protocol describes basic actions
@@ -18,6 +20,28 @@ module WSDirector
         type = step.delete("type")
         raise Error, "Unknown step: #{type}" unless respond_to?(type)
         public_send(type, step)
+      end
+
+      # Sleeps for a specified number of seconds.
+      #
+      # If "shift" is provided than the initial value is
+      # shifted by random number from (-shift, shift).
+      #
+      # Set "debug" to true to print the delay time.
+      def sleep(step)
+        delay = step.fetch("time").to_f
+        shift = step.fetch("shift", 0).to_f
+
+        delay = delay - shift * rand + shift * rand
+
+        print("Sleep for #{delay}s") if step.fetch("debug", false)
+
+        Kernel.sleep delay if delay > 0
+      end
+
+      # Prints provided message
+      def debug(step)
+        print(step.fetch("message"))
       end
 
       def receive(step)
@@ -98,6 +122,10 @@ module WSDirector
              -- expected: #{expected}
              ++ got: #{received}
         MSG
+      end
+
+      def print(msg)
+        $stdout.puts "DEBUG #{Time.now.iso8601}  client=#{client.id} #{msg}\n"
       end
     end
   end
