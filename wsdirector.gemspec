@@ -13,6 +13,8 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/palkan/wsdirector"
   spec.license       = "MIT"
 
+  spec.required_ruby_version = '>= 2.4.0'
+
   spec.files         = `git ls-files`.split($/).select { |p| p.match(%r{^lib/}) } +
     %w(README.md CHANGELOG.md LICENSE.txt)
 
