@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "erb"
+
 module WSDirector
   # Read and parse YAML scenario
   class ScenarioReader
@@ -7,7 +9,7 @@ module WSDirector
       include WSDirector::Utils
 
       def parse(file_path)
-        contents = YAML.load_file(file_path)
+        contents = ::YAML.load(ERB.new(File.read(file_path)).result)
 
         if contents.first.key?("client")
           parse_multiple_scenarios(contents)

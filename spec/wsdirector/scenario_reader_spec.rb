@@ -43,4 +43,16 @@ describe WSDirector::ScenarioReader do
       end
     end
   end
+
+  context "with ERB" do
+    let(:file_path) { fixture_path("scenario_erb.yml") }
+
+    before { ENV["TEST_SCALE"] = "2" }
+    after { ENV.delete("TEST_SCALE") }
+
+    it "parses with ERB", :aggregate_failures do
+      expect(subject["total"]).to eq 2
+      expect(subject["clients"].first["multiplier"]).to eq 2
+    end
+  end
 end

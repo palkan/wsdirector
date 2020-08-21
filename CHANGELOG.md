@@ -2,6 +2,10 @@
 
 ## master
 
+- Add ERB support. ([@palkan][])
+
+Now you can, for example, access `ENV` from scenarios.
+
 ## 0.3.0 (2018-05-02)
 
 - Add `debug` action and options. ([@palkan][])
