@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.4.0 (2020-08-24)
+
 - **Drop Ruby 2.4 support**. ([@palkan][])
 
 - Add sampling support. ([@palkan][])
