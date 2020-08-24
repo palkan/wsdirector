@@ -181,7 +181,71 @@ describe "wsdirector vs CableServer" do
       expect(output).to include "Group 1: 1 clients, 1 failures"
       expect(output).to include "Group 2: 1 clients, 1 failures"
       expect(output).to include "Subscription rejected to"
-      expect(output).to match /Timeout .* exceeded for #wait_all/
+      expect(output).to match(/Timeout .* exceeded for #wait_all/)
+    end
+  end
+
+  context "sampling" do
+    let(:content) do
+      <<~YAML
+        - client:
+            multiplier: ":scale"
+            protocol: "action_cable"
+            actions:
+              - subscribe:
+                  channel: "chat"
+                  params:
+                    id: 2
+              - wait_all
+              - perform:
+                  sample: ":scale / 2"
+                  channel: "chat"
+                  params:
+                    id: 2
+                  action: "speak"
+                  data:
+                    message: "Hello!"
+              - perform:
+                  sample: 1
+                  channel: "chat"
+                  params:
+                    id: 2
+                  action: "speak"
+                  data:
+                    message: "Goodbye!"
+              - perform:
+                  sample: "1 + 1"
+                  channel: "chat"
+                  params:
+                    id: 2
+                  action: "speak"
+                  data:
+                    message: "..."
+              - receive_all:
+                  messages:
+                    - channel: "chat"
+                      multiplier: ":scale / 2"
+                      params:
+                        id: 2
+                      data:
+                        text: "Hello!"
+                    - channel: "chat"
+                      params:
+                        id: 2
+                      data:
+                        text: "Goodbye!"
+                    - channel: "chat"
+                      multiplier: 2
+                      params:
+                        id: 2
+                      data:
+                        text: "..."
+      YAML
+    end
+
+    it "shows success message", :aggregate_failures do
+      output = run_wsdirector(test_script, options: "-s 4")
+      expect(output).to include "4 clients, 0 failures"
     end
   end
 end

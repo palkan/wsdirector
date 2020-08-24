@@ -2,7 +2,7 @@
 
 module WSDirector
   module Utils # :nodoc:
-    MULTIPLIER_FORMAT = /^[-+*\\\d ]+$/
+    MULTIPLIER_FORMAT = /^[-+*\/\\\d ]+$/
 
     def parse_multiplier(str)
       prepared = str.to_s.gsub(":scale", WSDirector.config.scale.to_s)

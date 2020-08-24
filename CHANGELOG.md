@@ -2,6 +2,25 @@
 
 ## master
 
+- Add sampling support. ([@palkan][])
+
+You can specify a `sample` option for a step to only run this step by specified number of clients from the group:
+
+```yml
+- perform:
+  sample: ":scale / 2"
+  channel: "chat"
+  params:
+    id: 2
+  action: "speak"
+  data:
+    message: "Hello!"
+```
+
+Useful in combination with `:scale`.
+
+**NOTE:** Sample size is always greater or equal to 1.
+
 - Add ERB support. ([@palkan][])
 
 Now you can, for example, access `ENV` from scenarios.

@@ -11,6 +11,9 @@ module WSDirector
 
       @all = Concurrent::AtomicFixnum.new(0)
       @failures = Concurrent::AtomicFixnum.new(0)
+
+      @sampling_mutex = Mutex.new
+      @sampling_counter = Hash.new { |h, k| h[k] = 0 }
     end
 
     # Called when client successfully finished it's work
@@ -37,8 +40,17 @@ module WSDirector
       failures.value
     end
 
+    def track_sample(id, max)
+      sampling_mutex.synchronize do
+        return false if sampling_counter[id] >= max
+
+        sampling_counter[id] += 1
+        true
+      end
+    end
+
     private
 
-    attr_reader :all, :success, :failures
+    attr_reader :all, :success, :failures, :sampling_counter, :sampling_mutex
   end
 end

@@ -28,6 +28,14 @@ module WSDirector
       result.failed(e.message)
     end
 
+    def sampled?(step)
+      return true unless step["sample"]
+
+      id, max = step["id"], step["sample"]
+
+      result.track_sample(id, max)
+    end
+
     private
 
     attr_reader :steps, :result, :protocol

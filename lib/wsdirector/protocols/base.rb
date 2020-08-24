@@ -19,6 +19,9 @@ module WSDirector
       def handle_step(step)
         type = step.delete("type")
         raise Error, "Unknown step: #{type}" unless respond_to?(type)
+
+        return unless task.sampled?(step)
+
         public_send(type, step)
       end
 

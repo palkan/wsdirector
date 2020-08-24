@@ -21,13 +21,16 @@ module WSDirector
       private
 
       def handle_steps(steps)
-        steps.flat_map do |step|
+        steps.flat_map.with_index do |step, id|
           if step.is_a?(Hash)
             type, data = step.to_a.first
+
+            data["sample"] = [1, parse_multiplier(data["sample"])].max if data["sample"]
+
             multiplier = parse_multiplier(data.delete("multiplier") || "1")
-            Array.new(multiplier) { { "type" => type }.merge(data) }
+            Array.new(multiplier) { {"type" => type, "id" => id}.merge(data) }
           else
-            { "type" => step }
+            {"type" => step, "id" => id}
           end
         end
       end
