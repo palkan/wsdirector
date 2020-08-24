@@ -28,7 +28,7 @@ module WSDirector
         Array.new(client.fetch("multiplier")) do
           Thread.new do
             Task.new(client.deep_dup, global_holder: global_holder, result: result)
-                .run
+              .run
           end
         end
       end

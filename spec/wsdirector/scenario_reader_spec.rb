@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe WSDirector::ScenarioReader do
   subject { described_class.parse(file_path) }
 

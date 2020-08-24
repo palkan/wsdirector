@@ -9,12 +9,12 @@ module WSDirector
       include WSDirector::Utils
 
       def parse(file_path)
-        contents = ::YAML.load(ERB.new(File.read(file_path)).result)
+        contents = ::YAML.load(ERB.new(File.read(file_path)).result) # rubocop:disable Security/YAMLLoad
 
         if contents.first.key?("client")
           parse_multiple_scenarios(contents)
         else
-          { "total" => 1, "clients" => [parse_simple_scenario(contents)] }
+          {"total" => 1, "clients" => [parse_simple_scenario(contents)]}
         end
       end
 
@@ -36,8 +36,8 @@ module WSDirector
       end
 
       def parse_simple_scenario(
-          steps,
-          multiplier: 1, name: "default", ignore: nil, protocol: "base"
+        steps,
+        multiplier: 1, name: "default", ignore: nil, protocol: "base"
       )
         {
           "multiplier" => multiplier,
@@ -64,7 +64,7 @@ module WSDirector
             protocol: client.fetch("protocol", "base")
           )
         end
-        { "total" => total_count, "clients" => clients }
+        {"total" => total_count, "clients" => clients}
       end
 
       def parse_ingore(str)

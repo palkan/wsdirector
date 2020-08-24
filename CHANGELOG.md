@@ -2,6 +2,8 @@
 
 ## master
 
+- **Drop Ruby 2.4 support**. ([@palkan][])
+
 - Add sampling support. ([@palkan][])
 
 You can specify a `sample` option for a step to only run this step by specified number of clients from the group:

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe WSDirector::Client do
   context "with EchoServer" do
     require "echo_server_helper"
@@ -41,7 +43,7 @@ describe WSDirector::Client do
         subject
         expect(subject.ws).to be_open
 
-        expect(subject.receive).to eq({ type: "welcome" }.to_json)
+        expect(subject.receive).to eq({type: "welcome"}.to_json)
       end
 
       context "when ping is not ignored" do
@@ -53,7 +55,7 @@ describe WSDirector::Client do
           msgs << subject.receive
           msgs << subject.receive
 
-          expect(msgs).to include({ type: "welcome" }.to_json)
+          expect(msgs).to include({type: "welcome"}.to_json)
           expect(msgs).to include(/ping/)
         end
       end
@@ -62,10 +64,10 @@ describe WSDirector::Client do
     describe "#send / #receive" do
       it "subscribes to channel" do
         subject
-        expect(subject.receive).to eq({ type: "welcome" }.to_json)
+        expect(subject.receive).to eq({type: "welcome"}.to_json)
 
-        subject.send({ command: "subscribe", identifier: JSON.generate(channel: "chat", id: "22") }.to_json)
-        expect(subject.receive).to eq({ "identifier" => "{\"channel\":\"chat\",\"id\":\"22\"}", "type" => "confirm_subscription" }.to_json)
+        subject.send({command: "subscribe", identifier: JSON.generate(channel: "chat", id: "22")}.to_json)
+        expect(subject.receive).to eq({"identifier" => "{\"channel\":\"chat\",\"id\":\"22\"}", "type" => "confirm_subscription"}.to_json)
       end
     end
   end

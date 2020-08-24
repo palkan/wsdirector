@@ -1,92 +1,28 @@
+require:
+  - standard/cop/semantic_blocks
+
+inherit_gem:
+  standard: config/base.yml
+
 AllCops:
-  Include:
-    - 'lib/**/*.rb'
-    - 'lib/**/*.rake'
-    - 'spec/**/*.rb'
   Exclude:
-    - 'bin/**/*'
-    - 'spec/dummy/**/*'
-    - 'vendor/**/*'
+    - 'bin/*'
     - 'tmp/**/*'
-    - '*.gemspec'
+    - 'Gemfile'
+    - 'vendor/**/*'
+    - 'gemfiles/**/*'
+    - 'spec/rubocop/fixtures/**/*'
   DisplayCopNames: true
-  StyleGuideCopsOnly: false
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.5
 
-Rails:
-  Enabled: false
-
-Naming/AccessorMethodName:
-  Enabled: false
-
-Naming/FileName:
-  Enabled: false
-
-Style/TrivialAccessors:
-  Enabled: false
-
-Style/Documentation:
-  Exclude:
-    - 'spec/**/*.rb'
-
-Style/SymbolArray:
+Standard/SemanticBlocks:
   Enabled: false
 
 Style/FrozenStringLiteralComment:
-  Exclude:
-    - 'spec/**/*.rb'
+  Enabled: true
 
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: no_comma
 
-Style/RegexpLiteral:
-  Enabled: false
-
-Style/ClassAndModuleChildren:
-  Enabled: false
-
-Style/NumericPredicate:
-  Enabled: false
-
-Style/BlockDelimiters:
-  Exclude:
-    - 'spec/**/*.rb'
-
-Style/ParallelAssignment:
-  Exclude:
-    - 'spec/**/*'
-
-Style/GlobalVars:
-  Exclude:
-    - 'spec/integrations/fixtures/**/*'
-    - 'spec/bugs/fixtures/**/*'
-
-Layout/SpaceInsideStringInterpolation:
-  EnforcedStyle: no_space
-
-Lint/AmbiguousRegexpLiteral:
-  Enabled: false
-
-Metrics/MethodLength:
-  Enabled: false
-
-Metrics/ParameterLists:
-  Enabled: false
-
-Metrics/AbcSize:
-  Enabled: false
-
-Metrics/LineLength:
-  Max: 100
-  Exclude:
-    - 'spec/**/*.rb'
-
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*.rb'
-
-Rails/Date:
-  Enabled: false
-
-Rails/TimeZone:
-  Enabled: false
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: no_comma

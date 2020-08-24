@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe WSDirector::ClientsHolder do
   let(:clients_count) { 3 }
 

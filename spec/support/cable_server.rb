@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module CableServer
   class << self
     PORT = 8898
-    HOST = "0.0.0.0".freeze
+    HOST = "0.0.0.0"
 
     def start
       _, @out, @err, @server_thr = Open3.popen3(
@@ -15,7 +17,7 @@ module CableServer
       loop do
         raise "Failed to start!" if timeout.zero?
         out = @out.readline
-        break if out =~ /Listening on tcp/
+        break if /Listening on tcp/.match?(out)
         timeout -= 0.5
         sleep 0.5
       end

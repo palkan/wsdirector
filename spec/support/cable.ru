@@ -48,7 +48,7 @@ end
 app = Rack::Builder.new
 app.map "/cable" do
   use(LiteCable::Server::Middleware, connection_class: Chat::Connection)
-  run(proc { |_| [200, { "Content-Type" => "text/plain" }, ["OK"]] })
+  run(proc { |_| [200, {"Content-Type" => "text/plain"}, ["OK"]] })
 end
 
 run app

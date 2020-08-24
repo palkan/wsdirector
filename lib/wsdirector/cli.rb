@@ -9,7 +9,8 @@ require "wsdirector/runner"
 module WSDirector
   # Command line interface for WsDirector
   class CLI
-    def initialize; end
+    def initialize
+    end
 
     def run
       parse_args!
@@ -31,7 +32,7 @@ module WSDirector
         exit 1
       end
     rescue Error => e
-      STDERR.puts e.message
+      warn e.message
       exit 1
     end
 
@@ -55,7 +56,7 @@ module WSDirector
         end
 
         opts.on("-v", "--version", "Print versin") do
-          STDOUT.puts WSDirector::VERSION
+          $stdout.puts WSDirector::VERSION
           exit 0
         end
       end

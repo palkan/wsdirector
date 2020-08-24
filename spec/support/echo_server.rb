@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require "websocket-eventmachine-server"
 
 module EchoServer
   class << self
     PORT = 8888
-    HOST = "0.0.0.0".freeze
+    HOST = "0.0.0.0"
 
     def start
       EM.run {

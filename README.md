@@ -1,5 +1,6 @@
 [![Cult Of Martians](http://cultofmartians.com/assets/badges/badge.svg)](http://cultofmartians.com/tasks/websocket-director.html)
-[![Gem Version](https://badge.fury.io/rb/wsdirector-cli.svg)](https://rubygems.org/gems/wsdirector-cli) [![Build Status](https://travis-ci.org/palkan/wsdirector.svg?branch=master)](https://travis-ci.org/palkan/wsdirector) [![CircleCI](https://circleci.com/gh/palkan/wsdirector.svg?style=svg)](https://circleci.com/gh/palkan/wsdirector) 
+[![Gem Version](https://badge.fury.io/rb/wsdirector-cli.svg)](https://rubygems.org/gems/wsdirector-cli)
+[![Build](https://github.com/palkan/wsdirector/workflows/Build/badge.svg)](https://github.com/palkan/wsdirector/actions)
 
 # WebSocket Director
 
@@ -10,7 +11,7 @@ Suitable for testing any websocket server implementation, like [Action Cable](ht
 ## Installation
 
 ```bash
-  $ gem install wsdirector-cli
+gem install wsdirector-cli
 ```
 
 ## Usage
@@ -60,7 +61,6 @@ You can create more complex scenarios with multiple client groups:
 ```
 
 Run with scale factor:
-
 
 ```bash
 wsdirector script.yml ws://websocket.server:9876 -s 10
@@ -152,7 +152,6 @@ wsdirector -i '{"receive": "hello"}' localhost:9898/ws
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/palkan/wsdirector.
-
 
 ## License
 

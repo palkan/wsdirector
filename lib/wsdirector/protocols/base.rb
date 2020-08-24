@@ -86,8 +86,8 @@ module WSDirector
         end
       rescue ThreadError
         raise NoMessageError,
-              "Expected to receive #{total_expected} messages " \
-              "but received only #{total_received}"
+          "Expected to receive #{total_expected} messages " \
+          "but received only #{total_received}"
       end
       # rubocop: enable Metrics/CyclomaticComplexity
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe WSDirector::ResultsHolder do
   subject { described_class.new }
 

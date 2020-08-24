@@ -59,7 +59,7 @@ describe "wsdirector vs EchoServer" do
       output = run_wsdirector(test_script, failure: true)
       expect(output).to include "1 clients, 1 failures"
       expect(output).to include("1) Action failed: #receive")
-      expect(output).to match(/\-\- expected: .*subscription_confirmation/)
+      expect(output).to match(/-- expected: .*subscription_confirmation/)
       expect(output).to match(/\+\+ got: .*subscribe/)
     end
   end
