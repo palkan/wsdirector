@@ -1,0 +1,54 @@
+- client:
+    ignore: !ruby/regexp /ping/
+    loop:
+      multiplier: 3
+      actions:
+        - receive:
+            data:
+              type: "welcome"
+        - send:
+            data:
+              command: "subscribe"
+              identifier: "{\"channel\":\"TestChannel\"}"
+        - receive:
+            data:
+              identifier: "{\"channel\":\"TestChannel\"}"
+              type: "confirm_subscription"
+        - wait_all
+        - send:
+            data:
+              command: "message"
+              identifier: "{\"channel\":\"TestChannel\"}"
+              data: "{\"text\": \"echo\",\"action\":\"broadcast\"}"
+        - send:
+            data:
+              command: "message"
+              identifier: "{\"channel\":\"TestChannel\"}"
+              data: "{\"text\": \"echo 2\",\"action\":\"broadcast\"}"
+        - send:
+            data:
+              command: "message"
+              identifier: "{\"channel\":\"TestChannel\"}"
+              data: "{\"text\": \"echo 3\",\"action\":\"broadcast\"}"
+
+- client:
+    name: "listeners"
+    ignore:
+      - !ruby/regexp /ping/
+    loop:
+      multiplier: ":scale * 2"
+      actions:
+        - receive:
+            data:
+              type: "welcome"
+        - send:
+            data:
+              command: "subscribe"
+              identifier: "{\"channel\":\"TestChannel\"}"
+        - receive:
+            data:
+              identifier: "{\"channel\":\"TestChannel\"}"
+              type: "confirm_subscription"
+        - wait_all
+        - receive:
+            multiplier: ":scale + :scale + 1"

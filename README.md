@@ -69,6 +69,22 @@ wsdirector script.yml ws://websocket.server:9876 -s 10
 #=> Group listeners: 20 clients, 0 failures
 ```
 
+Also you can add a loop option for your scenarios to avoid copy-paste actions:
+
+```yml
+  # script.yml
+  - client: # first clients group
+      name: "publisher" # optional group name
+      loop:
+        multiplier: ":scale" # :scale take number from -s param, and run :scale number of clients in this group
+        actions:
+          - receive:
+              data: "Welcome"
+          - wait_all # makes all clients in all groups wait untill every client get this point (global barrier)
+          - send:
+              data: "test message"
+```
+
 The simpliest scenario is just checking that socket is succesfully connected:
 
 ```yml
