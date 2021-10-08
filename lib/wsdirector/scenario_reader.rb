@@ -96,7 +96,7 @@ module WSDirector
             loop_scenario = scenario_step["loop"]
             multiplier = parse_multiplier(loop_scenario["multiplier"] || "1")
             loop_actions = loop_scenario["actions"] || []
-            total_count += loop_actions.size.zero? ? multiplier : loop_actions.size * multiplier
+            total_count += multiplier
 
             parsed_steps << parse_scenario(
               loop_actions,

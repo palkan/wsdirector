@@ -51,7 +51,7 @@ describe WSDirector::ScenarioReader do
       let(:file_path) { fixture_path("scenario_loop_simple.yml") }
 
       it "contains one looped client", :aggregate_failures do
-        expect(subject["total"]).to eq(13)
+        expect(subject["total"]).to eq 4
         expect(subject["clients"].first["name"]).to eq "default"
         expect(subject["clients"].first["steps"].size).to eq 1
         expect(subject["clients"].first["multiplier"]).to eq 1
@@ -68,7 +68,7 @@ describe WSDirector::ScenarioReader do
       let(:file_path) { fixture_path("scenario_loop_multiple.yml") }
 
       it "contains multiple looped clients", :aggregate_failures do
-        expect(subject["total"]).to eq(31)
+        expect(subject["total"]).to eq 5
         expect(subject["clients"].size).to eq 2
 
         expect(subject["clients"].first["name"]).to eq "1"
@@ -88,7 +88,7 @@ describe WSDirector::ScenarioReader do
         before { WSDirector.config.scale = 5 }
 
         it "parses multipliers", :aggregate_failures do
-          expect(subject["total"]).to eq 71
+          expect(subject["total"]).to eq 13
           expect(subject["clients"].size).to eq(2)
 
           expect(subject["clients"].first["multiplier"]).to eq 3
