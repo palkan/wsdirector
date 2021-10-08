@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 require "erb"
+require "wsdirector/ext/deep_dup"
 
 module WSDirector
   # Read and parse YAML scenario
   class ScenarioReader
+    using WSDirector::Ext::DeepDup
+
     class << self
       include WSDirector::Utils
 
@@ -12,8 +15,10 @@ module WSDirector
         contents = ::YAML.load(ERB.new(File.read(file_path)).result) # rubocop:disable Security/YAMLLoad
 
         if contents.first.key?("client")
+          contents = transform_with_loop(contents, multiple: true)
           parse_multiple_scenarios(contents)
         else
+          contents = transform_with_loop(contents)
           {"total" => 1, "clients" => [parse_simple_scenario(contents)]}
         end
       end
@@ -65,6 +70,22 @@ module WSDirector
           )
         end
         {"total" => total_count, "clients" => clients}
+      end
+
+      def transform_with_loop(contents, multiple: false)
+        contents.flat_map do |content|
+          loop_data = content.dig("client", "loop") || content.dig("loop")
+          next content unless loop_data
+
+          loop_multiplier = parse_multiplier(loop_data["multiplier"] || "1")
+
+          if multiple
+            content["client"]["actions"] = (loop_data["actions"] * loop_multiplier).map(&:deep_dup)
+            content
+          else
+            loop_data["actions"] * loop_multiplier
+          end
+        end
       end
 
       def parse_ingore(str)

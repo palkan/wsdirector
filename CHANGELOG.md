@@ -2,6 +2,35 @@
 
 ## master
 
+- Add loop option support. ([@last-in-japan][])
+
+You can specify a `loop` option to perform a similar set of actions multiple times:
+
+```yml
+  # script.yml
+  - client:
+      name: "listeners"
+      loop:
+        multiplier: ":scale" # :scale take number from -s param, and run :scale number of clients in this group
+        actions:
+          - receive:
+              data:
+                type: "welcome"
+          - send:
+              data:
+                command: "subscribe"
+                identifier: "{\"channel\":\"Channel\"}"
+          - receive:
+              data:
+                identifier: "{\"channel\":\"Channel\"}"
+                type: "confirm_subscription"
+          - wait_all
+          - receive:
+              multiplier: ":scale + 1"
+```
+
+Useful in combination with `:scale`.
+
 ## 0.4.0 (2020-08-24)
 
 - **Drop Ruby 2.4 support**. ([@palkan][])
