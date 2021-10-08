@@ -77,6 +77,31 @@ The simpliest scenario is just checking that socket is succesfully connected:
   # no actions
 ```
 
+Run with loop option:
+
+```yml
+  # script.yml
+  - client:
+      name: "listeners"
+      loop:
+        multiplier: ":scale" # :scale take number from -s param, and run :scale number of clients in this group
+        actions:
+          - receive:
+              data:
+                type: "welcome"
+          - send:
+              data:
+                command: "subscribe"
+                identifier: "{\"channel\":\"Channel\"}"
+          - receive:
+              data:
+                identifier: "{\"channel\":\"Channel\"}"
+                type: "confirm_subscription"
+          - wait_all
+          - receive:
+              multiplier: ":scale + 1"
+```
+
 ### Protocols
 
 WSDirector uses protocols to handle different actions.
