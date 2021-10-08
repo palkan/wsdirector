@@ -69,7 +69,7 @@ wsdirector script.yml ws://websocket.server:9876 -s 10
 #=> Group listeners: 20 clients, 0 failures
 ```
 
-Also you can add a loop option for your scenarios to avoid copy-paste actions:
+Also you can add a `loop` option for your scenarios to avoid copy-paste actions:
 
 ```yml
   # script.yml

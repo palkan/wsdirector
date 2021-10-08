@@ -124,11 +124,11 @@ module WSDirector
             if current_step.is_a?(Hash)
               type, data = current_step.to_a.first
               handled_steps << {"type" => type, "id" => current_id}.merge(data)
-              current_id += 1
             else
               handled_steps << {"type" => current_step, "id" => current_id}
-              current_id += 1
             end
+
+            current_id += 1
           end
         end
 

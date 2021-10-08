@@ -2,6 +2,25 @@
 
 ## master
 
+## 0.5.0 (2021-10-04)
+
+- Add `loop` option support. ([@wazzuper](https://github.com/wazzuper))
+
+You can add a `loop` option for your scenarios to avoid copy-paste actions:
+
+```yml
+  - client: # first clients group
+      name: "publisher" # optional group name
+      loop:
+        multiplier: ":scale" # :scale take number from -s param, and run :scale number of clients in this group
+        actions:
+          - receive:
+              data: "Welcome"
+          - wait_all # makes all clients in all groups wait untill every client get this point (global barrier)
+          - send:
+              data: "test message"
+```
+
 ## 0.4.0 (2020-08-24)
 
 - **Drop Ruby 2.4 support**. ([@palkan][])
