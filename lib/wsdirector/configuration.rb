@@ -3,8 +3,7 @@
 module WSDirector
   # WSDirector configuration
   class Configuration
-    attr_accessor :ws_url, :scenario_path, :colorize, :scale,
-      :sync_timeout
+    attr_accessor :ws_url, :scenario_path, :colorize, :scale, :sync_timeout, :json_scenario
 
     def initialize
       reset!

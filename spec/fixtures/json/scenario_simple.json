@@ -1,0 +1,45 @@
+[
+  {
+    "receive": {
+      "data": {
+        "type": "welcome"
+      }
+    }
+  },
+  {
+    "send": {
+      "data": {
+        "command": "subscribe",
+        "identifier": "{\"channel\":\"TestChannel\"}"
+      }
+    }
+  },
+  {
+    "receive": {
+      "data": {
+        "identifier": "{\"channel\":\"TestChannel\"}",
+        "type": "confirm_subscription"
+      }
+    }
+  },
+  {
+    "send": {
+      "data": {
+        "command": "message",
+        "identifier": "{\"channel\":\"TestChannel\"}",
+        "data": "{\"text\": \"echo\",\"action\":\"echo\"}"
+      }
+    }
+  },
+  {
+    "receive": {
+      "data": {
+        "identifier": "{\"channel\":\"TestChannel\"}",
+        "message": {
+          "text": "echo",
+          "action": "echo"
+        }
+      }
+    }
+  }
+]

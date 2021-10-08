@@ -12,6 +12,8 @@ describe "wsdirector vs CableServer" do
 
   before { WSDirector.config.ws_url = CableServer.url }
 
+  let(:options) { "-u #{WSDirector.config.ws_url}" }
+
   context "just connect (no actions, no protocol)" do
     let(:content) do
       <<~YAML
@@ -21,7 +23,7 @@ describe "wsdirector vs CableServer" do
     end
 
     it "shows success message" do
-      expect(run_wsdirector(test_script)).to include "1 clients, 0 failures"
+      expect(run_wsdirector(test_script, options: options)).to include "1 clients, 0 failures"
     end
   end
 
@@ -35,7 +37,7 @@ describe "wsdirector vs CableServer" do
     end
 
     it "shows success message" do
-      expect(run_wsdirector(test_script)).to include "3 clients, 0 failures"
+      expect(run_wsdirector(test_script, options: options)).to include "3 clients, 0 failures"
     end
   end
 
@@ -80,9 +82,10 @@ describe "wsdirector vs CableServer" do
                     text: "Hello!"
       YAML
     end
+    let(:options) { super() + " -s 3" }
 
     it "shows success message", :aggregate_failures do
-      output = run_wsdirector(test_script, options: "-s 3")
+      output = run_wsdirector(test_script, options: options)
       expect(output).to include "Group publishers: 3 clients, 0 failures"
       expect(output).to include "Group listeners: 6 clients, 0 failures"
     end
@@ -141,9 +144,10 @@ describe "wsdirector vs CableServer" do
                     text: "Hello!"
       YAML
     end
+    let(:options) { super() + " -s 1" }
 
     it "shows success message", :aggregate_failures do
-      output = run_wsdirector(test_script, options: "-s 1")
+      output = run_wsdirector(test_script, options: options)
       expect(output).to include "Group publishers: 1 clients, 0 failures"
       expect(output).to include "Group listeners: 2 clients, 0 failures"
     end
@@ -177,7 +181,7 @@ describe "wsdirector vs CableServer" do
     end
 
     it "shows failure message", :aggregate_failures do
-      output = run_wsdirector(test_script, failure: true)
+      output = run_wsdirector(test_script, failure: true, options: options)
       expect(output).to include "Group 1: 1 clients, 1 failures"
       expect(output).to include "Group 2: 1 clients, 1 failures"
       expect(output).to include "Subscription rejected to"
@@ -242,9 +246,10 @@ describe "wsdirector vs CableServer" do
                         text: "..."
       YAML
     end
+    let(:options) { super() + " -s 4" }
 
     it "shows success message", :aggregate_failures do
-      output = run_wsdirector(test_script, options: "-s 4")
+      output = run_wsdirector(test_script, options: options)
       expect(output).to include "4 clients, 0 failures"
     end
   end

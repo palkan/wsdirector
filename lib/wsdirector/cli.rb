@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "optparse"
+require "uri"
 
 require "wsdirector"
 require "wsdirector/scenario_reader"
@@ -23,7 +24,7 @@ module WSDirector
       end
 
       scenario = WSDirector::ScenarioReader.parse(
-        WSDirector.config.scenario_path
+        WSDirector.config.scenario_path || WSDirector.config.json_scenario
       )
 
       if WSDirector::Runner.new(scenario).start
@@ -51,6 +52,14 @@ module WSDirector
           WSDirector.config.sync_timeout = v
         end
 
+        opts.on("-i JSON", "--include=JSON", String, "Include JSON to parse") do |v|
+          WSDirector.config.json_scenario = v
+        end
+
+        opts.on("-u URL", "--url=URL", Object, "Websocket server URL") do |v|
+          WSDirector.config.ws_url = v
+        end
+
         opts.on("-c", "--[no-]color", "Colorize output") do |v|
           WSDirector.config.colorize = v
         end
@@ -63,16 +72,22 @@ module WSDirector
       # rubocop: enable Metrics/LineLength
 
       parser.parse!
+      check_for_errors
+    end
 
+    def check_for_errors
       WSDirector.config.scenario_path = ARGV[0]
-      WSDirector.config.ws_url = ARGV[1]
 
-      raise(Error, "Scenario path is missing") if WSDirector.config.scenario_path.nil?
+      if WSDirector.config.json_scenario.nil?
+        raise(Error, "Scenario is missing") if WSDirector.config.scenario_path.nil?
 
-      raise(Error, "File doesn't exist #{WSDirector.config.scenario_path}") unless
-        File.file?(WSDirector.config.scenario_path)
+        unless File.file?(WSDirector.config.scenario_path)
+          raise(Error, "File doesn't exist #{WSDirector.config.scenario_path}")
+        end
+      end
 
       raise(Error, "Websocket server url is missing") if WSDirector.config.ws_url.nil?
+      raise(Error, "Invalid websocket server url") unless WSDirector.config.ws_url.match?(URI::DEFAULT_PARSER.make_regexp)
     end
   end
 end

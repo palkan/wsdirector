@@ -12,6 +12,8 @@ describe "wsdirector vs EchoServer" do
 
   before { WSDirector.config.ws_url = EchoServer.url }
 
+  let(:options) { "-u #{WSDirector.config.ws_url}" }
+
   context "just connect (no actions)" do
     let(:content) do
       <<~YAML
@@ -21,7 +23,7 @@ describe "wsdirector vs EchoServer" do
     end
 
     it "shows success message" do
-      expect(run_wsdirector(test_script)).to include "1 clients, 0 failures"
+      expect(run_wsdirector(test_script, options: options)).to include "1 clients, 0 failures"
     end
   end
 
@@ -36,7 +38,7 @@ describe "wsdirector vs EchoServer" do
     end
 
     it "shows success message" do
-      expect(run_wsdirector(test_script)).to include "1 clients, 0 failures"
+      expect(run_wsdirector(test_script, options: options)).to include "1 clients, 0 failures"
     end
   end
 
@@ -56,7 +58,7 @@ describe "wsdirector vs EchoServer" do
     end
 
     it "show failure message and errors", :aggregate_failures do
-      output = run_wsdirector(test_script, failure: true)
+      output = run_wsdirector(test_script, failure: true, options: options)
       expect(output).to include "1 clients, 1 failures"
       expect(output).to include("1) Action failed: #receive")
       expect(output).to match(/-- expected: .*subscription_confirmation/)
