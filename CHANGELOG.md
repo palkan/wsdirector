@@ -2,6 +2,23 @@
 
 ## master
 
+
+- Add JSON support. ([@wazzuper](https://github.com/wazzuper))
+
+- Add new commands to CLI.
+
+You can pass a JSON scenario directly to the CLI without creating a file:
+
+```bash
+wsdirector -i '[{"receive": {"data":"welcome"}},{"send":{"data":"send message"}},{"receive":{"data":"receive message"}}]' -u ws://websocket.server:9876
+```
+
+or you can pass it as a JSON file:
+
+```bash
+wsdirector scenario.json -u ws://websocket.server:9876
+```
+
 - Add loop option support. ([@last-in-japan][])
 
 You can specify a `loop` option to perform a similar set of actions multiple times:

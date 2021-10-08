@@ -4,15 +4,20 @@ require "erb"
 require "wsdirector/ext/deep_dup"
 
 module WSDirector
-  # Read and parse YAML scenario
+  # Read and parse different scenarios
   class ScenarioReader
     using WSDirector::Ext::DeepDup
 
     class << self
       include WSDirector::Utils
 
-      def parse(file_path)
-        contents = ::YAML.load(ERB.new(File.read(file_path)).result) # rubocop:disable Security/YAMLLoad
+      def parse(scenario)
+        contents =
+          if File.file?(scenario)
+            ::YAML.load(ERB.new(File.read(scenario)).result) # rubocop:disable Security/YAMLLoad
+          else
+            [JSON.parse(scenario)]
+          end.flatten
 
         if contents.first.key?("client")
           contents = transform_with_loop(contents, multiple: true)

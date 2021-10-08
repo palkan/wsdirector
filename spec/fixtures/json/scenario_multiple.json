@@ -1,0 +1,99 @@
+[
+  {
+    "client": {
+      "multiplier": ":scale",
+      "ignore": !ruby/regexp /ping/,
+      "actions": [
+        {
+          "receive": {
+            "data": {
+              "type": "welcome"
+            }
+          }
+        },
+        {
+          "send": {
+            "data": {
+              "command": "subscribe",
+              "identifier": "{\"channel\":\"TestChannel\"}"
+            }
+          }
+        },
+        {
+          "receive": {
+            "data": {
+              "identifier": "{\"channel\":\"TestChannel\"}",
+              "type": "confirm_subscription"
+            }
+          }
+        },
+        "wait_all",
+        {
+          "send": {
+            "data": {
+              "command": "message",
+              "identifier": "{\"channel\":\"TestChannel\"}",
+              "data": "{\"text\": \"echo\",\"action\":\"broadcast\"}"
+            }
+          }
+        },
+        {
+          "send": {
+            "data": {
+              "command": "message",
+              "identifier": "{\"channel\":\"TestChannel\"}",
+              "data": "{\"text\": \"echo\",\"action\":\"broadcast\"}"
+            }
+          }
+        },
+        {
+          "send": {
+            "data": {
+              "command": "message",
+              "identifier": "{\"channel\":\"TestChannel\"}",
+              "data": "{\"text\": \"echo\",\"action\":\"broadcast\"}"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "client": {
+      "multiplier": ":scale * 2",
+      "name": "listeners",
+      "ignore": !ruby/regexp /ping/,
+      "actions": [
+        {
+          "receive": {
+            "data": {
+              "type": "welcome"
+            }
+          }
+        },
+        {
+          "send": {
+            "data": {
+              "command": "subscribe",
+              "identifier": "{\"channel\":\"TestChannel\"}"
+            }
+          }
+        },
+        {
+          "receive": {
+            "data": {
+              "identifier": "{\"channel\":\"TestChannel\"}",
+              "type": "confirm_subscription"
+            }
+          }
+        },
+        "wait_all",
+        {
+          "receive": {
+            "multiplier": ":scale + :scale + 1"
+          }
+        }
+      ]
+    }
+  }
+]
