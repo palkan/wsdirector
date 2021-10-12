@@ -59,7 +59,7 @@ describe WSDirector::ScenarioReader do
   end
 
   context "when single client with loop inside" do
-    let(:file_path) { fixture_path("scenario_simple_loop.yml") }
+    let(:scenario) { fixture_path("scenario_simple_loop.yml") }
 
     it "multiplies actions depending on multiplier from a loop" do
       expect(subject["total"]).to eq(1)
@@ -71,7 +71,7 @@ describe WSDirector::ScenarioReader do
   end
 
   context "when multiple clients with loop inside" do
-    let(:file_path) { fixture_path("scenario_multiple_loop.yml") }
+    let(:scenario) { fixture_path("scenario_multiple_loop.yml") }
 
     it "multiplies actions depending on multiplier from a loop" do
       expect(subject["total"]).to eq(2)
@@ -132,16 +132,28 @@ describe WSDirector::ScenarioReader do
       it "contains two clients", :aggregate_failures do
         expect(subject["total"]).to eq(3)
         expect(subject["clients"].first["name"]).to eq "1"
-        expect(subject["clients"].first["ignore"]).to eq([/ping/])
+        expect(subject["clients"].first["ignore"]).to eq(["ping"])
         expect(subject["clients"].size).to eq 2
         expect(subject["clients"].first["steps"].size).to eq 7
         expect(subject["clients"].first["multiplier"]).to eq 1
         expect(subject["clients"].first["steps"].last["type"]).to eq "send"
         expect(subject["clients"].last["steps"].size).to eq 7
         expect(subject["clients"].last["name"]).to eq "listeners"
-        expect(subject["clients"].last["ignore"]).to eq([/ping/])
+        expect(subject["clients"].last["ignore"]).to eq(["ping"])
         expect(subject["clients"].last["multiplier"]).to eq 2
         expect(subject["clients"].last["steps"][3]["type"]).to eq "wait_all"
+      end
+    end
+
+    context "with loop inside" do
+      let(:scenario) { fixture_path("json/scenario_simple_loop.json") }
+
+      it "contains two clients", :aggregate_failures do
+        expect(subject["total"]).to eq(1)
+        expect(subject["clients"].first["name"]).to eq "default"
+        expect(subject["clients"].first["steps"].size).to eq 13
+        expect(subject["clients"].first["multiplier"]).to eq 1
+        expect(subject["clients"].first["steps"].first["type"]).to eq "receive"
       end
     end
   end

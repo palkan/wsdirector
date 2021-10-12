@@ -39,6 +39,9 @@ module WSDirector
 
     private
 
+    FILE_FORMAT = /.+.(json|yml)\z/.freeze
+    private_constant :FILE_FORMAT
+
     def parse_args!
       # rubocop: disable Metrics/LineLength
       parser = OptionParser.new do |opts|
@@ -72,22 +75,26 @@ module WSDirector
       # rubocop: enable Metrics/LineLength
 
       parser.parse!
+
+      WSDirector.config.scenario_path = ARGV.grep(FILE_FORMAT).last
+
+      unless WSDirector.config.ws_url
+        WSDirector.config.ws_url = ARGV.grep(URI::DEFAULT_PARSER.make_regexp).last
+      end
+
       check_for_errors
     end
 
     def check_for_errors
-      WSDirector.config.scenario_path = ARGV[0]
-
       if WSDirector.config.json_scenario.nil?
-        raise(Error, "Scenario is missing") if WSDirector.config.scenario_path.nil?
+        raise(Error, "Scenario is missing") unless WSDirector.config.scenario_path
 
         unless File.file?(WSDirector.config.scenario_path)
           raise(Error, "File doesn't exist #{WSDirector.config.scenario_path}")
         end
       end
 
-      raise(Error, "Websocket server url is missing") if WSDirector.config.ws_url.nil?
-      raise(Error, "Invalid websocket server url") unless WSDirector.config.ws_url.match?(URI::DEFAULT_PARSER.make_regexp)
+      raise(Error, "Websocket server url is missing") unless WSDirector.config.ws_url
     end
   end
 end

@@ -60,7 +60,7 @@ module WSDirector
 
     def ignored?(msg)
       return false unless @ignore
-      @ignore.any? { |pattern| msg =~ pattern }
+      @ignore.any? { |pattern| msg =~ Regexp.new(pattern) }
     end
   end
 end
