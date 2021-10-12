@@ -30,7 +30,7 @@ Create YAML file with simple testing script:
 and run it with this command:
 
 ```bash
-wsdirector script.yml -u ws://websocket.server:9876/ws
+wsdirector script.yml ws://websocket.server:9876/ws
 
 #=> 1 clients, 0 failures
 ```
@@ -63,7 +63,7 @@ You can create more complex scenarios with multiple client groups:
 Run with scale factor:
 
 ```bash
-wsdirector script.yml -u ws://websocket.server:9876 -s 10
+wsdirector script.yml ws://websocket.server:9876 -s 10
 
 #=> Group publisher: 10 clients, 0 failures
 #=> Group listeners: 20 clients, 0 failures

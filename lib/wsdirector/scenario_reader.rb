@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "erb"
+require "json"
 require "wsdirector/ext/deep_dup"
 
 module WSDirector
@@ -14,7 +15,7 @@ module WSDirector
       def parse(scenario)
         contents =
           if File.file?(scenario)
-            ::YAML.load(ERB.new(File.read(scenario)).result) # rubocop:disable Security/YAMLLoad
+            parse_file(scenario)
           else
             [JSON.parse(scenario)]
           end.flatten
@@ -29,6 +30,17 @@ module WSDirector
       end
 
       private
+
+      JSON_FILE_FORMAT = /.+.(json)\z/.freeze
+      private_constant :JSON_FILE_FORMAT
+
+      def parse_file(file)
+        if file.match?(JSON_FILE_FORMAT)
+          JSON.parse(File.read(file))
+        else
+          ::YAML.load(ERB.new(File.read(file)).result) # rubocop:disable Security/YAMLLoad
+        end
+      end
 
       def handle_steps(steps)
         steps.flat_map.with_index do |step, id|
