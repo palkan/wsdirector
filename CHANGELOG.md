@@ -2,8 +2,9 @@
 
 ## master
 
+## 0.5.0 (2021-10-13)
 
-- Add JSON support. ([@wazzuper](https://github.com/wazzuper))
+- Add JSON support. ([@wazzuper][])
 
 - Add new commands to CLI.
 
@@ -110,3 +111,5 @@ Allows to handle multiple messages with unspecified order:
 [@palkan]: https://github.com/palkan
 [@Kirillvs]: https://github.com/Kirillvs
 [@Grandman]: https://github.com/Grandman
+[@wazzuper]: https://github.com/wazzuper
+[@last-in-japan]: https://github.com/last-in-japan
