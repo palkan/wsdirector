@@ -63,10 +63,10 @@ module WSDirector
           messages.nil? || messages.empty?
 
         expected =
-          Hash[messages.map do |msg|
+          messages.map do |msg|
             multiplier = parse_multiplier(msg.delete("multiplier") || "1")
             [msg["data"], multiplier]
-          end]
+          end.to_h
 
         total_expected = expected.values.sum
         total_received = 0
