@@ -174,12 +174,6 @@ Scenario:
 
 - Report timings (per-client and aggregates)
 
-- File-less scenarios (JSON-encoded?), e.g.
-
-```shell
-wsdirector -i '{"receive": "hello"}' localhost:9898/ws
-```
-
 - Connection parameters (headers, query params, etc)
 
 - Testing frameworks integrations
