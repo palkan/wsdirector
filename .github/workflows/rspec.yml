@@ -16,24 +16,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["2.5", "2.6", "2.7", "3.0"]
+        ruby: ["2.6", "2.7", "3.0", "3.1"]
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/cache@v1
-      with:
-        path: /home/runner/bundle
-        key: bundle-${{ matrix.ruby }}-${{ hashFiles('**/*.gemspec') }}
-        restore-keys: |
-          bundle-${{ matrix.ruby }}-
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-    - name: Bundle install
-      run: |
-        bundle config path /home/runner/bundle
-        bundle config --global gemfile ${{ matrix.gemfile }}
-        bundle install
-        bundle update
+        bundler-cache: true
     - name: Run RSpec
       run: |
         bundle exec rspec

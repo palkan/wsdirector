@@ -38,7 +38,21 @@ module WSDirector
         if file.match?(JSON_FILE_FORMAT)
           JSON.parse(File.read(file))
         else
-          ::YAML.load(ERB.new(File.read(file)).result) # rubocop:disable Security/YAMLLoad
+          parse_yaml(file)
+        end
+      end
+
+      def parse_yaml(path)
+        if defined?(ERB)
+          ::YAML.load(ERB.new(File.read(path)).result, aliases: true, permitted_classes: [Date, Time, Regexp]) || {} # rubocop:disable Security/YAMLLoad
+        else
+          ::YAML.load_file(path, aliases: true) || {}
+        end
+      rescue ArgumentError
+        if defined?(ERB)
+          ::YAML.load(ERB.new(File.read(path)).result) || {} # rubocop:disable Security/YAMLLoad
+        else
+          ::YAML.load_file(path) || {}
         end
       end
 

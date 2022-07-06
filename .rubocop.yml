@@ -14,16 +14,10 @@ AllCops:
     - 'spec/rubocop/fixtures/**/*'
   DisplayCopNames: true
   SuggestExtensions: false
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
 
 Standard/BlockSingleLineBraces:
   Enabled: false
 
 Style/FrozenStringLiteralComment:
   Enabled: true
-
-Style/TrailingCommaInArrayLiteral:
-  EnforcedStyleForMultiline: no_comma
-
-Style/TrailingCommaInHashLiteral:
-  EnforcedStyleForMultiline: no_comma

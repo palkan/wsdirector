@@ -6,7 +6,7 @@ require "wsdirector"
 
 begin
   require "pry-byebug"
-rescue LoadError # rubocop:disable Lint/HandleExceptions
+rescue LoadError
 end
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }

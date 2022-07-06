@@ -10,9 +10,6 @@ require "wsdirector/runner"
 module WSDirector
   # Command line interface for WsDirector
   class CLI
-    def initialize
-    end
-
     def run
       parse_args!
 
@@ -43,7 +40,6 @@ module WSDirector
     private_constant :FILE_FORMAT
 
     def parse_args!
-      # rubocop: disable Metrics/LineLength
       parser = OptionParser.new do |opts|
         opts.banner = "Usage: wsdirector scenario_path ws_url [options]"
 
