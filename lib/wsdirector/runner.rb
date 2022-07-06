@@ -11,14 +11,14 @@ module WSDirector
   class Runner
     using WSDirector::Ext::DeepDup
 
-    def initialize(scenario)
+    def initialize(scenario, sync_timeout: 5)
       @scenario = scenario
       @total_count = scenario["total"]
-      @global_holder = ClientsHolder.new(total_count)
+      @global_holder = ClientsHolder.new(total_count, sync_timeout: sync_timeout)
       @results_holder = ResultsHolder.new
     end
 
-    def start
+    def execute(url:, scale: 1)
       Thread.abort_on_exception = true
 
       tasks = scenario["clients"].flat_map do |client|
@@ -27,19 +27,19 @@ module WSDirector
 
         Array.new(client.fetch("multiplier")) do
           Thread.new do
-            Task.new(client.deep_dup, global_holder: global_holder, result: result)
-              .run
+            Task.new(client.deep_dup, global_holder: global_holder, result: result, scale: scale)
+              .run(url)
           end
         end
       end
 
       tasks.each(&:join)
-      results_holder.print_summary
-      results_holder.success?
+
+      results_holder
     end
 
     private
 
-    attr_reader :scenario, :total_count, :global_holder, :results_holder
+    attr_reader :scenario, :total_count, :global_holder, :results_holder, :scale
   end
 end

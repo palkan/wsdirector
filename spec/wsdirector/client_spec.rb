@@ -4,9 +4,9 @@ describe WSDirector::Client do
   context "with EchoServer" do
     require "echo_server_helper"
 
-    subject { described_class.new }
+    let(:url) { EchoServer.url }
 
-    before { WSDirector.config.ws_url = EchoServer.url }
+    subject { described_class.new(url: url) }
 
     describe "#initialize" do
       it "opens connection" do
@@ -15,8 +15,9 @@ describe WSDirector::Client do
       end
 
       context "when url is wrong" do
+        let(:url) { "ws://localhost:666" }
+
         it "raises error" do
-          WSDirector.config.ws_url = "ws://localhost:666"
           expect { subject }.to raise_error(WSDirector::Error, /failed to connect/i)
         end
       end
@@ -34,9 +35,9 @@ describe WSDirector::Client do
   context "with Cable server and ignore" do
     require "cable_server_helper"
 
-    before { WSDirector.config.ws_url = CableServer.url }
+    let(:url) { CableServer.url }
 
-    subject { described_class.new(ignore: [/ping/]) }
+    subject { described_class.new(url: url, ignore: [/ping/]) }
 
     describe "#initialize" do
       it "receives welcome message" do
@@ -47,7 +48,7 @@ describe WSDirector::Client do
       end
 
       context "when ping is not ignored" do
-        subject { described_class.new }
+        subject { described_class.new(url: url) }
 
         it "receives ping message" do
           subject

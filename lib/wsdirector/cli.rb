@@ -10,28 +10,51 @@ require "wsdirector/runner"
 module WSDirector
   # Command line interface for WsDirector
   class CLI
+    class Configuration
+      attr_accessor :ws_url, :scenario_path, :colorize, :scale, :sync_timeout, :json_scenario
+
+      def initialize
+        reset!
+      end
+
+      def colorize?
+        colorize == true
+      end
+
+      # Restore to defaults
+      def reset!
+        @scale = 1
+        @colorize = false
+        @sync_timeout = 5
+      end
+    end
+
+    attr_reader :config
+
     def run
+      @config = Configuration.new
+
       parse_args!
 
       begin
-        require "colorize" if WSDirector.config.colorize?
+        require "colorize" if config.colorize?
       rescue LoadError
-        WSDirector.config.colorize = false
+        config.colorize = false
         warn "Install colorize to use colored output"
       end
 
       scenario = WSDirector::ScenarioReader.parse(
-        WSDirector.config.scenario_path || WSDirector.config.json_scenario
+        config.scenario_path || config.json_scenario,
+        scale: config.scale
       )
 
-      if WSDirector::Runner.new(scenario).start
-        exit 0
-      else
-        exit 1
-      end
-    rescue Error => e
-      warn e.message
-      exit 1
+      result = WSDirector::Runner.new(
+        scenario,
+        sync_timeout: config.sync_timeout
+      ).execute(url: config.ws_url, scale: config.scale)
+
+      result.print_summary(colorize: config.colorize?)
+      result.success? || exit(1)
     end
 
     private
@@ -44,27 +67,27 @@ module WSDirector
         opts.banner = "Usage: wsdirector scenario_path ws_url [options]"
 
         opts.on("-s SCALE", "--scale=SCALE", Integer, "Scale factor") do |v|
-          WSDirector.config.scale = v
+          config.scale = v
         end
 
         opts.on("-t TIMEOUT", "--timeout=TIMEOUT", Integer, "Synchronization (wait_all) timeout") do |v|
-          WSDirector.config.sync_timeout = v
+          config.sync_timeout = v
         end
 
         opts.on("-i JSON", "--include=JSON", String, "Include JSON to parse") do |v|
-          WSDirector.config.json_scenario = v
+          config.json_scenario = v
         end
 
         opts.on("-u URL", "--url=URL", Object, "Websocket server URL") do |v|
-          WSDirector.config.ws_url = v
+          config.ws_url = v
         end
 
         opts.on("-f PATH", "--file=PATH", String, "Scenario path") do |v|
-          WSDirector.config.scenario_path = v
+          config.scenario_path = v
         end
 
         opts.on("-c", "--[no-]color", "Colorize output") do |v|
-          WSDirector.config.colorize = v
+          config.colorize = v
         end
 
         opts.on("-v", "--version", "Print versin") do
@@ -76,27 +99,27 @@ module WSDirector
 
       parser.parse!
 
-      unless WSDirector.config.scenario_path
-        WSDirector.config.scenario_path = ARGV.grep(FILE_FORMAT).last
+      unless config.scenario_path
+        config.scenario_path = ARGV.grep(FILE_FORMAT).last
       end
 
-      unless WSDirector.config.ws_url
-        WSDirector.config.ws_url = ARGV.grep(URI::DEFAULT_PARSER.make_regexp).last
+      unless config.ws_url
+        config.ws_url = ARGV.grep(URI::DEFAULT_PARSER.make_regexp).last
       end
 
       check_for_errors
     end
 
     def check_for_errors
-      if WSDirector.config.json_scenario.nil?
-        raise(Error, "Scenario is missing") unless WSDirector.config.scenario_path
+      if config.json_scenario.nil?
+        raise(Error, "Scenario is missing") unless config.scenario_path
 
-        unless File.file?(WSDirector.config.scenario_path)
-          raise(Error, "File doesn't exist #{WSDirector.config.scenario_path}")
+        unless File.file?(config.scenario_path)
+          raise(Error, "File doesn't exist # config.scenario_path}")
         end
       end
 
-      raise(Error, "Websocket server url is missing") unless WSDirector.config.ws_url
+      raise(Error, "Websocket server url is missing") unless config.ws_url
     end
   end
 end

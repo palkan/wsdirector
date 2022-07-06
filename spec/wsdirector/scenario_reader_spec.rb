@@ -34,7 +34,7 @@ describe WSDirector::ScenarioReader do
     end
 
     context "with scale" do
-      before { WSDirector.config.scale = 5 }
+      subject { described_class.parse(scenario, scale: 5) }
 
       it "parses multipliers", :aggregate_failures do
         expect(subject["total"]).to eq 15
@@ -89,7 +89,7 @@ describe WSDirector::ScenarioReader do
     end
 
     context "with scale" do
-      before { WSDirector.config.scale = 5 }
+      subject { described_class.parse(scenario, scale: 5) }
 
       it "parses multipliers with loop", :aggregate_failures do
         expect(subject["total"]).to eq 2

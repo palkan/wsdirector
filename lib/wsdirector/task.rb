@@ -8,18 +8,18 @@ module WSDirector
   class Task
     attr_reader :global_holder, :client
 
-    def initialize(config, global_holder:, result:)
+    def initialize(config, global_holder:, result:, scale:)
       @ignore = config.fetch("ignore")
       @steps = config.fetch("steps")
       @global_holder = global_holder
       @result = result
 
       protocol_class = Protocols.get(config.fetch("protocol", "base"))
-      @protocol = protocol_class.new(self)
+      @protocol = protocol_class.new(self, scale: scale)
     end
 
-    def run
-      connect!
+    def run(url)
+      connect!(url)
 
       steps.each(&protocol)
 
@@ -40,8 +40,8 @@ module WSDirector
 
     attr_reader :steps, :result, :protocol
 
-    def connect!
-      protocol.init_client(ignore: @ignore)
+    def connect!(url)
+      protocol.init_client(url: url, ignore: @ignore)
     end
   end
 end

@@ -15,16 +15,15 @@ module WSDirector
     #
     # Optionally provide an ignore pattern (to ignore incoming message,
     # for example, pings)
-    def initialize(ignore: nil)
+    def initialize(url:, ignore: nil)
       @ignore = ignore
       has_messages = @has_messages = Concurrent::Semaphore.new(0)
       messages = @messages = Queue.new
-      path = WSDirector.config.ws_url
       open = Concurrent::Promise.new
       client = self
 
       @id = SecureRandom.hex(6)
-      @ws = WebSocket::Client::Simple.connect(path) do |ws|
+      @ws = WebSocket::Client::Simple.connect(url) do |ws|
         ws.on(:open) do |_event|
           open.set(true)
         end
@@ -44,7 +43,7 @@ module WSDirector
 
       open.wait!(WAIT_WHEN_EXPECTING_EVENT)
     rescue Errno::ECONNREFUSED
-      raise Error, "Failed to connect to #{path}"
+      raise Error, "Failed to connect to #{url}"
     end
 
     def receive(timeout = WAIT_WHEN_EXPECTING_EVENT)

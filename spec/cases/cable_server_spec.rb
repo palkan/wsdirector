@@ -10,7 +10,7 @@ describe "wsdirector vs CableServer" do
 
   after(:example) { File.delete(test_script) }
 
-  before { WSDirector.config.ws_url = CableServer.url }
+  let(:url) { CableServer.url }
 
   context "just connect (no actions, no protocol)" do
     let(:content) do
@@ -21,7 +21,7 @@ describe "wsdirector vs CableServer" do
     end
 
     it "shows success message" do
-      expect(run_wsdirector(test_script)).to include "1 clients, 0 failures"
+      expect(run_wsdirector(test_script, url)).to include "1 clients, 0 failures"
     end
   end
 
@@ -35,7 +35,7 @@ describe "wsdirector vs CableServer" do
     end
 
     it "shows success message" do
-      expect(run_wsdirector(test_script)).to include "3 clients, 0 failures"
+      expect(run_wsdirector(test_script, url)).to include "3 clients, 0 failures"
     end
   end
 
@@ -82,7 +82,7 @@ describe "wsdirector vs CableServer" do
     end
 
     it "shows success message", :aggregate_failures do
-      output = run_wsdirector(test_script, options: "-s 3")
+      output = run_wsdirector(test_script, url, options: "-s 3")
       expect(output).to include "Group publishers: 3 clients, 0 failures"
       expect(output).to include "Group listeners: 6 clients, 0 failures"
     end
@@ -143,7 +143,7 @@ describe "wsdirector vs CableServer" do
     end
 
     it "shows success message", :aggregate_failures do
-      output = run_wsdirector(test_script, options: "-s 1")
+      output = run_wsdirector(test_script, url, options: "-s 1")
       expect(output).to include "Group publishers: 1 clients, 0 failures"
       expect(output).to include "Group listeners: 2 clients, 0 failures"
     end
@@ -177,7 +177,7 @@ describe "wsdirector vs CableServer" do
     end
 
     it "shows failure message", :aggregate_failures do
-      output = run_wsdirector(test_script, failure: true)
+      output = run_wsdirector(test_script, url, failure: true)
       expect(output).to include "Group 1: 1 clients, 1 failures"
       expect(output).to include "Group 2: 1 clients, 1 failures"
       expect(output).to include "Subscription rejected to"
@@ -244,7 +244,7 @@ describe "wsdirector vs CableServer" do
     end
 
     it "shows success message", :aggregate_failures do
-      output = run_wsdirector(test_script, options: "-s 4")
+      output = run_wsdirector(test_script, url, options: "-s 4")
       expect(output).to include "4 clients, 0 failures"
     end
   end

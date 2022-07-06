@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "colorize"
+
 describe WSDirector::ResultsHolder do
   subject { described_class.new }
 
@@ -18,13 +20,15 @@ describe WSDirector::ResultsHolder do
   end
 
   describe "#print_summary" do
-    before { allow(WSDirector::Printer).to receive(:out) }
+    let(:printer) { double }
+
+    before { allow(printer).to receive(:puts) }
 
     context "when no failures" do
       it "call print success message for every group" do
         subject << success
-        subject.print_summary
-        expect(WSDirector::Printer).to have_received(:out).with("3 clients, 0 failures\n", :green)
+        subject.print_summary(printer: printer, colorize: false)
+        expect(printer).to have_received(:puts).with("3 clients, 0 failures\n")
       end
     end
 
@@ -32,11 +36,11 @@ describe WSDirector::ResultsHolder do
       it "call print failure message for every group", :aggregate_failures do
         subject << success
         subject << failure
-        subject.print_summary
-        expect(WSDirector::Printer).to have_received(:out).with("Group group_1: 3 clients, 0 failures\n", :green)
-        expect(WSDirector::Printer).to have_received(:out).with("Group group_2: 4 clients, 2 failures\n", :red)
-        expect(WSDirector::Printer).to have_received(:out).with("1) Incorrect message\n", :red)
-        expect(WSDirector::Printer).to have_received(:out).with("2) Timeout error\n", :red)
+        subject.print_summary(printer: printer, colorize: true)
+        expect(printer).to have_received(:puts).with("Group group_1: 3 clients, 0 failures\n".colorize(:green))
+        expect(printer).to have_received(:puts).with("Group group_2: 4 clients, 2 failures\n".colorize(:red))
+        expect(printer).to have_received(:puts).with("1) Incorrect message\n".colorize(:red))
+        expect(printer).to have_received(:puts).with("2) Timeout error\n".colorize(:red))
       end
     end
   end

@@ -16,15 +16,15 @@ describe WSDirector::ClientsHolder do
     end
 
     it "fails when not enough clients finish their work in time" do
-      WSDirector.config.sync_timeout = 1
+      holder = described_class.new(clients_count, sync_timeout: 1)
 
       (clients_count - 2).times do
         Thread.new do
-          subject.wait_all
+          holder.wait_all
         end
       end
 
-      expect { subject.wait_all }.to raise_error(
+      expect { holder.wait_all }.to raise_error(
         WSDirector::Error,
         "Timeout (1s) exceeded for #wait_all"
       )
