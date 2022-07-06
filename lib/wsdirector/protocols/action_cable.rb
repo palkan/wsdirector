@@ -31,6 +31,12 @@ module WSDirector
         end
       end
 
+      def unsubscribe(step)
+        identifier = extract_identifier(step)
+
+        client.send({command: "unsubscribe", identifier: identifier}.to_json)
+      end
+
       def perform(step)
         identifier = extract_identifier(step)
         action = step.delete("action")
