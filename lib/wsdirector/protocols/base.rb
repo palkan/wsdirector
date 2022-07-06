@@ -117,6 +117,8 @@ module WSDirector
         received = JSON.parse(received) if expected.is_a?(Hash)
 
         received == expected
+      rescue JSON::ParserError
+        false
       end
 
       def prepare_receive_error(expected, received)
