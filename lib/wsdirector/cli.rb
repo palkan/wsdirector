@@ -59,6 +59,10 @@ module WSDirector
           WSDirector.config.ws_url = v
         end
 
+        opts.on("-f PATH", "--file=PATH", String, "Scenario path") do |v|
+          WSDirector.config.scenario_path = v
+        end
+
         opts.on("-c", "--[no-]color", "Colorize output") do |v|
           WSDirector.config.colorize = v
         end
@@ -72,7 +76,9 @@ module WSDirector
 
       parser.parse!
 
-      WSDirector.config.scenario_path = ARGV.grep(FILE_FORMAT).last
+      unless WSDirector.config.scenario_path
+        WSDirector.config.scenario_path = ARGV.grep(FILE_FORMAT).last
+      end
 
       unless WSDirector.config.ws_url
         WSDirector.config.ws_url = ARGV.grep(URI::DEFAULT_PARSER.make_regexp).last
