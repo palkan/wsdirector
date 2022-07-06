@@ -2,6 +2,8 @@
 
 ## master
 
+- Add `-f/--file` option to specify scenario path. ([@palkan][])
+
 - Drop Ruby 2.5 support.
 
 ## 0.5.0 (2021-10-13)
