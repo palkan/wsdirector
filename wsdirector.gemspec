@@ -5,15 +5,15 @@ require_relative "lib/wsdirector/version"
 Gem::Specification.new do |spec|
   spec.name = "wsdirector-cli"
   spec.version = WSDirector::VERSION
-  spec.authors = ["Kirill Arkhipov", "Grandman", "palkan"]
-  spec.email = ["kirillvs@mail.ru", "root@grandman73.ru", "dementiev.vm@gmail.com"]
+  spec.authors = ["Vladimir Dementyev", "Kirill Arkhipov", "Grandman"]
+  spec.email = ["dementiev.vm@gmail.com", "kirillvs@mail.ru", "root@grandman73.ru"]
 
   spec.summary = "Command line tool for testing websocket servers using scenarios."
   spec.description = "Command line tool for testing websocket servers using scenarios."
   spec.homepage = "https://github.com/palkan/wsdirector"
   spec.license = "MIT"
 
-  spec.required_ruby_version = ">= 2.5.0"
+  spec.required_ruby_version = ">= 2.6.0"
 
   spec.files = Dir.glob("lib/**/*") + %w[README.md LICENSE.txt CHANGELOG.md]
 

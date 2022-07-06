@@ -56,7 +56,6 @@ module WSDirector
         raise NoMessageError, "Expected to receive #{expected} but nothing has been received"
       end
 
-      # rubocop: disable Metrics/CyclomaticComplexity
       def receive_all(step)
         messages = step.delete("messages")
         raise ArgumentError, "Messages array must be specified" if

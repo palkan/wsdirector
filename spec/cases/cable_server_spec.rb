@@ -5,7 +5,7 @@ require "cable_server_helper"
 
 describe "wsdirector vs CableServer" do
   before(:example) do
-    File.open(test_script, "w+") { |file| file.write(content) }
+    File.write(test_script, content)
   end
 
   after(:example) { File.delete(test_script) }

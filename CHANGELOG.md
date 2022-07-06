@@ -2,6 +2,8 @@
 
 ## master
 
+- Drop Ruby 2.5 support.
+
 ## 0.5.0 (2021-10-13)
 
 - Add JSON support. ([@wazzuper][])
