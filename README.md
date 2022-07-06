@@ -2,7 +2,7 @@
 [![Gem Version](https://badge.fury.io/rb/wsdirector-cli.svg)](https://rubygems.org/gems/wsdirector-cli)
 [![Build](https://github.com/palkan/wsdirector/workflows/Build/badge.svg)](https://github.com/palkan/wsdirector/actions)
 
-# WebSocket Director
+# WebSockets Director
 
 Command line tool for testing websocket servers using scenarios.
 
@@ -10,8 +10,17 @@ Suitable for testing any websocket server implementation, like [Action Cable](ht
 
 ## Installation
 
-```bash
+Install CLI:
+
+```sh
 gem install wsdirector-cli
+```
+
+Or use WebSockets Director as a library:
+
+```ruby
+# Gemfile
+gem "wsdirector", "~> 1.0"
 ```
 
 ## Usage
@@ -19,51 +28,57 @@ gem install wsdirector-cli
 Create YAML file with simple testing script:
 
 ```yml
-  # script.yml
-  - receive: "Welcome" # expect to receive message
-  - send:
-      data: "send message" # send message, all messages in data will be parse to json
-  - receive:
-      data: "receive message" # expect to receive json message
+# script.yml
+- receive: "Welcome" # expect to receive message
+- send:
+    data: "send message" # send message, all messages in data will be parse to json
+- receive:
+    data: "receive message" # expect to receive json message
 ```
 
 and run it with this command:
 
 ```bash
-wsdirector script.yml ws://websocket.server:9876/ws
+wsdirector -f script.yml -u ws://websocket.server:9876/ws
 
 #=> 1 clients, 0 failures
+```
+
+You can also use positional arguments:
+
+```sh
+wsdirector script.yml ws://websocket.server:9876/ws
 ```
 
 You can create more complex scenarios with multiple client groups:
 
 ```yml
-  # script.yml
-  - client: # first clients group
-      name: "publisher" # optional group name
-      multiplier: ":scale" # :scale take number from -s param, and run :scale number of clients in this group
-      actions:
-        - receive:
-            data: "Welcome"
-        - wait_all # makes all clients in all groups wait untill every client get this point (global barrier)
-        - send:
-            data: "test message"
-  - client:
-      name: "listeners"
-      multiplier: ":scale * 2"
-      actions:
-        - receive:
-            data: "Welcome"
-        - wait_all
-        - receive:
-            multiplier: ":scale" # you can use multiplier with any action
-            data: "test message"
+# script.yml
+- client: # first clients group
+    name: "publisher" # optional group name
+    multiplier: ":scale" # :scale take number from -s param, and run :scale number of clients in this group
+    actions:
+      - receive:
+          data: "Welcome"
+      - wait_all # makes all clients in all groups wait untill every client get this point (global barrier)
+      - send:
+          data: "test message"
+- client:
+    name: "listeners"
+    multiplier: ":scale * 2"
+    actions:
+      - receive:
+          data: "Welcome"
+      - wait_all
+      - receive:
+          multiplier: ":scale" # you can use multiplier with any action
+          data: "test message"
 ```
 
 Run with scale factor:
 
 ```bash
-wsdirector script.yml ws://websocket.server:9876 -s 10
+wsdirector -f script.yml -u ws://websocket.server:9876 -s 10
 
 #=> Group publisher: 10 clients, 0 failures
 #=> Group listeners: 20 clients, 0 failures
@@ -74,7 +89,7 @@ The simpliest scenario is just checking that socket is succesfully connected:
 ```yml
 - client:
     name: connection check
-  # no actions
+    # no actions
 ```
 
 Run with loop option:
@@ -105,13 +120,13 @@ Run with loop option:
 Also you can pass a JSON file with some testing scripts:
 
 ```bash
-wsdirector scenario.json ws://websocket.server:9876
+wsdirector -f scenario.json -u ws://websocket.server:9876
 ```
 
 or pass a JSON scenario directly to the CLI without creating a file:
 
 ```bash
-wsdirector -i '[{"receive": {"data":"welcome"}},{"send":{"data":"send message"}},{"receive":{"data":"receive message"}}]' ws://websocket.server:9876
+wsdirector -i '[{"receive": {"data":"welcome"}},{"send":{"data":"send message"}},{"receive":{"data":"receive message"}}]' -u ws://websocket.server:9876
 ```
 
 Type `wsdirector --help` to check all commands.
@@ -119,7 +134,7 @@ Type `wsdirector --help` to check all commands.
 ### Protocols
 
 WSDirector uses protocols to handle different actions.
-Currently, we support "base" protocol (with `send`, `receive`, `wait_all` actions) and "action_cable" protocol, which extends "base" with `subscribe` and `perform` actions.
+Currently, we support "base" protocol (with `send`, `receive`, `wait_all` actions) and "action_cable" protocol, which extends "base" with `subscribe`, `unsubscribe` and `perform` actions.
 
 #### ActionCable Example
 

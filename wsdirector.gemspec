@@ -3,13 +3,13 @@
 require_relative "lib/wsdirector/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "wsdirector-cli"
+  spec.name = "wsdirector"
   spec.version = WSDirector::VERSION
   spec.authors = ["Vladimir Dementyev", "Kirill Arkhipov", "Grandman"]
   spec.email = ["dementiev.vm@gmail.com", "kirillvs@mail.ru", "root@grandman73.ru"]
 
-  spec.summary = "Command line tool for testing websocket servers using scenarios."
-  spec.description = "Command line tool for testing websocket servers using scenarios."
+  spec.summary = "Scenario-based WebSocket black-box testing"
+  spec.description = "Scenario-based WebSocket black-box testing"
   spec.homepage = "https://github.com/palkan/wsdirector"
   spec.license = "MIT"
 
