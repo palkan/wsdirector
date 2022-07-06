@@ -8,8 +8,9 @@ module WSDirector
     class Base
       include WSDirector::Utils
 
-      def initialize(task)
+      def initialize(task, scale: 1)
         @task = task
+        @scale = scale
       end
 
       def init_client(**options)

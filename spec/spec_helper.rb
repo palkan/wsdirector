@@ -26,6 +26,4 @@ RSpec.configure do |config|
 
   config.include FixtureHelper
   config.include IntegrationHelpers, type: :integration
-
-  config.after(:each) { WSDirector.config.reset! }
 end

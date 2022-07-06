@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib_path) unless $LOAD_PATH.include?(lib_path)
 require "wsdirector/cli"
 
 begin
-  WSDirector::CLI.new.tap { |cli| cli.run }
+  WSDirector::CLI.new.run
 rescue => e
   raise e if $DEBUG
   STDERR.puts e.message
