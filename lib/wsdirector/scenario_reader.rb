@@ -17,8 +17,11 @@ module WSDirector
       end
     end
 
-    def initialize(scale: 1)
+    attr_reader :default_connections_options
+
+    def initialize(scale: 1, connection_options: {})
       @scale = scale
+      @default_connections_options = connection_options
     end
 
     def parse(scenario)
@@ -82,14 +85,16 @@ module WSDirector
 
     def parse_simple_scenario(
       steps,
-      multiplier: 1, name: "default", ignore: nil, protocol: "base"
+      multiplier: 1, name: "default", ignore: nil, protocol: "base",
+      connection_options: {}
     )
       {
         "multiplier" => multiplier,
         "steps" => handle_steps(steps),
         "name" => name,
         "ignore" => ignore,
-        "protocol" => protocol
+        "protocol" => protocol,
+        "connection_options" => default_connections_options.merge(connection_options)
       }
     end
 
@@ -99,6 +104,7 @@ module WSDirector
         _, client = client.to_a.first
         multiplier = parse_multiplier(client.delete("multiplier") || "1")
         name = client.delete("name") || (i + 1).to_s
+        connection_options = client.delete("connection_options") || {}
         total_count += multiplier
         ignore = parse_ingore(client.fetch("ignore", nil))
         parse_simple_scenario(
@@ -106,7 +112,8 @@ module WSDirector
           multiplier: multiplier,
           name: name,
           ignore: ignore,
-          protocol: client.fetch("protocol", "base")
+          protocol: client.fetch("protocol", "base"),
+          connection_options: connection_options
         )
       end
       {"total" => total_count, "clients" => clients}

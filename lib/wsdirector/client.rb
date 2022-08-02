@@ -15,15 +15,24 @@ module WSDirector
     #
     # Optionally provide an ignore pattern (to ignore incoming message,
     # for example, pings)
-    def initialize(url:, ignore: nil)
+    def initialize(url:, ignore: nil, subprotocol: nil, headers: nil)
       @ignore = ignore
       has_messages = @has_messages = Concurrent::Semaphore.new(0)
       messages = @messages = Queue.new
       open = Concurrent::Promise.new
       client = self
 
+      options = {}
+
+      if subprotocol
+        headers ||= {}
+        headers["Sec-WebSocket-Protocol"] = subprotocol
+      end
+
+      options[:headers] = headers if headers
+
       @id = SecureRandom.hex(6)
-      @ws = WebSocket::Client::Simple.connect(url) do |ws|
+      @ws = WebSocket::Client::Simple.connect(url, options) do |ws|
         ws.on(:open) do |_event|
           open.set(true)
         end
