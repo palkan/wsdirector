@@ -11,6 +11,7 @@ module WSDirector
     def initialize(config, global_holder:, result:, scale:)
       @ignore = config.fetch("ignore")
       @steps = config.fetch("steps")
+      @connection_options = config.fetch("connection_options").transform_keys(&:to_sym)
       @global_holder = global_holder
       @result = result
 
@@ -19,7 +20,7 @@ module WSDirector
     end
 
     def run(url)
-      connect!(url)
+      connect!(url, **@connection_options)
 
       steps.each(&protocol)
 
@@ -40,8 +41,8 @@ module WSDirector
 
     attr_reader :steps, :result, :protocol
 
-    def connect!(url)
-      protocol.init_client(url: url, ignore: @ignore)
+    def connect!(url, **options)
+      protocol.init_client(url: url, ignore: @ignore, **options)
     end
   end
 end

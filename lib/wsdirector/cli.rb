@@ -11,7 +11,8 @@ module WSDirector
   # Command line interface for WsDirector
   class CLI
     class Configuration
-      attr_accessor :ws_url, :scenario_path, :colorize, :scale, :sync_timeout, :json_scenario
+      attr_accessor :ws_url, :scenario_path, :colorize, :scale,
+        :sync_timeout, :json_scenario, :subprotocol
 
       def initialize
         reset!
@@ -43,9 +44,14 @@ module WSDirector
         warn "Install colorize to use colored output"
       end
 
+      connection_options = {
+        subprotocol: config.subprotocol
+      }.compact
+
       scenario = WSDirector::ScenarioReader.parse(
         config.scenario_path || config.json_scenario,
-        scale: config.scale
+        scale: config.scale,
+        connection_options: connection_options
       )
 
       result = WSDirector::Runner.new(
@@ -84,6 +90,10 @@ module WSDirector
 
         opts.on("-f PATH", "--file=PATH", String, "Scenario path") do |v|
           config.scenario_path = v
+        end
+
+        opts.on("--subprotocol=VALUE", String, "WebSocket subprotocol") do |v|
+          config.subprotocol = v
         end
 
         opts.on("-c", "--[no-]color", "Colorize output") do |v|

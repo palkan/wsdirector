@@ -2,6 +2,8 @@
 
 ## master
 
+- Add `--subprotocol` support and `connection_options` in the scenario files. ([@palkan][])
+
 - Add `-f/--file` option to specify scenario path. ([@palkan][])
 
 - Drop Ruby 2.5 support.

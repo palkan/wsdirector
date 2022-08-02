@@ -10,6 +10,7 @@ module WSDirector
       # Add ping ignore and make sure that we receive Welcome message
       def init_client(**options)
         options[:ignore] ||= [PING_IGNORE]
+        options[:subprotocol] ||= "actioncable-v1-json"
 
         super(**options)
 
