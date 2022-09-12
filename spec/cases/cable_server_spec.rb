@@ -25,6 +25,26 @@ describe "wsdirector vs CableServer" do
     end
   end
 
+  context "verbose action cable logs" do
+    let(:content) do
+      <<~YAML
+        - client:
+            name: chatterbox
+            protocol: "action_cable"
+      YAML
+    end
+
+    it "shows action logs" do
+      output = run_wsdirector(test_script, url, options: "-vv")
+
+      expect(output).to include "client=chatterbox_1 Connecting"
+      expect(output).to include "client=chatterbox_1 Connected"
+      expect(output).to include "client=chatterbox_1 Welcomed"
+
+      expect(output).to include "1 clients, 0 failures"
+    end
+  end
+
   context "multiple connect with protocol" do
     let(:content) do
       <<~YAML

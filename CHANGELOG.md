@@ -2,6 +2,8 @@
 
 ## master
 
+- Add `-vv` option to print action logs. ([@palkan][])
+
 - Add `--subprotocol` support and `connection_options` in the scenario files. ([@palkan][])
 
 - Add `-f/--file` option to specify scenario path. ([@palkan][])

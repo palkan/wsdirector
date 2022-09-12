@@ -1,20 +1,30 @@
 # frozen_string_literal: true
 
 require "time"
+require "wsdirector/ext/formatting"
 
 module WSDirector
   module Protocols
+    using Ext::Formatting
+
     # Base protocol describes basic actions
     class Base
       include WSDirector::Utils
 
-      def initialize(task, scale: 1)
+      def initialize(task, scale: 1, logger: nil, id: nil, color: nil)
         @task = task
         @scale = scale
+        @logger = logger
+        @id = id
+        @color = color
       end
 
       def init_client(**options)
+        log { "Connecting" }
+
         @client = build_client(**options)
+
+        log(:done) { "Connected" }
       end
 
       def handle_step(step)
@@ -38,19 +48,27 @@ module WSDirector
 
         delay = delay - shift * rand + shift * rand
 
-        print("Sleep for #{delay}s") if step.fetch("debug", false)
+        log { "Sleep for #{delay}s" }
 
         Kernel.sleep delay if delay > 0
+
+        log(:done) { "Slept for #{delay}s" }
       end
 
       # Prints provided message
       def debug(step)
-        print(step.fetch("message"))
+        with_logger do
+          log(nil) { step.fetch("message") }
+        end
       end
 
       def receive(step)
         expected = step.fetch("data")
+
+        log { "Receive a message: #{expected.truncate(50)}" }
         received = client.receive
+        log(:done) { "Received a message: #{received&.truncate(50)}" }
+
         raise UnmatchedExpectationError, prepare_receive_error(expected, received) unless
           receive_matches?(expected, received)
       rescue ThreadError
@@ -71,6 +89,8 @@ module WSDirector
         total_expected = expected.values.sum
         total_received = 0
 
+        log { "Receive #{total_expected} messages" }
+
         total_expected.times do
           received = client.receive
 
@@ -84,6 +104,8 @@ module WSDirector
           expected[match.first] -= 1
           expected.delete(match.first) if expected[match.first].zero?
         end
+
+        log(:done) { "Received #{total_expected} messages" }
       rescue ThreadError
         raise NoMessageError,
           "Expected to receive #{total_expected} messages " \
@@ -94,11 +116,16 @@ module WSDirector
       def send(step)
         data = step.fetch("data")
         data = JSON.generate(data) if data.is_a?(Hash)
+
         client.send(data)
+
+        log(nil) { "Sent message: #{data.truncate(50)}" }
       end
 
       def wait_all(_step)
+        log { "Wait all clients" }
         task.global_holder.wait_all
+        log { "All clients" }
       end
 
       def to_proc
@@ -107,7 +134,7 @@ module WSDirector
 
       private
 
-      attr_reader :client, :task
+      attr_reader :client, :task, :logger, :id, :color
 
       def build_client(**options)
         Client.new(**options)
@@ -129,8 +156,34 @@ module WSDirector
         MSG
       end
 
-      def print(msg)
-        $stdout.puts "DEBUG #{Time.now.iso8601}  client=#{client.id} #{msg}\n"
+      def log(state = :begin)
+        return unless logger
+
+        if state == :begin
+          @last_event_at = Time.now.to_f
+        end
+
+        done_info =
+          if state == :done
+            " (#{(Time.now.to_f - @last_event_at).duration})"
+          else
+            ""
+          end
+
+        msg = "[#{Time.now.strftime("%H:%I:%S.%L")}] client=#{id} #{yield}#{done_info}"
+
+        msg = msg.colorize(color) if color
+
+        logger.puts msg
+      end
+
+      def with_logger
+        return yield if logger
+
+        @logger = $stdout
+        yield
+      ensure
+        @logger = nil
       end
     end
   end

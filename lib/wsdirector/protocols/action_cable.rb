@@ -15,10 +15,13 @@ module WSDirector
         super(**options)
 
         receive("data" => WELCOME_MSG)
+        log(:done) { "Welcomed" }
       end
 
       def subscribe(step)
         identifier = extract_identifier(step)
+
+        log { "Subsribing to #{identifier}" }
 
         client.send({command: "subscribe", identifier: identifier}.to_json)
 
@@ -26,6 +29,7 @@ module WSDirector
           receive(
             "data" => {"type" => "confirm_subscription", "identifier" => identifier}
           )
+          log(:done) { "Subsribed to #{identifier}" }
         rescue UnmatchedExpectationError => e
           raise unless /reject_subscription/.match?(e.message)
           raise UnmatchedExpectationError, "Subscription rejected to #{identifier}"
@@ -36,6 +40,8 @@ module WSDirector
         identifier = extract_identifier(step)
 
         client.send({command: "unsubscribe", identifier: identifier}.to_json)
+
+        log(nil) { "Unsubscribed from #{identifier}" }
       end
 
       def perform(step)
@@ -47,6 +53,8 @@ module WSDirector
         data = step.fetch("data", {}).merge(action: action).to_json
 
         client.send({command: "message", data: data, identifier: identifier}.to_json)
+
+        log(nil) { "Performed #{action} on #{identifier}" }
       end
 
       def receive(step)
