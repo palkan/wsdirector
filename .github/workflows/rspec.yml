@@ -23,6 +23,8 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
+    - name: Run Ruby Next
+      run: bundle exec rake nextify
     - name: Run RSpec
       run: |
         bundle exec rspec

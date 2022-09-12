@@ -5,9 +5,14 @@ $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "wsdirector"
 
 begin
-  require "pry-byebug"
+  require "debug" unless ENV["CI"]
 rescue LoadError
 end
+
+ENV["RUBY_NEXT_WARN"] = "false"
+ENV["RUBY_NEXT_EDGE"] = "1"
+ENV["RUBY_NEXT_PROPOSED"] = "1"
+require "ruby-next/language/runtime" unless ENV["CI"]
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }
 

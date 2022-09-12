@@ -71,39 +71,39 @@ module WSDirector
 
     private
 
-    FILE_FORMAT = /.+.(json|yml)\z/.freeze
+    FILE_FORMAT = /.+.(json|yml)\z/
     private_constant :FILE_FORMAT
 
     def parse_args!
       parser = OptionParser.new do |opts|
         opts.banner = "Usage: wsdirector scenario_path ws_url [options]"
 
-        opts.on("-s SCALE", "--scale=SCALE", Integer, "Scale factor") do |v|
-          config.scale = v
+        opts.on("-s SCALE", "--scale=SCALE", Integer, "Scale factor") do
+          config.scale = _1
         end
 
-        opts.on("-t TIMEOUT", "--timeout=TIMEOUT", Integer, "Synchronization (wait_all) timeout") do |v|
-          config.sync_timeout = v
+        opts.on("-t TIMEOUT", "--timeout=TIMEOUT", Integer, "Synchronization (wait_all) timeout") do
+          config.sync_timeout = _1
         end
 
-        opts.on("-i JSON", "--include=JSON", String, "Include JSON to parse") do |v|
-          config.json_scenario = v
+        opts.on("-i JSON", "--include=JSON", String, "Include JSON to parse") do
+          config.json_scenario = _1
         end
 
-        opts.on("-u URL", "--url=URL", Object, "Websocket server URL") do |v|
-          config.ws_url = v
+        opts.on("-u URL", "--url=URL", Object, "Websocket server URL") do
+          config.ws_url = _1
         end
 
-        opts.on("-f PATH", "--file=PATH", String, "Scenario path") do |v|
-          config.scenario_path = v
+        opts.on("-f PATH", "--file=PATH", String, "Scenario path") do
+          config.scenario_path = _1
         end
 
-        opts.on("--subprotocol=VALUE", String, "WebSocket subprotocol") do |v|
-          config.subprotocol = v
+        opts.on("--subprotocol=VALUE", String, "WebSocket subprotocol") do
+          config.subprotocol = _1
         end
 
-        opts.on("-c", "--[no-]color", "Colorize output") do |v|
-          config.colorize = v
+        opts.on("-c", "--[no-]color", "Colorize output") do
+          config.colorize = _1
         end
 
         opts.on("-v", "--version", "Print version") do
@@ -115,8 +115,8 @@ module WSDirector
           config.verbose = true
         end
 
-        opts.on("-r", "--require=PATH", "Load Ruby file (e.g., protocol)") do |val|
-          Kernel.load(val)
+        opts.on("-r", "--require=PATH", "Load Ruby file (e.g., protocol)") do
+          Kernel.load(_1)
         end
       end
 

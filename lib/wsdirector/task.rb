@@ -18,7 +18,7 @@ module WSDirector
       @result = result
 
       protocol_class = Protocols.get(config.fetch("protocol", "base"))
-      @protocol = protocol_class.new(self, scale: scale, logger: logger, id: id, color: color_for_id(id, colorize))
+      @protocol = protocol_class.new(self, scale:, logger:, id:, color: color_for_id(id, colorize))
     end
 
     def run(url)
@@ -41,10 +41,10 @@ module WSDirector
 
     private
 
-    attr_reader :steps, :result, :protocol, :id, :logger
+    attr_reader :steps, :result, :protocol, :id, :logger, :ignore
 
     def connect!(url, **options)
-      protocol.init_client(url: url, id: id, ignore: @ignore, **options)
+      protocol.init_client(url:, id:, ignore:, **options)
     end
 
     def color_for_id(id, colorize)

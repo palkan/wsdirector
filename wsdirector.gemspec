@@ -24,6 +24,14 @@ Gem::Specification.new do |spec|
   spec.add_dependency "websocket-client-simple", "~> 0.3"
   spec.add_dependency "concurrent-ruby", "~> 1.0"
 
+  # When gem is installed from source, we add `ruby-next` as a dependency
+  # to auto-transpile source files during the first load
+  if ENV["RELEASING_ANYWAY"].nil? && File.directory?(File.join(__dir__, ".git"))
+    spec.add_runtime_dependency "ruby-next", ">= 0.15.0"
+  else
+    spec.add_runtime_dependency "ruby-next-core", ">= 0.15.0"
+  end
+
   spec.add_development_dependency "colorize"
   spec.add_development_dependency "websocket-eventmachine-server", "~> 1.0.1"
   spec.add_development_dependency "rack", "~> 2.0"
