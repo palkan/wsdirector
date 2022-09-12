@@ -29,6 +29,26 @@ describe WSDirector::Client do
 
         expect(subject.receive).to eq "test message"
       end
+
+      context "with intercept" do
+        let(:interceptor) do
+          proc do |msg|
+            if msg == "ping"
+              send("pong") # rubocop:disable Performance/StringIdentifierArgument
+              next true
+            end
+            false
+          end
+        end
+
+        subject { described_class.new(url: url, intercept: interceptor) }
+
+        specify do
+          subject.send "ping" # rubocop:disable Performance/StringIdentifierArgument
+
+          expect(subject.receive).to eq "pong"
+        end
+      end
     end
   end
 

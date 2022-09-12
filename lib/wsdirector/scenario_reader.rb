@@ -106,7 +106,7 @@ module WSDirector
         name = client.delete("name") || (i + 1).to_s
         connection_options = client.delete("connection_options") || {}
         total_count += multiplier
-        ignore = parse_ingore(client.fetch("ignore", nil))
+        ignore = parse_ignore(client.fetch("ignore", nil))
         parse_simple_scenario(
           client.fetch("actions", []),
           multiplier: multiplier,
@@ -135,7 +135,7 @@ module WSDirector
       end
     end
 
-    def parse_ingore(str)
+    def parse_ignore(str)
       return unless str
 
       Array(str)

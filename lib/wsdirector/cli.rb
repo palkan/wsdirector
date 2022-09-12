@@ -4,8 +4,6 @@ require "optparse"
 require "uri"
 
 require "wsdirector"
-require "wsdirector/scenario_reader"
-require "wsdirector/runner"
 
 module WSDirector
   # Command line interface for WsDirector
@@ -105,7 +103,6 @@ module WSDirector
           exit 0
         end
       end
-      # rubocop: enable Metrics/LineLength
 
       parser.parse!
 
