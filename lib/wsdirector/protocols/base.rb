@@ -19,10 +19,10 @@ module WSDirector
         @color = color
       end
 
-      def init_client(**options)
+      def init_client(...)
         log { "Connecting" }
 
-        @client = build_client(**options)
+        @client = build_client(...)
 
         log(:done) { "Connected" }
       end
@@ -136,8 +136,8 @@ module WSDirector
 
       attr_reader :client, :task, :logger, :id, :color
 
-      def build_client(**options)
-        Client.new(**options)
+      def build_client(...)
+        Client.new(...)
       end
 
       def receive_matches?(expected, received)

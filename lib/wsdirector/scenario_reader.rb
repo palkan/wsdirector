@@ -45,7 +45,7 @@ module WSDirector
 
     private
 
-    JSON_FILE_FORMAT = /.+.(json)\z/.freeze
+    JSON_FILE_FORMAT = /.+.(json)\z/
     private_constant :JSON_FILE_FORMAT
 
     def parse_file(file)
@@ -58,13 +58,13 @@ module WSDirector
 
     def parse_yaml(path)
       if defined?(ERB)
-        ::YAML.load(ERB.new(File.read(path)).result, aliases: true, permitted_classes: [Date, Time, Regexp]) || {} # rubocop:disable Security/YAMLLoad
+        ::YAML.load(ERB.new(File.read(path)).result, aliases: true, permitted_classes: [Date, Time, Regexp]) || {}
       else
         ::YAML.load_file(path, aliases: true) || {}
       end
     rescue ArgumentError
       if defined?(ERB)
-        ::YAML.load(ERB.new(File.read(path)).result) || {} # rubocop:disable Security/YAMLLoad
+        ::YAML.load(ERB.new(File.read(path)).result) || {}
       else
         ::YAML.load_file(path) || {}
       end
@@ -109,13 +109,15 @@ module WSDirector
         connection_options = client.delete("connection_options") || {}
         total_count += multiplier
         ignore = parse_ignore(client.fetch("ignore", nil))
+        protocol = client.fetch("protocol", "base")
+
         parse_simple_scenario(
           client.fetch("actions", []),
-          multiplier: multiplier,
-          name: name,
-          ignore: ignore,
-          protocol: client.fetch("protocol", "base"),
-          connection_options: connection_options
+          multiplier:,
+          name:,
+          ignore:,
+          protocol:,
+          connection_options:
         )
       end
       {"total" => total_count, "clients" => clients}

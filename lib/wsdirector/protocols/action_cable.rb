@@ -23,7 +23,7 @@ module WSDirector
 
         log { "Subsribing to #{identifier}" }
 
-        client.send({command: "subscribe", identifier: identifier}.to_json)
+        client.send({command: "subscribe", identifier:}.to_json)
 
         begin
           receive(
@@ -39,7 +39,7 @@ module WSDirector
       def unsubscribe(step)
         identifier = extract_identifier(step)
 
-        client.send({command: "unsubscribe", identifier: identifier}.to_json)
+        client.send({command: "unsubscribe", identifier:}.to_json)
 
         log(nil) { "Unsubscribed from #{identifier}" }
       end
@@ -50,9 +50,9 @@ module WSDirector
 
         raise Error, "Action is missing" unless action
 
-        data = step.fetch("data", {}).merge(action: action).to_json
+        data = step.fetch("data", {}).merge(action:).to_json
 
-        client.send({command: "message", data: data, identifier: identifier}.to_json)
+        client.send({command: "message", data:, identifier:}.to_json)
 
         log(nil) { "Performed #{action} on #{identifier}" }
       end

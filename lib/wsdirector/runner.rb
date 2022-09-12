@@ -16,7 +16,7 @@ module WSDirector
       @logger = logger
       @colorize = colorize
       @total_count = scenario["total"]
-      @global_holder = ClientsHolder.new(total_count, sync_timeout: sync_timeout)
+      @global_holder = ClientsHolder.new(total_count, sync_timeout:)
       @results_holder = ResultsHolder.new
     end
 
@@ -34,7 +34,7 @@ module WSDirector
           num += 1
           id = "#{name}_#{num}"
           Thread.new do
-            Task.new(client.deep_dup, id: id, colorize: colorize, global_holder: global_holder, result: result, scale: scale, logger: logger)
+            Task.new(client.deep_dup, id:, colorize:, global_holder:, result:, scale:, logger:)
               .run(url)
           end
         end

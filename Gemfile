@@ -6,4 +6,4 @@ eval_gemfile "gemfiles/rubocop.gemfile"
 
 gemspec name: "wsdirector"
 
-gem "pry-byebug", platform: :mri
+gem "debug", platform: :mri
