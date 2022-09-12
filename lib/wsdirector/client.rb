@@ -15,8 +15,9 @@ module WSDirector
     #
     # Optionally provide an ignore pattern (to ignore incoming message,
     # for example, pings)
-    def initialize(url:, ignore: nil, subprotocol: nil, headers: nil)
+    def initialize(url:, ignore: nil, intercept: nil, subprotocol: nil, headers: nil, id: nil)
       @ignore = ignore
+      @interceptor = intercept
       has_messages = @has_messages = Concurrent::Semaphore.new(0)
       messages = @messages = Queue.new
       open = Concurrent::Promise.new
@@ -31,7 +32,7 @@ module WSDirector
 
       options[:headers] = headers if headers
 
-      @id = SecureRandom.hex(6)
+      @id = id || SecureRandom.hex(6)
       @ws = WebSocket::Client::Simple.connect(url, options) do |ws|
         ws.on(:open) do |_event|
           open.set(true)
@@ -41,6 +42,7 @@ module WSDirector
           data = msg.data
           next if data.empty?
           next if client.ignored?(data)
+          next if client.intercepted?(data)
           messages << data
           has_messages.release
         end
@@ -69,6 +71,12 @@ module WSDirector
     def ignored?(msg)
       return false unless @ignore
       @ignore.any? { |pattern| msg =~ Regexp.new(pattern) }
+    end
+
+    def intercepted?(msg)
+      return false unless @interceptor
+
+      instance_exec(msg, &@interceptor)
     end
   end
 end
