@@ -2,6 +2,8 @@
 
 ## master
 
+- Allow passing URL without a scheme part. ([@palkan][])
+
 - Add `-vv` option to print action logs. ([@palkan][])
 
 - Add `--subprotocol` support and `connection_options` in the scenario files. ([@palkan][])
