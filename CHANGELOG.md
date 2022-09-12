@@ -2,6 +2,8 @@
 
 ## master
 
+- Add `locals` support when running scenarios programmatically. ([@palkan][])
+
 - Add partial receive data matching support (via `data>` field). ([@palkan][])
 
 - Add `connection_options` support (headers, cookies, query). ([@palkan][])
