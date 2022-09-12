@@ -2,9 +2,9 @@
 [![Gem Version](https://badge.fury.io/rb/wsdirector-cli.svg)](https://rubygems.org/gems/wsdirector-cli)
 [![Build](https://github.com/palkan/wsdirector/workflows/Build/badge.svg)](https://github.com/palkan/wsdirector/actions)
 
-# WebSockets Director
+# WebSocket Director
 
-Command line tool for testing websocket servers using scenarios.
+Command line tool for testing WebSocket servers using scenarios.
 
 Suitable for testing any websocket server implementation, like [Action Cable](https://github.com/rails/rails/tree/master/actioncable), [Websocket Eventmachine Server](https://github.com/imanel/websocket-eventmachine-server), [Litecable](https://github.com/palkan/litecable) and so on.
 
@@ -16,7 +16,7 @@ Install CLI:
 gem install wsdirector-cli
 ```
 
-Or use WebSockets Director as a library:
+Or use WebSockets Director as a library (see below for intructions):
 
 ```ruby
 # Gemfile
@@ -131,6 +131,30 @@ wsdirector -i '[{"receive": {"data":"welcome"}},{"send":{"data":"send message"}}
 
 Type `wsdirector --help` to check all commands.
 
+### Using as a library
+
+You can integrate WS Director into your library or application by using its APIs:
+
+```ruby
+# Could be a file path or JSON-encoded string as well
+scenario = [
+  {
+    send: {
+      data: "ping"
+    }
+  },
+  {
+    receive: {
+      data: "pong"
+    }
+  }
+]
+
+result = WSDirector.run(scenario, url: "ws://my.ws.server:4949/live")
+result.success? #=> true of false
+result.groups #=> result data for each client group
+```
+
 ### Protocols
 
 WSDirector uses protocols to handle different actions.
@@ -185,7 +209,7 @@ Scenario:
             text: "hello"
 ```
 
-## Custom protocols
+#### Custom protocols
 
 You can define your own protocol and load it dynamically:
 

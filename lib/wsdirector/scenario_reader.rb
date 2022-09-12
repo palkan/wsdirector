@@ -29,10 +29,12 @@ module WSDirector
         if File.file?(scenario)
           parse_file(scenario)
         else
-          Array(JSON.parse(scenario)).map do |item|
-            item.is_a?(String) ? {item => {}} : item
-          end
+          Array(JSON.parse(scenario))
         end.flatten
+
+      contents.map! do |item|
+        item.is_a?(String) ? {item => {}} : item
+      end
 
       if contents.first.key?("client")
         contents = transform_with_loop(contents, multiple: true)
