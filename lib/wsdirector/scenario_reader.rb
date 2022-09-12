@@ -17,26 +17,31 @@ module WSDirector
       end
     end
 
-    attr_reader :default_connections_options
+    attr_reader :default_connections_options, :locals
 
-    def initialize(scale: 1, connection_options: {})
+    def initialize(scale: 1, connection_options: {}, locals: {})
       @scale = scale
       @default_connections_options = connection_options
+      @locals = locals
     end
 
     def parse(scenario)
       contents =
-        if File.file?(scenario)
-          parse_file(scenario)
+        if scenario.is_a?(String)
+          if File.file?(scenario)
+            parse_file(scenario)
+          else
+            Array(JSON.parse(scenario))
+          end.flatten
         else
-          Array(JSON.parse(scenario))
-        end.flatten
+          scenario
+        end
 
       contents.map! do |item|
         item.is_a?(String) ? {item => {}} : item
       end
 
-      if contents.first.key?("client")
+      if contents.first&.key?("client")
         contents = transform_with_loop(contents, multiple: true)
         parse_multiple_scenarios(contents)
       else
@@ -60,13 +65,13 @@ module WSDirector
 
     def parse_yaml(path)
       if defined?(ERB)
-        ::YAML.load(ERB.new(File.read(path)).result, aliases: true, permitted_classes: [Date, Time, Regexp]) || {}
+        ::YAML.load(ERB.new(File.read(path)).result(erb_context), aliases: true, permitted_classes: [Date, Time, Regexp]) || {}
       else
         ::YAML.load_file(path, aliases: true) || {}
       end
     rescue ArgumentError
       if defined?(ERB)
-        ::YAML.load(ERB.new(File.read(path)).result) || {}
+        ::YAML.load(ERB.new(File.read(path)).result(erb_context)) || {}
       else
         ::YAML.load_file(path) || {}
       end
@@ -145,6 +150,16 @@ module WSDirector
       return unless str
 
       Array(str)
+    end
+
+    def erb_context
+      binding.then do |b|
+        locals.each do
+          b.local_variable_set(_1, _2)
+        end
+
+        b
+      end
     end
   end
 end

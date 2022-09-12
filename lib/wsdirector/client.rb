@@ -34,11 +34,11 @@ module WSDirector
 
       if cookies
         headers ||= {}
-        headers["Cookie"] = cookies.map { "#{_1}=#{escape(_2)}" }.join("; ")
+        headers["Cookie"] = cookies.map { "#{_1}=#{escape(_2.to_s)}" }.join("; ")
       end
 
       if query
-        url = "#{url}?#{query.map { "#{_1}=#{escape(_2)}" }.join("&")}"
+        url = "#{url}?#{query.map { "#{_1}=#{escape(_2.to_s)}" }.join("&")}"
       end
 
       options[:headers] = headers if headers

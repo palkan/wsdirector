@@ -8,8 +8,8 @@ require "wsdirector/task"
 require "wsdirector/ext/deep_dup"
 
 module WSDirector
-  def self.run(scenario, scale: 1, connection_options: {}, **options)
-    scenario = ScenarioReader.parse(scenario, scale:, connection_options:)
+  def self.run(scenario, scale: 1, connection_options: {}, locals: {}, **options)
+    scenario = ScenarioReader.parse(scenario, scale:, connection_options:, locals:)
     Runner.new(scenario, scale:, **options).execute
   end
 

@@ -189,6 +189,20 @@ result.success? #=> true of false
 result.groups #=> result data for each client group
 ```
 
+If you're using YAML-based scenarios, you can also pass local variables to be used with ERB via the `locals` option:
+
+```yml
+- client:
+    connection_options:
+      headers:
+        "X-API-TOKEN": <%= token %>
+```
+
+```ruby
+token = UserToken.generate
+WSDirector.run(scenario, url: "ws://my.ws.server:4949/live", locals: {token:})
+```
+
 ### Protocols
 
 WSDirector uses protocols to handle different actions.
