@@ -6,7 +6,7 @@
 
 Command line tool for testing WebSocket servers using scenarios.
 
-Suitable for testing any websocket server implementation, like [Action Cable](https://github.com/rails/rails/tree/master/actioncable), [Websocket Eventmachine Server](https://github.com/imanel/websocket-eventmachine-server), [Litecable](https://github.com/palkan/litecable) and so on.
+Suitable for testing any websocket server implementation, like [Action Cable](https://github.com/rails/rails/tree/master/actioncable), [AnyCable](https://anycable.io), [Phoenix Channels](https://hexdocs.pm/phoenix/channels.html), [GraphQL WS](https://github.com/enisdenjo/graphql-ws) and so on.
 
 ## Installation
 
@@ -276,7 +276,7 @@ end
 Now you can load it via the `-r` option:
 
 ```sh
-$ wsdirector -u localhost:3232/ws -i '["send_ping_and_receive_pong"]' -r ./path/to/custom_protocol.rb
+$ wsdirector -u localhost:3232/ws -i '["send_ping_and_receive_pong"]' -r ./path/to/custom_protocol.rb -vv
 
 hh:mm:ss client=default_1 Connecting
 hh:mm:ss client=default_1 Connected (45ms)
@@ -285,11 +285,32 @@ hh:mm:ss client=default_1 Receive message: {"type":"pong"}
 hh:mm:ss client=default_1 Received message: {"type":"pong"} (21ms)
 ```
 
+## Testing frameworks integration
+
+WSDirector does not provide any specific helpers for RSpec or Minitest. Instead, we provide an example setup, which you could adjust to your needs (and which is too small to be a part of the library).
+
+The example below implies running tests against an Action Cable server with a token-based authentication
+
+```ruby
+module WSDirectorTestHelper
+  def run_websocket_scenario(path, token:, url: ActionCable.server.config.url, **options)
+    url = "#{url}?jid=#{token}"
+    scenario = Rails.root.join "spec" / "fixtures" / "wsdirector" / path
+
+    WSDirector.run(scenario, url:, **options)
+  end
+end
+
+# In RSpec, you can include this modules via the configuration
+RSpec.configure do |config|
+  # Here we only add this helper to system tests
+  config.include WSDirectorTestHelper, type: :system
+end
+```
+
 ## Future Ideas
 
 - Report timings (per-client and aggregates)
-
-- Testing frameworks integrations
 
 - What else? [Submit an issue!](https://github.com/palkan/wsdirector/issues/new)
 
