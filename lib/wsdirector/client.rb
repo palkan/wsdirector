@@ -6,6 +6,8 @@ require "securerandom"
 module WSDirector
   # WebSocket client
   class Client
+    include CGI::Escape
+
     WAIT_WHEN_EXPECTING_EVENT = 5
 
     attr_reader :ws, :id
@@ -15,7 +17,7 @@ module WSDirector
     #
     # Optionally provide an ignore pattern (to ignore incoming message,
     # for example, pings)
-    def initialize(url:, ignore: nil, intercept: nil, subprotocol: nil, headers: nil, id: nil)
+    def initialize(url:, ignore: nil, intercept: nil, subprotocol: nil, headers: nil, id: nil, query: nil, cookies: nil)
       @ignore = ignore
       @interceptor = intercept
       has_messages = @has_messages = Concurrent::Semaphore.new(0)
@@ -28,6 +30,15 @@ module WSDirector
       if subprotocol
         headers ||= {}
         headers["Sec-WebSocket-Protocol"] = subprotocol
+      end
+
+      if cookies
+        headers ||= {}
+        headers["Cookie"] = cookies.map { "#{_1}=#{escape(_2)}" }.join("; ")
+      end
+
+      if query
+        url = "#{url}?#{query.map { "#{_1}=#{escape(_2)}" }.join("&")}"
       end
 
       options[:headers] = headers if headers

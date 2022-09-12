@@ -2,6 +2,8 @@
 
 ## master
 
+- Add `connection_options` support (headers, cookies, query). ([@palkan][])
+
 - Add loading custom protocols support. ([@palkan][])
 
 - Allow passing URL without a scheme part. ([@palkan][])

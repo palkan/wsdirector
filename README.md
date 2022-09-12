@@ -131,6 +131,23 @@ wsdirector -i '[{"receive": {"data":"welcome"}},{"send":{"data":"send message"}}
 
 Type `wsdirector --help` to check all commands.
 
+### Connection configuration
+
+You can specify client's headers, cookies or query string params via the `connection_options` directive:
+
+```yml
+- client:
+    connection_options:
+      headers:
+        "X-API-KEY": "secret"
+      query:
+        token: "123"
+      cookies:
+        session_id: "2022"
+```
+
+**NOTE**: Query string params could also be passed as a part of the URL. Specifying them in the scenario allows you to provide values via the interpolation.
+
 ### Using as a library
 
 You can integrate WS Director into your library or application by using its APIs:
