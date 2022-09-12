@@ -117,6 +117,23 @@ Run with loop option:
               multiplier: ":scale + 1"
 ```
 
+By default, `receive` action expects the exact `data` match. In some cases, it's useful to only match the specified keys (inclusion). For that, you can use `data>` field instead:
+
+```yml
+- client:
+  actions:
+    - receive:
+        data:
+          type: "welcome"
+    - send:
+        data:
+          command: "subscribe"
+          identifier: "{\"channel\":\"Channel\"}"
+    - receive:
+        data>:
+          type: "confirm_subscription"
+```
+
 Also you can pass a JSON file with some testing scripts:
 
 ```bash

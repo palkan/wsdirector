@@ -7,6 +7,66 @@ module WSDirector
   module Protocols
     using Ext::Formatting
 
+    using(Module.new do
+      refine ::Object do
+        def matches?(other)
+          self == other
+        end
+
+        def partially_matches?(other)
+          self == other
+        end
+      end
+
+      refine ::Hash do
+        def matches?(actual)
+          unless actual.is_a?(::Hash)
+            actual = JSON.parse(actual) rescue nil # rubocop:disable Style/RescueModifier
+          end
+
+          return false unless actual
+
+          actual.each_key do
+            return false unless actual[_1].matches?(self[_1])
+          end
+
+          true
+        end
+
+        def partially_matches?(actual)
+          unless actual.is_a?(::Hash)
+            actual = JSON.parse(actual) rescue nil # rubocop:disable Style/RescueModifier
+          end
+
+          return false unless actual
+
+          each_key do
+            return false unless self[_1].partially_matches?(actual[_1])
+          end
+
+          true
+        end
+      end
+    end)
+
+    class PartialMatcher
+      attr_reader :obj
+
+      def initialize(obj)
+        @obj = obj
+      end
+
+      def matches?(actual)
+        obj.partially_matches?(actual)
+      end
+
+      def inspect
+        "an object including #{obj.inspect}"
+      end
+
+      def truncate(...) = obj.truncate(...)
+    end
+
     # Base protocol describes basic actions
     class Base
       include WSDirector::Utils
@@ -63,14 +123,14 @@ module WSDirector
       end
 
       def receive(step)
-        expected = step.fetch("data")
+        expected = step["data"] || PartialMatcher.new(step["data>"])
 
         log { "Receive a message: #{expected.truncate(50)}" }
         received = client.receive
         log(:done) { "Received a message: #{received&.truncate(50)}" }
 
         raise UnmatchedExpectationError, prepare_receive_error(expected, received) unless
-          receive_matches?(expected, received)
+          expected.matches?(received)
       rescue ThreadError
         raise NoMessageError, "Expected to receive #{expected} but nothing has been received"
       end
@@ -83,7 +143,7 @@ module WSDirector
         expected =
           messages.map do |msg|
             multiplier = parse_multiplier(msg.delete("multiplier") || "1")
-            [msg["data"], multiplier]
+            [msg["data"] || PartialMatcher.new(msg["data>"]), multiplier]
           end.to_h
 
         total_expected = expected.values.sum
@@ -96,7 +156,7 @@ module WSDirector
 
           total_received += 1
 
-          match = expected.find { |k, _| receive_matches?(k, received) }
+          match = expected.find { |k, _| k.matches?(received) }
 
           raise UnexpectedMessageError, "Unexpected message received: #{received}" if
             match.nil?
@@ -140,18 +200,10 @@ module WSDirector
         Client.new(...)
       end
 
-      def receive_matches?(expected, received)
-        received = JSON.parse(received) if expected.is_a?(Hash)
-
-        received == expected
-      rescue JSON::ParserError
-        false
-      end
-
       def prepare_receive_error(expected, received)
         <<~MSG
           Action failed: #receive
-             -- expected: #{expected}
+             -- expected: #{expected.inspect}
              ++ got: #{received}
         MSG
       end

@@ -137,7 +137,7 @@ describe "wsdirector vs CableServer" do
                       channel: "chat"
                       params:
                         id: 2
-                    - data:
+                    - data>:
                         text: "message sent"
                       channel: "chat"
                       params:
@@ -191,7 +191,7 @@ describe "wsdirector vs CableServer" do
                   channel: "chat"
                   params:
                     id: 2
-                  data:
+                  data>:
                     text: "Hello!"
       YAML
     end

@@ -4,7 +4,6 @@ module WSDirector
   module Protocols
     # ActionCable protocol
     class ActionCable < Base
-      WELCOME_MSG = {type: "welcome"}.to_json
       PING_IGNORE = /['"]type['"]:\s*['"]ping['"]/
 
       # Add ping ignore and make sure that we receive Welcome message
@@ -14,7 +13,7 @@ module WSDirector
 
         super(**options)
 
-        receive("data" => WELCOME_MSG)
+        receive("data>" => {"type" => "welcome"})
         log(:done) { "Welcomed" }
       end
 
@@ -61,8 +60,11 @@ module WSDirector
         return super unless step.key?("channel")
 
         identifier = extract_identifier(step)
-        message = step.fetch("data", {})
-        super("data" => {"identifier" => identifier, "message" => message})
+
+        key = step.key?("data") ? "data" : "data>"
+
+        message = step.fetch(key, {})
+        super(key => {"identifier" => identifier, "message" => message})
       end
 
       def receive_all(step)
@@ -73,7 +75,10 @@ module WSDirector
         messages.each do |msg|
           next unless msg.key?("channel")
           identifier = extract_identifier(msg)
-          msg["data"] = {"identifier" => identifier, "message" => msg["data"]}
+
+          key = msg.key?("data") ? "data" : "data>"
+
+          msg[key] = {"identifier" => identifier, "message" => msg[key]}
         end
 
         super
