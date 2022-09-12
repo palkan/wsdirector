@@ -63,4 +63,24 @@ describe "wsdirector vs EchoServer" do
       expect(output).to match(/\+\+ got: .*subscribe/)
     end
   end
+
+  context "receive with partial match" do
+    let(:content) do
+      <<~YAML
+        - send:
+            data:
+              command: "subscribe"
+              identifier: '{\"channel\":\"TestChannel\"}'
+        - receive:
+            data>:
+              command: "subscribe"
+
+      YAML
+    end
+
+    it "show success message", :aggregate_failures do
+      output = run_wsdirector(test_script, url)
+      expect(output).to include "1 clients, 0 failures"
+    end
+  end
 end

@@ -2,6 +2,8 @@
 
 ## master
 
+- Add partial receive data matching support (via `data>` field). ([@palkan][])
+
 - Add `connection_options` support (headers, cookies, query). ([@palkan][])
 
 - Add loading custom protocols support. ([@palkan][])
