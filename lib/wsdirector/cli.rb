@@ -52,6 +52,8 @@ module WSDirector
         connection_options: connection_options
       )
 
+      config.ws_url = "ws://#{config.ws_url}" unless config.ws_url.start_with?(/wss?:\/\//)
+
       logger = $stdout if config.verbose
 
       result = WSDirector::Runner.new(
