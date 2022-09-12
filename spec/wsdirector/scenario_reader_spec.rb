@@ -114,7 +114,7 @@ describe WSDirector::ScenarioReader do
       end
     end
 
-    context "when it's string row from CLI" do
+    context "when it's a string array of object steps" do
       let(:scenario) { '[{"receive": {"data":"welcome"}},{"send":{"data":"send message"}},{"receive":{"data":"receive message"}}]' }
 
       it "successfully parses it", :aggregate_failures do
@@ -123,6 +123,19 @@ describe WSDirector::ScenarioReader do
         expect(subject["clients"].first["steps"].size).to eq 3
         expect(subject["clients"].first["multiplier"]).to eq 1
         expect(subject["clients"].first["steps"].first["type"]).to eq "receive"
+      end
+    end
+
+    context "when it's a string array of mixed steps" do
+      let(:scenario) { '["receive_welcome", {"send":{"data":"send message"}}]' }
+
+      it "successfully parses it", :aggregate_failures do
+        expect(subject["total"]).to eq(1)
+        expect(subject["clients"].first["name"]).to eq "default"
+        expect(subject["clients"].first["steps"].size).to eq 2
+        expect(subject["clients"].first["multiplier"]).to eq 1
+        expect(subject["clients"].first["steps"].first["type"]).to eq "receive_welcome"
+        expect(subject["clients"].first["steps"].last["type"]).to eq "send"
       end
     end
 

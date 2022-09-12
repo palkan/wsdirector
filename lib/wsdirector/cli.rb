@@ -114,6 +114,10 @@ module WSDirector
         opts.on("-vv", "Print verbose logs") do
           config.verbose = true
         end
+
+        opts.on("-r", "--require=PATH", "Load Ruby file (e.g., protocol)") do |val|
+          Kernel.load(val)
+        end
       end
 
       parser.parse!

@@ -29,7 +29,9 @@ module WSDirector
         if File.file?(scenario)
           parse_file(scenario)
         else
-          [JSON.parse(scenario)]
+          Array(JSON.parse(scenario)).map do |item|
+            item.is_a?(String) ? {item => {}} : item
+          end
         end.flatten
 
       if contents.first.key?("client")

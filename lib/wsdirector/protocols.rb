@@ -21,9 +21,15 @@ module WSDirector
 
     class << self
       def get(id)
-        raise Error, "Unknown protocol: #{id}" unless ID2CLASS.key?(id)
-        class_name = ID2CLASS.fetch(id)
+        class_name = if ID2CLASS.key?(id)
+          ID2CLASS.fetch(id)
+        else
+          id
+        end
+
         const_get(class_name)
+      rescue NameError
+        raise Error, "Unknown protocol: #{id}"
       end
     end
   end
