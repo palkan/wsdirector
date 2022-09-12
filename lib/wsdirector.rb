@@ -18,5 +18,4 @@ module WSDirector
   end
 end
 
-require "wsdirector/scenario_reader"
 require "wsdirector/runner"

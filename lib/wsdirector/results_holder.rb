@@ -11,10 +11,14 @@ module WSDirector
       @groups.values.all?(&:success?)
     end
 
+    def groups
+      @groups.values
+    end
+
     def print_summary(printer: $stdout, colorize: false)
       single_group = groups.size == 1
 
-      groups.each do |group, result|
+      @groups.each do |group, result|
         color = result.success? ? :green : :red
         prefix = single_group ? "" : "Group #{group}: "
 
@@ -31,12 +35,10 @@ module WSDirector
     end
 
     def <<(result)
-      groups[result.group] = result
+      @groups[result.group] = result
     end
 
     private
-
-    attr_reader :groups
 
     def print_errors(errors, printer:, colorize:)
       printer.puts "\n"

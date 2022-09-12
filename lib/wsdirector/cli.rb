@@ -46,22 +46,26 @@ module WSDirector
         subprotocol: config.subprotocol
       }.compact
 
-      scenario = WSDirector::ScenarioReader.parse(
-        config.scenario_path || config.json_scenario,
-        scale: config.scale,
-        connection_options: connection_options
-      )
+      scenario = config.scenario_path || config.json_scenario
 
       config.ws_url = "ws://#{config.ws_url}" unless config.ws_url.start_with?(/wss?:\/\//)
 
+      url = config.ws_url
+      scale = config.scale
+      sync_timeout = config.sync_timeout
+      colorize = config.colorize
+
       logger = $stdout if config.verbose
 
-      result = WSDirector::Runner.new(
+      result = WSDirector.run(
         scenario,
-        sync_timeout: config.sync_timeout,
-        logger: logger,
-        colorize: config.colorize
-      ).execute(url: config.ws_url, scale: config.scale)
+        url:,
+        connection_options:,
+        scale:,
+        sync_timeout:,
+        logger:,
+        colorize:
+      )
 
       puts "\n\n" if config.verbose
 
