@@ -10,7 +10,7 @@ module WSDirector
   class CLI
     class Configuration
       attr_accessor :ws_url, :scenario_path, :colorize, :scale,
-        :sync_timeout, :json_scenario, :subprotocol
+        :sync_timeout, :json_scenario, :subprotocol, :verbose
 
       def initialize
         reset!
@@ -23,7 +23,7 @@ module WSDirector
       # Restore to defaults
       def reset!
         @scale = 1
-        @colorize = false
+        @colorize = $stdout.tty?
         @sync_timeout = 5
       end
     end
@@ -52,10 +52,16 @@ module WSDirector
         connection_options: connection_options
       )
 
+      logger = $stdout if config.verbose
+
       result = WSDirector::Runner.new(
         scenario,
-        sync_timeout: config.sync_timeout
+        sync_timeout: config.sync_timeout,
+        logger: logger,
+        colorize: config.colorize
       ).execute(url: config.ws_url, scale: config.scale)
+
+      puts "\n\n" if config.verbose
 
       result.print_summary(colorize: config.colorize?)
       result.success? || exit(1)
@@ -98,9 +104,13 @@ module WSDirector
           config.colorize = v
         end
 
-        opts.on("-v", "--version", "Print versin") do
+        opts.on("-v", "--version", "Print version") do
           $stdout.puts WSDirector::VERSION
           exit 0
+        end
+
+        opts.on("-vv", "Print verbose logs") do
+          config.verbose = true
         end
       end
 
