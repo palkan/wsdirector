@@ -11,7 +11,15 @@ module Chat
 
     def connect
       @user = cookies["user"]
-      @sid = request.params["sid"]
+      @sid = request.params["sid"] || request.env["HTTP_X_SID"]
+    end
+  end
+
+  class MeChannel < LiteCable::Channel::Base
+    identifier :me
+
+    def info
+      transmit({user: user, sid: sid})
     end
   end
 
