@@ -12,6 +12,14 @@ module WSDirector
         end
       end
 
+      refine ::Hash do
+        def truncate(limit)
+          str = to_json
+
+          str.truncate(limit)
+        end
+      end
+
       refine ::Float do
         def duration
           if self > 1

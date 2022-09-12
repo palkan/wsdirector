@@ -185,15 +185,39 @@ Scenario:
             text: "hello"
 ```
 
+## Custom protocols
+
+You can define your own protocol and load it dynamically:
+
+```ruby
+# It's important to put a custom protocol class under WSDirector::Protocols
+module WSDirector::Protocols
+  class CustomProtocol < Base
+    def send_ping_and_receive_pong
+      send("data" => {"type" => "ping"})
+      receive("data" => {"type" => "pong"})
+    end
+  end
+end
+```
+
+Now you can load it via the `-r` option:
+
+```sh
+$ wsdirector -u localhost:3232/ws -i '["send_ping_and_receive_pong"]' -r ./path/to/custom_protocol.rb
+
+hh:mm:ss client=default_1 Connecting
+hh:mm:ss client=default_1 Connected (45ms)
+hh:mm:ss client=default_1 Sent message: {"type":"ping"}
+hh:mm:ss client=default_1 Receive message: {"type":"pong"}
+hh:mm:ss client=default_1 Received message: {"type":"pong"} (21ms)
+```
+
 ## Future Ideas
 
 - Report timings (per-client and aggregates)
 
-- Connection parameters (headers, query params, etc)
-
 - Testing frameworks integrations
-
-- Loading protocols dynamically
 
 - What else? [Submit an issue!](https://github.com/palkan/wsdirector/issues/new)
 

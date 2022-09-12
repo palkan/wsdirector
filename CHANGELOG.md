@@ -2,6 +2,8 @@
 
 ## master
 
+- Add loading custom protocols support. ([@palkan][])
+
 - Allow passing URL without a scheme part. ([@palkan][])
 
 - Add `-vv` option to print action logs. ([@palkan][])

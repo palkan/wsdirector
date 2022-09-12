@@ -45,6 +45,12 @@ module Chat
   end
 end
 
+module Turbo
+  class StreamChannel < LiteCable::Channel::Base
+    identifier :turbo
+  end
+end
+
 app = Rack::Builder.new
 app.map "/cable" do
   use(LiteCable::Server::Middleware, connection_class: Chat::Connection)
