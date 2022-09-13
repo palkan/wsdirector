@@ -31,7 +31,7 @@ module WSDirector
           if File.file?(scenario)
             parse_file(scenario)
           else
-            Array(JSON.parse(scenario))
+            Array(parse_from_str(scenario))
           end.flatten
         else
           scenario
@@ -55,6 +55,12 @@ module WSDirector
     JSON_FILE_FORMAT = /.+.(json)\z/
     private_constant :JSON_FILE_FORMAT
 
+    def parse_from_str(contents)
+      JSON.parse(contents)
+    rescue JSON::ParserError
+      parse_yaml(contents)
+    end
+
     def parse_file(file)
       if file.match?(JSON_FILE_FORMAT)
         JSON.parse(File.read(file))
@@ -64,17 +70,15 @@ module WSDirector
     end
 
     def parse_yaml(path)
+      contents = File.file?(path) ? File.read(path) : path
+
       if defined?(ERB)
-        ::YAML.load(ERB.new(File.read(path)).result(erb_context), aliases: true, permitted_classes: [Date, Time, Regexp]) || {}
-      else
-        ::YAML.load_file(path, aliases: true) || {}
+        contents = ERB.new(contents).result(erb_context)
       end
+
+      ::YAML.load(contents, aliases: true, permitted_classes: [Date, Time, Regexp]) || {}
     rescue ArgumentError
-      if defined?(ERB)
-        ::YAML.load(ERB.new(File.read(path)).result(erb_context)) || {}
-      else
-        ::YAML.load_file(path) || {}
-      end
+      ::YAML.load(contents) || {}
     end
 
     def handle_steps(steps)

@@ -21,6 +21,7 @@ describe WSDirector::ClientsHolder do
       (clients_count - 2).times do
         Thread.new do
           holder.wait_all
+        rescue
         end
       end
 
