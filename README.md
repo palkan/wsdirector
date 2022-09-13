@@ -148,6 +148,11 @@ wsdirector -i '[{"receive": {"data":"welcome"}},{"send":{"data":"send message"}}
 
 Type `wsdirector --help` to check all commands.
 
+### Receive order
+
+By default, the `receive` action scans through all available or newly added message to find a matching one.
+If you want to check the order of incoming messages, add the `ordered: true` option to the `receive` action.
+
 ### Connection configuration
 
 You can specify client's headers, cookies or query string params via the `connection_options` directive:

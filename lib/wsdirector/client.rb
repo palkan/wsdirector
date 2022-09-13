@@ -20,6 +20,8 @@ module WSDirector
     def initialize(url:, ignore: nil, intercept: nil, subprotocol: nil, headers: nil, id: nil, query: nil, cookies: nil)
       @ignore = ignore
       @interceptor = intercept
+      @mailbox = []
+
       has_messages = @has_messages = Concurrent::Semaphore.new(0)
       messages = @messages = Queue.new
       open = Concurrent::Promise.new
@@ -68,11 +70,28 @@ module WSDirector
       raise Error, "Failed to connect to #{url}"
     end
 
+    def each_message
+      @mailbox.dup.each.with_index do |msg, i|
+        yield msg, i
+      end
+
+      loop do
+        msg = receive
+        @mailbox << msg
+        yield msg, (@mailbox.size - 1)
+      end
+    end
+
     def receive(timeout = WAIT_WHEN_EXPECTING_EVENT)
       @has_messages.try_acquire(1, timeout)
       msg = @messages.pop(true)
       raise msg if msg.is_a?(Exception)
       msg
+    end
+
+    # Push message back to the mailbox (when it doesn't match the expectation)
+    def consumed(id)
+      @mailbox.delete_at(id)
     end
 
     def send(msg)

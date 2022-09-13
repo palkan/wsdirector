@@ -12,7 +12,12 @@ module EchoServer
         @server_id = WebSocket::EventMachine::Server.start(host: HOST, port: PORT) do |ws|
           ws.onopen do
             ws.onmessage do |msg|
-              ws.send msg
+              if msg == "receive a to b"
+                ws.send "a" # rubocop:disable Performance/StringIdentifierArgument
+                ws.send "b" # rubocop:disable Performance/StringIdentifierArgument
+              else
+                ws.send msg
+              end
             end
           end
         end

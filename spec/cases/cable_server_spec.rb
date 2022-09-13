@@ -129,19 +129,19 @@ describe "wsdirector vs CableServer" do
                   multiplier: 3
                   data:
                     message: "Hello!"
-              - receive_all:
-                  messages:
-                    - data:
-                        text: "Hello!"
-                      multiplier: ":scale + :scale"
-                      channel: "chat"
-                      params:
-                        id: 2
-                    - data>:
-                        text: "message sent"
-                      channel: "chat"
-                      params:
-                        id: 2
+              - receive:
+                  data:
+                    text: "Hello!"
+                  multiplier: ":scale + :scale"
+                  channel: "chat"
+                  params:
+                    id: 2
+              - receive:
+                  data>:
+                    text: "message sent"
+                  channel: "chat"
+                  params:
+                    id: 2
         - client:
             multiplier: ":scale * 2"
             name: "listeners"

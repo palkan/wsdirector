@@ -124,15 +124,31 @@ module WSDirector
 
       def receive(step)
         expected = step["data"] || PartialMatcher.new(step["data>"])
+        ordered = step["ordered"]
 
         log { "Receive a message: #{expected.truncate(50)}" }
-        received = client.receive
-        log(:done) { "Received a message: #{received&.truncate(50)}" }
 
-        raise UnmatchedExpectationError, prepare_receive_error(expected, received) unless
-          expected.matches?(received)
+        received = nil
+
+        client.each_message do |msg, id|
+          received = msg
+          if expected.matches?(msg)
+            client.consumed(id)
+            break
+          end
+
+          if ordered
+            raise UnmatchedExpectationError, prepare_receive_error(expected, received)
+          end
+        end
+
+        log(:done) { "Received a message: #{received&.truncate(50)}" }
       rescue ThreadError
-        raise NoMessageError, "Expected to receive #{expected} but nothing has been received"
+        if received
+          raise UnmatchedExpectationError, prepare_receive_error(expected, received)
+        else
+          raise NoMessageError, "Expected to receive #{expected} but nothing has been received"
+        end
       end
 
       def receive_all(step)

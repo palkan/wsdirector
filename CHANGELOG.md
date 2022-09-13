@@ -2,6 +2,11 @@
 
 ## master
 
+- Make `receive` order-independent. ([@palkan][])
+
+Using `receive` now looks up a matching message through all the mailbox (already received or newly arrived messages).
+If you need strict order guarantees, add `ordered: true` to `receive`.
+
 - Add `WSDirector::Snapshot`. ([@palkan][])
 
 - Add `locals` support when running scenarios programmatically. ([@palkan][])

@@ -83,4 +83,46 @@ describe "wsdirector vs EchoServer" do
       expect(output).to include "1 clients, 0 failures"
     end
   end
+
+  context "receive order non-strict" do
+    let(:content) do
+      <<~YAML
+        - send:
+            data: "receive a to b"
+        - receive:
+            data: b
+        - receive:
+            data: a
+
+      YAML
+    end
+
+    it "show success message", :aggregate_failures do
+      output = run_wsdirector(test_script, url)
+      expect(output).to include "1 clients, 0 failures"
+    end
+  end
+
+  context "receive order strict" do
+    let(:content) do
+      <<~YAML
+        - send:
+            data: "receive a to b"
+        - receive:
+            data: b
+            ordered: true
+        - receive:
+            data: a
+
+      YAML
+    end
+
+    it "show failure message", :aggregate_failures do
+      output = run_wsdirector(test_script, url, failure: true)
+      expect(output).to include "1 clients, 1 failures"
+      expect(output).to include("1) Action failed: #receive")
+      expect(output).to match(/-- expected: "b"/)
+      expect(output).to match(/\+\+ got: a/)
+    end
+  end
 end
