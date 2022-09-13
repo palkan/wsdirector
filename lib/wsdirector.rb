@@ -19,3 +19,4 @@ module WSDirector
 end
 
 require "wsdirector/runner"
+require "wsdirector/snapshot"
