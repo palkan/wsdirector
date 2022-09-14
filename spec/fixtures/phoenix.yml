@@ -1,0 +1,19 @@
+- client:
+    protocol: phoenix
+    multiplier: ":scale"
+    actions:
+      - join:
+          topic: room:lobby
+      - wait_all
+      - send:
+          topic: room:lobby
+          event: new_msg
+          data:
+            body: "hey from WS director!"
+      - receive:
+          topic: room:lobby
+          multiplier: ":scale"
+          event: new_msg
+          data:
+            body: "hey from WS director!"
+

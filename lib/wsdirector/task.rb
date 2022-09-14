@@ -50,7 +50,7 @@ module WSDirector
     def color_for_id(id, colorize)
       return unless colorize
 
-      String.colors[id.object_id % String.colors.size]
+      String.colors[id.hash % String.colors.size]
     end
   end
 end

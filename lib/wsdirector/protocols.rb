@@ -2,11 +2,13 @@
 
 require "wsdirector/protocols/base"
 require "wsdirector/protocols/action_cable"
+require "wsdirector/protocols/phoenix"
 
 module WSDirector
   ID2CLASS = {
     "base" => "Base",
-    "action_cable" => "ActionCable"
+    "action_cable" => "ActionCable",
+    "phoenix" => "Phoenix"
   }.freeze
 
   module Protocols # :nodoc:

@@ -2,6 +2,8 @@
 
 ## master
 
+- Add Phoenix Channels protocol support. ([@palkan][])
+
 - Make `receive` order-independent. ([@palkan][])
 
 Using `receive` now looks up a matching message through all the mailbox (already received or newly arrived messages).
