@@ -4,6 +4,10 @@ module WSDirector
   module Ext
     # Extend Object through refinements
     module Formatting
+      refine ::Object do
+        def truncate(*) = itself
+      end
+
       refine ::String do
         def truncate(limit)
           return self if size <= limit

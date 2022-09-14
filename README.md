@@ -210,8 +210,7 @@ WSDirector.run(scenario, url: "ws://my.ws.server:4949/live", locals: {token:})
 
 ### Protocols
 
-WSDirector uses protocols to handle different actions.
-Currently, we support "base" protocol (with `send`, `receive`, `wait_all` actions) and "action_cable" protocol, which extends "base" with `subscribe`, `unsubscribe` and `perform` actions.
+WSDirector uses protocols to handle provide convinient actions for some popular protocols.
 
 #### ActionCable Example
 
@@ -261,6 +260,33 @@ Scenario:
           data:
             text: "hello"
 ```
+
+#### Phoenix Channels
+
+With "phoenix" protocol, you can use communicate with a [Phoenix Channels](https://hexdocs.pm/phoenix/channels.html) server:
+
+```yml
+- client:
+    protocol: phoenix
+    multiplier: ":scale"
+    actions:
+      - join:
+          topic: room:lobby
+      - wait_all
+      - send:
+          topic: room:lobby
+          event: new_msg
+          data:
+            body: "Hey from WS director!"
+      - receive:
+          topic: room:lobby
+          multiplier: ":scale"
+          event: new_msg
+          data:
+            body: "Hey from WS director!"
+```
+
+**IMPORTANT**: We support only v2 version of the Channels protocol.
 
 #### Custom protocols
 

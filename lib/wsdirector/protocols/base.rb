@@ -18,6 +18,36 @@ module WSDirector
         end
       end
 
+      refine ::Array do
+        def matches?(actual)
+          if actual.is_a?(::String)
+            actual = JSON.parse(actual) rescue nil # rubocop:disable Style/RescueModifier
+          end
+
+          return false unless actual
+
+          each.with_index do
+            return false unless _1.matches?(actual[_2])
+          end
+
+          true
+        end
+
+        def partially_matches?(actual)
+          if actual.is_a?(::String)
+            actual = JSON.parse(actual) rescue nil # rubocop:disable Style/RescueModifier
+          end
+
+          return false unless actual
+
+          each.with_index do
+            return false unless _1.partially_matches?(actual[_2])
+          end
+
+          true
+        end
+      end
+
       refine ::Hash do
         def matches?(actual)
           unless actual.is_a?(::Hash)
@@ -220,7 +250,7 @@ module WSDirector
         <<~MSG
           Action failed: #receive
              -- expected: #{expected.inspect}
-             ++ got: #{received}
+             ++ got: #{received} (#{received.class})
         MSG
       end
 
