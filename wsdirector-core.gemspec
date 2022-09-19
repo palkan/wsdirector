@@ -3,7 +3,7 @@
 require_relative "lib/wsdirector/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "wsdirector"
+  spec.name = "wsdirector-core"
   spec.version = WSDirector::VERSION
   spec.authors = ["Vladimir Dementyev", "Kirill Arkhipov", "Grandman"]
   spec.email = ["dementiev.vm@gmail.com", "kirillvs@mail.ru", "root@grandman73.ru"]

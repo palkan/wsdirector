@@ -20,7 +20,7 @@ Or use WebSockets Director as a library (see below for intructions):
 
 ```ruby
 # Gemfile
-gem "wsdirector", "~> 1.0"
+gem "wsdirector-core", "~> 1.0"
 ```
 
 ## Usage
