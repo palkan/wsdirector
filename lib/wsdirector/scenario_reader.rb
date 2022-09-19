@@ -31,7 +31,10 @@ module WSDirector
           if File.file?(scenario)
             parse_file(scenario)
           else
-            Array(parse_from_str(scenario))
+            parse_from_str(scenario).then do
+              next _1 if _1.is_a?(Array)
+              [_1]
+            end
           end.flatten
         else
           scenario
