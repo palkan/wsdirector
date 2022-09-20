@@ -8,6 +8,8 @@ Command line tool for testing WebSocket servers using scenarios.
 
 Suitable for testing any websocket server implementation, like [Action Cable](https://github.com/rails/rails/tree/master/actioncable), [AnyCable](https://anycable.io), [Phoenix Channels](https://hexdocs.pm/phoenix/channels.html), [GraphQL WS](https://github.com/enisdenjo/graphql-ws) and so on.
 
+> 📖 Read also [WebSocket Director: scenario-based integration tests for realtime apps](https://evilmartians.com/chronicles/websocket-director-scenario-based-integration-tests-for-real-time-apps)
+
 ## Installation
 
 Install CLI:
