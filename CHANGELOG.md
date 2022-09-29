@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.0.1 (2022-09-29)
+
+- Fix `wsdirector-cli` dependencies.
+
 ## 1.0.0 (2022-09-19)
 
 - Add Phoenix Channels protocol support. ([@palkan][])

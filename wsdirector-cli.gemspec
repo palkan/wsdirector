@@ -17,6 +17,6 @@ Gem::Specification.new do |spec|
 
   spec.files = %w[README.md LICENSE.txt CHANGELOG.md]
 
-  spec.add_dependency "wsdirector", WSDirector::VERSION
+  spec.add_dependency "wsdirector-core", WSDirector::VERSION
   spec.add_dependency "colorize"
 end
