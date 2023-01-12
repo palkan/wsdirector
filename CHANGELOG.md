@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.0.2 (2023-01-12)
+
+- Fix adding transpiled files to releases. ([@palkan][])
+
 ## 1.0.1 (2022-09-29)
 
 - Fix `wsdirector-cli` dependencies.
