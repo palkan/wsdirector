@@ -46,11 +46,11 @@ describe "wsdirector vs EchoServer" do
         - send:
             data:
               command: "subscribe"
-              identifier: '{\"channel\":\"TestChannel\"}'
+              identifier: '{"channel":"TestChannel"}'
         - receive:
             data:
               type: "subscription_confirmation"
-              identifier: '{\"channel\":\"TestChannel\"}'
+              identifier: '{"channel":"TestChannel"}'
 
       YAML
     end
@@ -70,7 +70,7 @@ describe "wsdirector vs EchoServer" do
         - send:
             data:
               command: "subscribe"
-              identifier: '{\"channel\":\"TestChannel\"}'
+              identifier: '{"channel":"TestChannel"}'
         - receive:
             data>:
               command: "subscribe"
