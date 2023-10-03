@@ -16,8 +16,5 @@ AllCops:
   SuggestExtensions: false
   TargetRubyVersion: 3.1
 
-Standard/BlockSingleLineBraces:
-  Enabled: false
-
 Style/FrozenStringLiteralComment:
   Enabled: true

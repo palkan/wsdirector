@@ -18,7 +18,7 @@ describe "wsdirector vs CableServer with custom protocol" do
   let(:options) { "-r #{test_script("protocol.rb")} -vv" }
 
   let(:protocol_contents) do
-    <<~'RUBY'
+    <<~RUBY
       module WSDirector::Protocols
         class Hotwired < ActionCable
           def stream_from(step)
