@@ -99,6 +99,9 @@ module WSDirector
 
     # Base protocol describes basic actions
     class Base
+      class ReceiveTimeoutError < StandardError
+      end
+
       include WSDirector::Utils
 
       def initialize(task, scale: 1, logger: nil, id: nil, color: nil)
@@ -155,9 +158,11 @@ module WSDirector
       def receive(step)
         expected = step["data"] || PartialMatcher.new(step["data>"])
         ordered = step["ordered"]
+        timeout = step.fetch("timeout", 5).to_f
 
-        log { "Receive a message: #{expected.truncate(50)}" }
+        log { "Receive a message in #{timeout}s: #{expected.truncate(100)}" }
 
+        start = Time.now.to_f
         received = nil
 
         client.each_message do |msg, id|
@@ -170,10 +175,14 @@ module WSDirector
           if ordered
             raise UnmatchedExpectationError, prepare_receive_error(expected, received)
           end
+
+          if Time.now.to_f - start > timeout
+            raise ReceiveTimeoutError
+          end
         end
 
-        log(:done) { "Received a message: #{received&.truncate(50)}" }
-      rescue ThreadError
+        log(:done) { "Received a message: #{received&.truncate(100)}" }
+      rescue ThreadError, ReceiveTimeoutError
         if received
           raise UnmatchedExpectationError, prepare_receive_error(expected, received)
         else

@@ -1,0 +1,34 @@
+- client:
+    multiplier: ":scale"
+    connection_options:
+      subprotocol: "actioncable-v1-json"
+    actions:
+      - receive:
+          data:
+            type: "welcome"
+      - loop:
+          multiplier: 10
+          actions:
+            - send:
+                data:
+                  command: "subscribe"
+                  identifier: "{\"channel\":\"BenchmarkChannel\"}"
+            - send:
+                data:
+                  command: "unsubscribe"
+                  identifier: "{\"channel\":\"BenchmarkChannel\"}"
+      - send:
+          data:
+            command: "subscribe"
+            identifier: "{\"channel\":\"BenchmarkChannel\"}"
+      - send:
+          data:
+            command: "message"
+            identifier: "{\"channel\":\"BenchmarkChannel\"}"
+            data: "{\"action\":\"echo\",\"test\":42}"
+      - receive:
+          data:
+            identifier: "{\"channel\":\"BenchmarkChannel\"}"
+            message:
+              action: "echo"
+              test: 42
