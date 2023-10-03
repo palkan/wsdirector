@@ -92,7 +92,12 @@ module WSDirector
           data["sample"] = [1, parse_multiplier(data["sample"])].max if data["sample"]
 
           multiplier = parse_multiplier(data.delete("multiplier") || "1")
-          Array.new(multiplier) { {"type" => type, "id" => id}.merge(data) }
+
+          if type == "loop"
+            handle_steps(data.fetch("actions")) * multiplier
+          else
+            Array.new(multiplier) { {"type" => type, "id" => id}.merge(data) }
+          end
         else
           {"type" => step, "id" => id}
         end
