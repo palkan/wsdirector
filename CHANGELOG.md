@@ -2,6 +2,8 @@
 
 ## master
 
+## 1.0.3 (2023-10-03)
+
 - Add `timeout` option to receive to limit the amount of time we wait for the expected message. ([@palkan][])
 
 - Add `loop` action to multiply several actions. ([@palkan][])
