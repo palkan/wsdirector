@@ -64,7 +64,11 @@ module WSDirector
         key = step.key?("data") ? "data" : "data>"
 
         message = step.fetch(key, {})
-        super(key => {"identifier" => identifier, "message" => message})
+
+        # Move all protocol-level fields to data
+        step[key] = {"identifier" => identifier, "message" => message}.merge(step.slice("offset", "stream_id", "epoch"))
+
+        super
       end
 
       def receive_all(step)
@@ -78,7 +82,7 @@ module WSDirector
 
           key = msg.key?("data") ? "data" : "data>"
 
-          msg[key] = {"identifier" => identifier, "message" => msg[key]}
+          msg[key] = {"identifier" => identifier, "message" => msg[key]}.merge(step.slice("offset", "stream_id", "epoch"))
         end
 
         super
@@ -88,7 +92,7 @@ module WSDirector
 
       def extract_identifier(step)
         channel = step.delete("channel")
-        step.fetch("params", {}).merge(channel: channel).to_json
+        (step.delete("params") || {}).merge(channel: channel).to_json
       end
     end
   end

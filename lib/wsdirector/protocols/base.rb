@@ -160,7 +160,7 @@ module WSDirector
         ordered = step["ordered"]
         timeout = step.fetch("timeout", 5).to_f
 
-        log { "Receive a message in #{timeout}s: #{expected.truncate(100)}" }
+        log { "Receive a message in #{timeout}s: #{expected.inspect.truncate(100)}" }
 
         start = Time.now.to_f
         received = nil
@@ -181,12 +181,16 @@ module WSDirector
           end
         end
 
+        if step["print"]
+          debug({"message" => received})
+        end
+
         log(:done) { "Received a message: #{received&.truncate(100)}" }
       rescue ThreadError, ReceiveTimeoutError
         if received
           raise UnmatchedExpectationError, prepare_receive_error(expected, received)
         else
-          raise NoMessageError, "Expected to receive #{expected} but nothing has been received"
+          raise NoMessageError, "Expected to receive #{expected.inspect} but nothing has been received"
         end
       end
 
