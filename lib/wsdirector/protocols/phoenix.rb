@@ -21,7 +21,7 @@ module WSDirector
         # Make sure we use the v2 of the protocol
         options[:query][:vsn] = "2.0.0"
 
-        super(**options)
+        super
       end
 
       def join(step)

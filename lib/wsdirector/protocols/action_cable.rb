@@ -11,7 +11,7 @@ module WSDirector
         options[:ignore] ||= [PING_IGNORE]
         options[:subprotocol] ||= "actioncable-v1-json"
 
-        super(**options)
+        super
 
         receive("data>" => {"type" => "welcome"})
         log(:done) { "Welcomed" }
