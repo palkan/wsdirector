@@ -2,6 +2,8 @@
 
 ## master
 
+## 1.1.0 (2024-10-04)
+
 - Support `stream_id`, `offset`, and `epoch` fields in Action Cable `receive`. ([@palkan][])
 
 - Add `print` option to `receive` action to print the received message. ([@palkan][])
