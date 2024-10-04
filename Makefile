@@ -9,12 +9,14 @@ test: nextify
 lint:
 	bundle exec rubocop
 
-release: test lint
+.PHONY: pure-release
+pure-release:
+	@echo "Executing pure-release target"
 	RELEASING_ANYWAY=true gem release wsdirector-core -t
 	RELEASING_ANYWAY=true gem release wsdirector-cli
+
+release: test lint pure-release
 	git push
 	git push --tags
 
-ci-release: nextify
-    RELEASING_ANYWAY=true gem release wsdirector-core -t
-	RELEASING_ANYWAY=true gem release wsdirector-cli
+ci-release: nextify pure-release
