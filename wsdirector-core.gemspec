@@ -13,6 +13,10 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/palkan/wsdirector"
   spec.license = "MIT"
 
+  spec.metadata = {
+    "rubygems_mfa_required" => "true"
+  }
+
   spec.required_ruby_version = ">= 2.6.0"
 
   spec.files = Dir.glob("lib/**/*") + Dir.glob("lib/.rbnext/**/*") + %w[README.md LICENSE.txt CHANGELOG.md]

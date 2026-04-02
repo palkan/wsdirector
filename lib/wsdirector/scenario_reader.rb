@@ -60,7 +60,8 @@ module WSDirector
 
     def parse_from_str(contents)
       JSON.parse(contents)
-    rescue JSON::ParserError
+    rescue JSON::ParserError => e
+      puts "Failed to parse JSON: #{e.message}\nSOURCE: #{contents}"
       parse_yaml(contents)
     end
 

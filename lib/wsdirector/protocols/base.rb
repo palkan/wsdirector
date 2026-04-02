@@ -185,7 +185,7 @@ module WSDirector
           debug({"message" => received})
         end
 
-        log(:done) { "Received a message: #{received&.truncate(100)}" }
+        log(:done) { "Received a message: #{received&.truncate(200)}" }
       rescue ThreadError, ReceiveTimeoutError
         if received
           raise UnmatchedExpectationError, prepare_receive_error(expected, received)

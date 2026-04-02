@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.1.1 (2026-04-02)
+
+- Require MFA to publish the gem.
+
 ## 1.1.0 (2024-10-04)
 
 - Support `stream_id`, `offset`, and `epoch` fields in Action Cable `receive`. ([@palkan][])
