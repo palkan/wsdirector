@@ -6,4 +6,5 @@ eval_gemfile "gemfiles/rubocop.gemfile"
 
 gemspec name: "wsdirector-core"
 
+gem "logger"
 gem "debug", platform: :mri
